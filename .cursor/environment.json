@@ -1,0 +1,6 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "install": "composer install --no-interaction && if [ ! -f PhoenixCart/includes/system/autoloader.php ]; then git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart; fi"
+}
