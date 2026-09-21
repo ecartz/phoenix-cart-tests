@@ -51,6 +51,7 @@ require_once DIR_FS_CATALOG . 'includes/system/class_index.php';
 require_once DIR_FS_CATALOG . 'includes/system/autoloader.php';
 
 $class_index = catalog_autoloader::register();
+$GLOBALS['class_index'] = $class_index;
 
 // Phoenix indexes versioned files by filename (e.g. Text) but autoloads via normalize_class_name (text).
 $indexedFiles = $class_index->get_files();

@@ -7,3 +7,4 @@
 | `Href::redirect()` | Sends HTTP headers and terminates the request |
 | `Href` with `SESSION_FORCE_COOKIE_USE === 'True'` | Requires alternate shop constant bootstrap in an isolated process |
 | `Image` with `IMAGE_REQUIRED === 'false'` | Requires alternate shop constant bootstrap in an isolated process |
+| `Template::build_blocks` | Requires `TEMPLATE_BLOCK_GROUPS` and `MODULE_*_INSTALLED` constants from live shop configuration |
