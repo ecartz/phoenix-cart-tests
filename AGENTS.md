@@ -5,9 +5,12 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 ## Conventions
 
 - GPL-2.0-or-later, `declare(strict_types=1)`
-- Namespace `PhoenixCart\Tests\Unit\<Area>\...`, extend `PhoenixCart\Tests\Support\PhoenixTestCase`
+- Namespace `PhoenixCart\Tests\Unit\<Area>\...`, extend `PhoenixCart\Tests\Support\phoenix_test_case`
+- Catalog-style **snake_case** for classes under `tests/Support/`, `tests/Unit/` (e.g. `mock_catalog_database`, `tickable_test`, `html_test_case`, `phoenix_test_case`); one class per file, filename matches class name
+- Test methods, data providers, and other members in this repo use **snake_case** as well (e.g. `test_real_link`, `real_link_provider`); PHPUnit `#[DataProvider('real_link_provider')]` attributes
 - Prefer data providers; assert behavior, not source text
-- If a constructor needs config constants, `define()` them in the test — do not stand up MySQL
+- **`tests/Unit/Html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
+- If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`**, or MySQL fixtures — not full `application_top.php` in wave 1
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
 - Do not modify files under `PhoenixCart/` (cloned catalog is read-only for agents)
 

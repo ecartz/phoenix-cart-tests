@@ -28,7 +28,9 @@ composer test
 | Path | Purpose |
 |------|---------|
 | `tests/bootstrap.php` | Locates catalog root, registers `catalog_autoloader` |
-| `tests/Support/PhoenixTestCase.php` | Base test case |
+| `tests/Support/phoenix_test_case.php` | Base test case |
+| `tests/Support/mock_catalog_database.php` | In-memory `$db` double for configuration segments |
+| `tests/Unit/Html/html_test_case.php` | Html unit bootstrap (constants, request cleanup) |
 | `tests/Unit/` | Unit tests by area (`Html/`, `Support/`, `Template/`, …) |
 
 ## License

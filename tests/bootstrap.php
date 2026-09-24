@@ -14,24 +14,24 @@ $candidates[] = realpath(__DIR__ . '/../../PhoenixCart') ?: __DIR__ . '/../../Ph
 $candidates[] = realpath(__DIR__ . '/../PhoenixCart') ?: __DIR__ . '/../PhoenixCart';
 $candidates[] = realpath(__DIR__ . '/..') ?: __DIR__ . '/..';
 
-$catalogRoot = null;
+$catalog_root = null;
 
 foreach ($candidates as $candidate) {
   $autoloader = $candidate . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'autoloader.php';
   if (is_file($autoloader)) {
-    $catalogRoot = $candidate;
+    $catalog_root = $candidate;
     break;
   }
 }
 
-if ($catalogRoot === null) {
+if ($catalog_root === null) {
     throw new RuntimeException(
         'Phoenix Cart catalog root not found. Set PHOENIX_CART_ROOT or clone CE-PhoenixCart/PhoenixCart beside this repo.'
     );
 }
 
 if (!defined('DIR_FS_CATALOG')) {
-    define('DIR_FS_CATALOG', $catalogRoot . DIRECTORY_SEPARATOR);
+    define('DIR_FS_CATALOG', $catalog_root . DIRECTORY_SEPARATOR);
 }
 
 if (!defined('DIR_FS_ADMIN')) {
@@ -54,11 +54,11 @@ $class_index = catalog_autoloader::register();
 $GLOBALS['class_index'] = $class_index;
 
 // Phoenix indexes versioned files by filename (e.g. Text) but autoloads via normalize_class_name (text).
-$indexedFiles = $class_index->get_files();
-foreach ($indexedFiles as $class => $path) {
+$indexed_files = $class_index->get_files();
+foreach ($indexed_files as $class => $path) {
     $normalized = class_index::normalize_class_name($class);
-    if ($class !== $normalized && !array_key_exists($normalized, $indexedFiles)) {
+    if ($class !== $normalized && !array_key_exists($normalized, $indexed_files)) {
         $class_index->set($class, $path);
-        $indexedFiles[$normalized] = $path;
+        $indexed_files[$normalized] = $path;
     }
 }

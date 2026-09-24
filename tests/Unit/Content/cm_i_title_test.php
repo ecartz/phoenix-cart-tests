@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PhoenixCart\Tests\Unit\Content;
+
+use cm_i_title;
+use PhoenixCart\Tests\Support\content_module_test_case;
+
+final class cm_i_title_test extends content_module_test_case
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->define_constants([
+            'MODULE_CONTENT_I_TITLE_STATUS' => 'True',
+            'MODULE_CONTENT_I_TITLE_CONTENT_WIDTH' => 'col-sm-12 mb-4',
+            'MODULE_CONTENT_I_TITLE_PUBLIC_TITLE' => 'Welcome on %s',
+            'STORE_NAME' => 'Acme Shop',
+        ]);
+    }
+
+    public function test_execute_buffers_store_welcome_into_index_group(): void
+    {
+        $this->execute_module(cm_i_title::class);
+
+        $content = $this->buffered_content('index');
+        $this->assertStringContainsString('Welcome on Acme Shop', $content);
+        $this->assertStringContainsString('cm-i-title', $content);
+    }
+}
