@@ -13,14 +13,14 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 | Approach | Maintenance | CI time | Fidelity | Verdict |
 |----------|-------------|---------|----------|---------|
 | **A. Full `phoenix.sql`** | Re-copy file from catalog tag when CE releases; single source of truth | ~310 KB / 62 tables / 1,137 `INSERT` statements; import under ~30s on MariaDB 10.x | Hooks + 563 `configuration` rows + tax/geo seed match production install | **Selected** |
-| **B. Schema extract + curated seed** | Must regenerate FK order; duplicate 563 config keys by hand | Smaller import | Risk drift from real install | Rejected for PR1 |
-| **C. Hybrid** | Two files to keep in sync | Medium | Good for add-ons only | **Deferred:** use `fixtures/wave3-supplement.sql` in PR2+ when tests need rows absent from install |
+| **B. Schema extract + curated seed** | Must regenerate FK order; duplicate 563 config keys by hand | Smaller import | Risk drift from real install | Rejected for part 1 |
+| **C. Hybrid (install + sample)** | Re-copy both files from catalog tag when CE releases | Base import + ~14 KB sample file | Matches installer “Import Sample Data”; real categories/products | **Selected for product/listing tests (parts 2+)** |
 
 **Evidence (upstream `PhoenixCart/install/phoenix.sql`):**
 
 - 62 `CREATE TABLE` statements; all tables use `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`.
 - Critical seed counts: `configuration` 563, `hooks` 86, `countries` 251, `zones` 181, `tax_class` 1, `tax_rates` 1, `geo_zones` 1, `zones_to_geo_zones` 1, `pages` 5, `pages_description` 5, `languages` 1.
-- **No demo products** in install SQL (`products` / `products_description` have schema only, zero `INSERT`). Product/listing tests require **`fixtures/wave3-supplement.sql`** (PR2+), not a slimmer schema extract.
+- **No demo products** in `phoenix.sql` alone (`products` / `products_description` have schema only, zero `INSERT`). Product/listing tests import CE **`install/phoenix_data_sample.sql`** (vendored as **`fixtures/phoenix_data_sample.sql`**) **after** `phoenix.sql`, same order as the installer’s “Import Sample Data” option.
 - Florida tax chain for `Tax::fetch`: `tax_rates` 7.0% on class 1; `zones_to_geo_zones` links country **223**, zone **18**, geo_zone **1**; `configuration` sets `STORE_COUNTRY=223`, `STORE_ZONE=18`.
 
 **Repo layout:**
@@ -28,10 +28,10 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 | Path | Role |
 |------|------|
 | `fixtures/phoenix.sql` | Vendored copy of catalog `install/phoenix.sql` at a documented CE tag (not symlink; CI clones catalog separately but imports **this** file for reproducibility) |
-| `fixtures/wave3-supplement.sql` | Optional; PR2+ only (products, customers, etc.) |
+| `fixtures/phoenix_data_sample.sql` | Vendored copy of catalog `install/phoenix_data_sample.sql`; import **after** `phoenix.sql` when Integration tests need sample categories/products (part 2+) |
 | `fixtures/README.md` | Tag pin, refresh command, charset note |
 
-**Refresh procedure:** On CE release tag `T`, copy `PhoenixCart/install/phoenix.sql` → `fixtures/phoenix.sql`, commit with note `Fixture from CE tag T`. Diff upstream install when catalog PRs touch schema.
+**Refresh procedure:** On CE release tag `T`, copy `PhoenixCart/install/phoenix.sql` → `fixtures/phoenix.sql` and `PhoenixCart/install/phoenix_data_sample.sql` → `fixtures/phoenix_data_sample.sql`, commit with note `Fixture from CE tag T`. Diff upstream install when catalog releases touch schema or sample data.
 
 **Engine:** MariaDB **10.11** service in CI (utf8mb4 compatible). MySQL 8.0 acceptable locally if charset matches.
 
@@ -43,13 +43,13 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 | Tier | Use in Wave 3 |
 |------|----------------|
-| **T1** | `define DB_*` from env → catalog autoload (already in `tests/bootstrap.php`) → `new Database()` → `$GLOBALS['db'] = $db` → `require read_configuration.php` | **PR1 default** |
-| **T2** | T1 + real `hooks` table + `$hooks->register('system')` + iterate `startApplication` callbacks | **PR2** when a test needs hook order (e.g. `currencies::set_currency`) |
-| **T3** | Partial/full `application_top.php` | **Out of PR1**; wave 4+ / cart/session integration |
+| **T1** | `define DB_*` from env → catalog autoload (already in `tests/bootstrap.php`) → `new Database()` → `$GLOBALS['db'] = $db` → `require read_configuration.php` | **Part 1 default** |
+| **T2** | T1 + real `hooks` table + `$hooks->register('system')` + iterate `startApplication` callbacks | **Part 2+** when a test needs hook order (e.g. `currencies::set_currency`) |
+| **T3** | Partial/full `application_top.php` | **Out of part 1**; wave 4+ / cart/session integration |
 
 **Rationale:** `Tax::fetch`, `abstract_module::check()`, and `database_core::perform` need real `mysqli` and seeded tables, not hook pipeline. T1 loads the same `MODULE_*` / `STORE_*` constants as production after full SQL import.
 
-**Session:** **Plain PHP session** from [`tests/bootstrap.php`](../tests/bootstrap.php). Do **not** run `start_session` segment or `mysql_session` in PR1 (avoids `sessions` table writes and cookie/spider branches).
+**Session:** **Plain PHP session** from [`tests/bootstrap.php`](../tests/bootstrap.php). Do **not** run `start_session` segment or `mysql_session` in part 1 (avoids `sessions` table writes and cookie/spider branches).
 
 **Configure source:** **`tests/Support/mysql_bootstrap.php`** (new) defines `DB_SERVER`, `DB_SERVER_USERNAME`, `DB_SERVER_PASSWORD`, `DB_DATABASE`, and minimal catalog constants (`HTTP_SERVER`, `DIR_WS_CATALOG`, `DIR_FS_CATALOG` already set) from environment. No committed `includes/local/configure.php` in the catalog tree.
 
@@ -58,9 +58,9 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 | Class | Responsibility |
 |-------|----------------|
 | `mysql_database_helper` | Connect `Database`, assign `$GLOBALS['db']`, optional `read_configuration`, optional import SQL file once per process |
-| `mysql_test_case` | Extends `phoenix_test_case`; `setUpBeforeClass` ensures DB reachable when `PHOENIX_MYSQL_ENABLED=1`; `setUp` runs T1 bootstrap; **no truncate** in PR1 (read-only tests); PR2+ may `DROP DATABASE` / re-import or use transactions where safe |
+| `mysql_test_case` | Extends `phoenix_test_case`; `setUpBeforeClass` ensures DB reachable when `PHOENIX_MYSQL_ENABLED=1`; `setUp` runs T1 bootstrap; **no truncate** in part 1 (read-only tests); later parts may `DROP DATABASE` / re-import or use transactions where safe |
 
-**Teardown:** PR1 tests are read-only except one `perform` insert test that deletes its row in `tearDown`. Full schema reset = re-import `fixtures/phoenix.sql` in CI job setup, not per test class.
+**Teardown:** Part 1 tests are read-only except one `perform` insert test that deletes its row in `tearDown`. Full schema reset = re-import `fixtures/phoenix.sql` in CI job setup, not per test class.
 
 ---
 
@@ -127,22 +127,22 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 | `info_pages::get_pages` | JOIN, session `languages_id` | `pages`, `pages_description` | T1 + `$_SESSION['languages_id']=1` | partial mock |
 | `cm_login_form::login` | dynamic customer read, update | `customers`, `customer_data` | T2+ customer bootstrap | No |
 | GDPR `cm_*` | many tables, customer session | `customers_gdpr`, orders, … | T3 | No |
-| Listing / cart content | `splitPageResults`, cart | products*, basket | T3 + supplement SQL | No |
+| Listing / cart content | `splitPageResults`, cart | products*, basket | T3 + sample SQL | No |
 
 **Content module cost (later slices):**
 
 | Rank | Module | Blocker |
 |------|--------|---------|
-| 1 (PR2) | `info_pages` helpers | Seed pages exist; needs session language id |
-| 2 | `cm_header_breadcrumb` product path | Needs `wave3-supplement.sql` product rows |
+| 1 (part 2) | `info_pages` helpers | Seed pages exist; needs session language id |
+| 2 | `cm_header_breadcrumb` product path | Needs `phoenix_data_sample.sql` after base install |
 | 3 | `cm_login_form` | `customer_data`, POST, messageStack |
 | 4 | GDPR / navbar / listings | Session, cart, many tables |
 
 ---
 
-## PR1 scope
+## Part 1 — harness and core Integration (delivered)
 
-**In scope (first implementation PR):**
+**In scope:**
 
 1. **`fixtures/phoenix.sql`** + `fixtures/README.md` (pinned tag note).
 2. **`mysql_bootstrap.php`**, **`mysql_database_helper`**, **`mysql_test_case`**.
@@ -154,7 +154,7 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
    - `abstract_module_check_test.php` — e.g. `ht_robot_noindex` with known `MODULE_HEADER_TAGS_ROBOT_NOINDEX_STATUS` in DB returns check > 0.
    - `database_perform_test.php` — insert ephemeral `configuration` key via `perform`, assert via `query`, delete in `tearDown`.
 
-**Explicit PR1 out-of-scope:**
+**Explicit part 1 out-of-scope:**
 
 - Checkout / order / cart segments and writes beyond one config row test.
 - HTTP / browser / admin tree.
@@ -166,14 +166,17 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 ---
 
-## Later slices
+## Parts 2–4 (remaining wave 3)
 
-| Slice | Deliverables |
-|-------|----------------|
-| **PR2** | `fixtures/wave3-supplement.sql` (demo product + category); `info_pages` Integration tests; optional T2 bootstrap helper |
-| **PR3** | `abstract_module::install`/`remove` on throwaway module keys; `Tax::fetch` edge cases (zero rate zone) |
-| **PR4** | One content module with real rows (`cm_login_form` or breadcrumb product path); minimal customer seed |
-| **PR5+** | GDPR, listings, cart persistence; coordinate with wave 4 HTTP |
+Wave 3 is planned as **four commits/slices on `main`**: part 1 delivered; **three parts left**.
+
+| Part | Deliverables |
+|------|----------------|
+| **2** | Vendor `fixtures/phoenix_data_sample.sql`; CI/cloud import **after** `phoenix.sql`; `info_pages` Integration tests; `Product::fetch_name` (or similar) Integration as needed; optional T2 bootstrap helper |
+| **3** | `abstract_module::install`/`remove` on throwaway module keys; `Tax::fetch` edge cases (zero rate zone) |
+| **4** | One content module with real rows (`cm_login_form` or breadcrumb product path); customer seed from sample SQL where applicable |
+
+**Beyond part 4 (wave 4 or late wave 3):** GDPR, listings, cart persistence; coordinate with HTTP acceptance.
 
 ---
 
@@ -204,7 +207,7 @@ require …/read_configuration.php   // 563 keys defined
 Tax::fetch(1, 223, 18)             // uses STORE_*-aligned seed
 ```
 
-T2 spike: after import, `$hooks = new hooks('shop'); $hooks->register('system');` then foreach `$hooks->generate('startApplication')` as `application_top.php` — loads session/cart unless filtered; **not used in PR1**.
+T2 spike: after import, `$hooks = new hooks('shop'); $hooks->register('system');` then foreach `$hooks->generate('startApplication')` as `application_top.php` — loads session/cart unless filtered; **not used in part 1**.
 
 **Sample local env (Compose):**
 
@@ -221,9 +224,9 @@ vendor/bin/phpunit --testsuite Integration
 
 ---
 
-## Implementation backlog (Wave 3 PR1)
+## Part 1 checklist (delivered)
 
-Ordered checklist for the next implementation plan:
+Ordered checklist for part 1 (all done in commit `a48fc13` on `main`):
 
 1. Add `fixtures/phoenix.sql` (copy from catalog) + `fixtures/README.md`.
 2. Add `tests/Support/mysql_bootstrap.php`, `mysql_database_helper.php`, `mysql_test_case.php`.

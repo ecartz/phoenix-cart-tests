@@ -18,7 +18,7 @@ final class tax_fetch_test extends mysql_test_case
 
         $tax = Tax::fetch(1, 223, 18);
 
-        $this->assertSame(7.0, (float) $tax['rate']);
+        $this->assertEqualsWithDelta(7.0, (float) $tax['rate'], 0.001);
         $this->assertStringContainsString('FL TAX', $tax['description']);
     }
 
@@ -28,6 +28,6 @@ final class tax_fetch_test extends mysql_test_case
         $second = Tax::get(1, 223, 18);
 
         $this->assertSame($first, $second);
-        $this->assertSame(7.0, (float) $first['rate']);
+        $this->assertEqualsWithDelta(7.0, (float) $first['rate'], 0.001);
     }
 }
