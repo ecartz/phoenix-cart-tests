@@ -28,7 +28,7 @@ composer test
 ```bash
 docker compose -f docker-compose.mysql.yml up -d
 # wait for healthy MariaDB, then:
-mysql -h 127.0.0.1 -u phoenix -pphoenix phoenix_test < fixtures/phoenix.sql
+bash fixtures/import-mysql-fixtures.sh
 export PHOENIX_MYSQL_ENABLED=1
 export PHOENIX_DB_HOST=127.0.0.1
 export PHOENIX_DB_NAME=phoenix_test
@@ -50,6 +50,7 @@ See [`fixtures/README.md`](fixtures/README.md) and [`docs/wave-3-design-brief.md
 | `tests/Unit/` | Unit and mock-db tests |
 | `tests/Integration/` | `@group mysql` tests against fixture SQL |
 | `fixtures/phoenix.sql` | Vendored CE install schema + seed |
+| `fixtures/phoenix_data_sample.sql` | Vendored CE sample catalog (import after `phoenix.sql`) |
 
 ## License
 

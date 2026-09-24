@@ -14,4 +14,6 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 
 **Wave 3 part 1 covered (real MySQL, `tests/Integration/`):** fixture import smoke; `Tax::fetch` / `get` (FL 7% seed); `abstract_module::check()`; `database_core::perform` on `configuration`.
 
+**Wave 3 part 2 covered:** CE sample SQL import; `info_pages` JOIN/helpers; `Product::fetch_name` against sample products.
+
 Covered thin content modules (wave 2 style, hand `define()` + stub `Template` / `Linker` / `messageStack` / `$page` / `navigationHistory`): `cm_footer_text`, `cm_login_title`, `cm_cas_title`, `cm_account_title`, `cm_announcement`, `cm_footer_extra_copyright`, `cm_footer_information_links`, `cm_footer_contact_us`, `cm_footer_account`, `cm_cas_message`, `cm_cas_continue_button`, `cm_header_messagestack`, `cm_footer_extra_icons`, `cm_info_title`, `cm_info_text`, `cm_sc_title`, `cm_i_title`, `cm_t_title`, `cm_cs_title`, `cm_pinf_message`, `cm_forgot_password`.

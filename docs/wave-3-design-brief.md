@@ -166,13 +166,20 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 ---
 
-## Parts 2–4 (remaining wave 3)
+## Part 2 — sample SQL and catalog reads (delivered)
 
-Wave 3 is planned as **four commits/slices on `main`**: part 1 delivered; **three parts left**.
+1. **`fixtures/phoenix_data_sample.sql`** vendored from CE `install/phoenix_data_sample.sql`.
+2. **`fixtures/import-mysql-fixtures.sh`** — imports base + sample; used in CI.
+3. **Integration tests:** `info_pages_test.php`, `product_fetch_name_test.php`; smoke asserts sample `products` rows.
+
+---
+
+## Parts 3–4 (remaining wave 3)
+
+Wave 3 is planned as **four commits on `main`**: parts 1–2 delivered; **two parts left**.
 
 | Part | Deliverables |
 |------|----------------|
-| **2** | Vendor `fixtures/phoenix_data_sample.sql`; CI/cloud import **after** `phoenix.sql`; `info_pages` Integration tests; `Product::fetch_name` (or similar) Integration as needed; optional T2 bootstrap helper |
 | **3** | `abstract_module::install`/`remove` on throwaway module keys; `Tax::fetch` edge cases (zero rate zone) |
 | **4** | One content module with real rows (`cm_login_form` or breadcrumb product path); customer seed from sample SQL where applicable |
 

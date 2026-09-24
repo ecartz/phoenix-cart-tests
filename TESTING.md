@@ -140,7 +140,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 3 — Real MySQL and fixture catalog
 
-**Status:** **Part 1 delivered** — Integration harness, vendored `fixtures/phoenix.sql`, CI workflow [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml). **Parts 2–4** remain (sample SQL + product/info pages; `install`/`remove` + tax edges; one DB-backed content module). Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+**Status:** **Parts 1–2 delivered** — Integration harness, vendored `fixtures/phoenix.sql` + `fixtures/phoenix_data_sample.sql`, CI workflow [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml). **Parts 3–4** remain (`install`/`remove` + tax edges; one DB-backed content module). Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
 
 **Goal:** Test classes and segments that need **`configuration`**, products, customers, cart, tax, zones, or checkout segments — without a browser.
 

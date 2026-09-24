@@ -35,7 +35,13 @@ Commit with message: `Fixture from CE tag <tag>`.
 
 ## Import (local or CI)
 
-Base install (part 1 — tax, modules, smoke):
+Preferred — base install plus sample catalog:
+
+```bash
+bash fixtures/import-mysql-fixtures.sh
+```
+
+Manual steps:
 
 ```bash
 mysql -h "$PHOENIX_DB_HOST" -P "${PHOENIX_DB_PORT:-3306}" \

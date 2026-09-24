@@ -24,4 +24,11 @@ final class database_smoke_test extends mysql_test_case
         $this->assertGreaterThanOrEqual(500, count($rows));
         $this->assertContains('STORE_COUNTRY', array_column($rows, 'configuration_key'));
     }
+
+    public function test_sample_products_seeded(): void
+    {
+        $count = $this->db()->fetch_all('SELECT products_id FROM products');
+
+        $this->assertGreaterThanOrEqual(9, count($count));
+    }
 }
