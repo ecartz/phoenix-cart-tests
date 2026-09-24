@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\Support;
 /**
  * Minimal double for {@see database_core} methods used by application segments (no mysqli).
  */
-final class mock_catalog_database {
-
+final class mock_catalog_database
+{
     /**
      * @param list<array<string, string>> $configuration_rows
      * @param array<string, list<array<string, string>>> $table_rows keyed by table name
@@ -20,24 +20,18 @@ final class mock_catalog_database {
     }
 
     /**
-     * @param mysqli_result|string $db_query
+     * @param mock_catalog_query_result|string $db_query
      *
-     * @return list<array<string, string>>
+     * @return list<array<string, mixed>>
      */
     public function fetch_all($db_query): array
     {
+        if ($db_query instanceof mock_catalog_query_result) {
+            return $db_query->remaining_rows();
+        }
+
         if (is_string($db_query)) {
-            if (str_contains($db_query, 'FROM configuration')) {
-                return $this->configuration_rows;
-            }
-
-            foreach ($this->table_rows as $table => $rows) {
-                if (str_contains($db_query, 'FROM ' . $table) || str_contains($db_query, 'FROM `' . $table . '`')) {
-                    return $rows;
-                }
-            }
-
-            return [];
+            return $this->rows_for_sql($db_query);
         }
 
         return [];
@@ -45,12 +39,10 @@ final class mock_catalog_database {
 
     /**
      * @param string $query
-     *
-     * @return list<array<string, string>>
      */
-    public function query($query)
+    public function query($query): mock_catalog_query_result
     {
-        return $this->fetch_all($query);
+        return new mock_catalog_query_result($this->rows_for_sql($query));
     }
 
     public function escape(string $value): string
@@ -58,4 +50,29 @@ final class mock_catalog_database {
         return $value;
     }
 
+    public function install_as_global(): self
+    {
+        $GLOBALS['db'] = $this;
+
+        return $this;
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function rows_for_sql(string $sql): array
+    {
+        if (preg_match('/\bFROM\s+`?configuration`?\b/i', $sql) === 1) {
+            return $this->configuration_rows;
+        }
+
+        foreach ($this->table_rows as $table => $rows) {
+            $quoted = preg_quote((string) $table, '/');
+            if (preg_match('/\bFROM\s+`?' . $quoted . '`?\b/i', $sql) === 1) {
+                return $rows;
+            }
+        }
+
+        return [];
+    }
 }

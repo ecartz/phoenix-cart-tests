@@ -44,15 +44,36 @@ Wave 1 covers a **small fraction** of autoloaded types (~10% by name). That is e
 - Html: `Href` when `SESSION_FORCE_COOKIE_USE === 'True'`, `Image` when `IMAGE_REQUIRED === 'false'` (separate process)
 - Content: shared [`content_module_test_case`](tests/Support/content_module_test_case.php); thin modules under `tests/Unit/Content/` (footer/header/login/CAS/info/index/cart/testimonials/checkout-success titles and related stubs)
 - Support stretch: `modular::display_layout()`, `navigationHistory` snapshot/path helpers
-- Early **wave 2b** in the same tree: `tests/Unit/Configuration/read_configuration_test.php`, `tests/Unit/Template/template_build_blocks_test.php` tagged `#[Group('mockdb')]`
-
 **Wave 2 completion checklist:**
 
-- [x] All **wave 2** rows in [`SKIPPED.md`](SKIPPED.md) covered or re-tagged (Href/Image session constants covered; `build_blocks` with enabled modules remains **2b/3**)
+- [x] All **wave 2** rows in [`SKIPPED.md`](SKIPPED.md) covered or re-tagged
 - [x] Stable versioned targets from the wave 2 inventory have PHPUnit classes under `tests/Unit/`
 - [x] Full suite green on PHP 8.3/8.4 against a **CE-PhoenixCart** checkout (`PHOENIX_CART_ROOT`)
 
 **Selecting “stable” catalog classes for tests:** prefer versioned files whose latest `class_index` winner has not changed in git since roughly Sep 2024; avoid churny Html/Select paths unless fixing upstream first.
+
+### Wave 2b — complete (mock database, still no MySQL)
+
+**Goal:** Install `$GLOBALS['db']` as an in-memory double, seed configuration (and simple table) rows, run production `read_configuration`, then exercise config-driven and single-table paths without a real engine.
+
+**Delivered:**
+
+- Support: [`mock_catalog_database`](tests/Support/mock_catalog_database.php) (case-insensitive `FROM` matching), [`mock_catalog_query_result`](tests/Support/mock_catalog_query_result.php) (`fetch_assoc()`), [`configuration_test_helper`](tests/Support/configuration_test_helper.php) (sets `$GLOBALS['db']` + requires `read_configuration.php`)
+- Configuration / Template: `read_configuration_test`, enabled `build_blocks` via `ht_robot_noindex` / `ht_table_click_jquery` / `ht_canonical` / `ht_pages_seo` / `ht_category_title` / `bm_home`, `template_content_modules_mockdb_test`
+- Catalog helpers: `country_test`, `zone_test`, `tax_test` (`fetch_classes` / `get_class_title`), `currencies_test`, `language_test`, `product_test` (`fetch_name`), `info_pages_test`, `abstract_module_enabled_test`
+- Content: `cm_header_breadcrumb_test` (Schema; product / category stub / manufacturer stub)
+
+**Wave 2b completion checklist:**
+
+- [x] Mock supports `fetch_all(string)` and `query()->fetch_assoc()` (not `mysqli_num_rows` / writes)
+- [x] `Template::build_blocks()` with enabled real header_tags and boxes modules
+- [x] `get_content_modules` loaded via mock configuration rows
+- [x] `Country` / `Zone` / `Tax::fetch_classes` / `currencies` / `language` / `Product::fetch_name` / `info_pages` helpers
+- [x] Explicit `abstract_module::isEnabled()` via mock STATUS
+- [x] `cm_header_breadcrumb` Schema paths (including stubbed category/manufacturer)
+- [x] Tests tagged `#[Group('mockdb')]`; full suite and `--group mockdb` green
+
+**Still wave 3:** `abstract_module::check()` (`mysqli_num_rows`), `Tax::fetch` joins, GDPR/navbar/login/listing/cart modules, `install`/`remove`/`perform`.
 
 ## Configuration constants and why “wave 2” is not trivial
 
@@ -75,30 +96,25 @@ Implications for testing:
 
 So the roadmap splits **“no DB process”** work from **“real SQL”** work. **Mocking the database** sits between wave 2 and wave 3: still PHPUnit-only CI, but configured constants and module strings can come from **fake query results**, not hand-wavy `define()` lists.
 
-### Mocking the database (planned)
+### Mocking the database (wave 2b)
 
-Before exercising code that expects `$GLOBALS['db']`, tests can install a **double** that returns canned rows (PHPUnit mock, anonymous class, or a small `tests/Support/` helper). Typical flow:
+Use [`configuration_test_helper::load_from_configuration_rows()`](tests/Support/configuration_test_helper.php) or install [`mock_catalog_database`](tests/Support/mock_catalog_database.php) via `install_as_global()`:
 
-1. Build an array of `configuration_key` / `configuration_value` rows (and any other tables the test needs).
-2. Assign `$GLOBALS['db']` to an object whose `fetch_all()` (and `query()` if needed) returns those rows for matching SQL patterns.
-3. `require` the relevant segment (for example `read_configuration.php`) or construct the module/class under test so constants are defined the **same way as production** (via the segment loop), not copied manually in the test.
-4. Tear down or replace `$GLOBALS['db']` in `tearDown()` so tests stay isolated.
+1. Build `configuration_key` / `configuration_value` rows (and optional `table_rows` keyed by table name).
+2. Helper assigns `$GLOBALS['db']` and `require`s `read_configuration.php` so constants match production order; use `#[RunInSeparateProcess]` when redefining keys.
+3. `query()` returns [`mock_catalog_query_result`](tests/Support/mock_catalog_query_result.php) with `fetch_assoc()`; `fetch_all()` accepts a string or that result. Matching is by `FROM {table}` substring only (no WHERE filtering).
+4. Tag tests `#[Group('mockdb')]`. Run `vendor/bin/phpunit --group mockdb` for the mock subset.
 
-**Good candidates for a db mock:**
-
-- `read_configuration` → `MODULE_*`, `TEMPLATE_*`, and related constants
-- `Template::build_blocks()` / `get_content_modules()` after configuration load
-- `abstract_module` when only `defined($status_key)` matters and `_check` is not invoked
-- Single-table `fetch_all` helpers with straightforward SQL
+**Covered by the mock today:** configuration load; `build_blocks` / `get_content_modules`; `Country` / `Zone` / `Tax::fetch_classes` / `currencies` / `language` / `Product::fetch_name` / `info_pages`; `cm_header_breadcrumb` Schema paths; `isEnabled()`.
 
 **Still use real MySQL (wave 3), not mocks, when:**
 
 - SQL is complex (joins, subqueries, dynamic fragments) and correctness of the query matters
-- Code uses mysqli-specific behavior, transactions, or `database_core` edge cases
+- Code uses `mysqli_num_rows`, transactions, or `database_core` edge cases
 - Checkout/order/cart segments write to multiple tables
 - You want CE-PhoenixCart CI to prove the catalog works against a real engine
 
-Mocked-db tests belong in `tests/Integration/` or `tests/Unit/` with a `@group mockdb` (name TBD) so CI can run **mockdb + unit** without starting MySQL, while `@group mysql` stays the full fixture suite.
+Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional later split: `tests/Integration/` for heavier mockdb / `@group mysql` for fixtures.
 
 ---
 
@@ -118,14 +134,13 @@ Mocked-db tests belong in `tests/Integration/` or `tests/Unit/` with a `@group m
 - Content-module tests that only buffer a `tpl_` file with **hand-built** `$GLOBALS` arrays (no real `MODULE_*` from DB)
 - Template tests that stub `$GLOBALS['Template']` / `hooks` without loading configuration
 
-**Wave 2b — Mock database (still no MySQL in CI):**
-
-- Install **`$GLOBALS['db']`** before running segments or modules; seed **configuration rows** in memory; run `read_configuration` (or equivalent) so constants match production loading order
-- Targets called out in [`SKIPPED.md`](SKIPPED.md) today (`Template::build_blocks`, module lists, …) may move here before wave 3
+**Wave 2b — Mock database (still no MySQL in CI):** **Complete** — see **Wave status** above.
 
 **Not wave 2 alone:** Hand-copying dozens of `define()` calls instead of mock + `read_configuration` — that duplicates production order and drifts quickly.
 
 ### Wave 3 — Real MySQL and fixture catalog
+
+**Status:** **PR1 delivered** — Integration harness, vendored `fixtures/phoenix.sql`, CI workflow [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml). Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
 
 **Goal:** Test classes and segments that need **`configuration`**, products, customers, cart, tax, zones, or checkout segments — without a browser.
 

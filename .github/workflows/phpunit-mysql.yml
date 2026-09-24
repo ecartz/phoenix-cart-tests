@@ -1,0 +1,79 @@
+name: PHPUnit Integration (MySQL)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  integration:
+    name: Integration PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: phoenix_test
+          MYSQL_USER: phoenix
+          MYSQL_PASSWORD: phoenix
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.3', '8.4']
+
+    steps:
+      - name: Check out test repo
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, xml, mysqli
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Clone CE PhoenixCart catalog
+        run: git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+
+      - name: Import fixture SQL
+        env:
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client
+          mysql -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -p"$PHOENIX_DB_PASSWORD" "$PHOENIX_DB_NAME" < fixtures/phoenix.sql
+
+      - name: Run Integration PHPUnit
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+          PHOENIX_MYSQL_ENABLED: '1'
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: vendor/bin/phpunit --testsuite Integration
+
+      - name: Run Unit PHPUnit (regression)
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+        run: vendor/bin/phpunit --testsuite Unit

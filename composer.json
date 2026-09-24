@@ -15,7 +15,9 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit --testsuite Unit",
+        "test:mysql": "phpunit --testsuite Integration",
+        "test:all": "phpunit"
     },
     "config": {
         "sort-packages": true

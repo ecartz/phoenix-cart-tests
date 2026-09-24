@@ -5,12 +5,12 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 ## Conventions
 
 - GPL-2.0-or-later, `declare(strict_types=1)`
-- Namespace `PhoenixCart\Tests\Unit\<Area>\...`, extend `PhoenixCart\Tests\Support\phoenix_test_case`
+- Namespace `PhoenixCart\Tests\Unit\<Area>\...` or `PhoenixCart\Tests\Integration\...`; extend `phoenix_test_case` or `mysql_test_case`
 - Catalog-style **snake_case** for classes under `tests/Support/`, `tests/Unit/` (e.g. `mock_catalog_database`, `tickable_test`, `html_test_case`, `phoenix_test_case`); one class per file, filename matches class name
 - Test methods, data providers, and other members in this repo use **snake_case** as well (e.g. `test_real_link`, `real_link_provider`); PHPUnit `#[DataProvider('real_link_provider')]` attributes
 - Prefer data providers; assert behavior, not source text
 - **`tests/Unit/Html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
-- If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`**, or MySQL fixtures — not full `application_top.php` in wave 1
+- If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in wave 1
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
 - Do not modify files under `PhoenixCart/` (cloned catalog is read-only for agents)
 
@@ -29,12 +29,12 @@ There is no `includes/functions/` tree in current Phoenix; legacy procedural hel
 
 **Out of scope (skip and list in `SKIPPED.md`):**
 
-- MySQL, `database_core`, `mysql_session`, `$GLOBALS['db']`
+- Real MySQL Integration tests live under `tests/Integration/` with `#[Group('mysql')]` and `PHOENIX_MYSQL_ENABLED=1`; mock `$GLOBALS['db']` remains under `#[Group('mockdb')]` in Unit tests
 - Checkout/application segments that assume a running shop session
 - Installer, admin HTTP, payment modules
 - Booting `application_top.php`
 
-Content-module `execute()` that only buffers a `tpl_` file is allowed with stub `$GLOBALS['Template']` / product arrays.
+Content-module `execute()` that only buffers a `tpl_` file is allowed with stub `$GLOBALS['Template']` / product arrays. Mock-db content paths (for example `cm_header_breadcrumb`) use `configuration_test_helper`.
 
 ## Parallel agent areas
 
@@ -55,7 +55,9 @@ Verify with:
 ```bash
 composer install
 [ -d PhoenixCart/includes/system/autoloader.php ] || git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
-vendor/bin/phpunit
+composer test
 ```
+
+Integration (MySQL): import `fixtures/phoenix.sql`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. See [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
 
 Never add `CLAUDE.md` to the Phoenix Cart fork.
