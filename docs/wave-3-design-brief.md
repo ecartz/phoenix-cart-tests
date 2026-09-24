@@ -174,13 +174,20 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 ---
 
-## Parts 3–4 (remaining wave 3)
+## Part 3 — module writes and tax edges (delivered)
 
-Wave 3 is planned as **four commits on `main`**: parts 1–2 delivered; **two parts left**.
+1. **`integration_throwaway_module`** — minimal real `abstract_module` subclass with ephemeral `MODULE_PHOENIX_INTEGRATION_PROBE_*` keys.
+2. **`abstract_module_install_remove_test.php`** — `install()` writes rows; `remove()` deletes all module keys.
+3. **`tax_fetch_test.php`** — zero rate + `TEXT_UNKNOWN_TAX_RATE` when zone/country does not match install geo seed.
+
+---
+
+## Part 4 (remaining wave 3)
+
+Wave 3 is planned as **four commits on `main`**: parts 1–3 delivered; **part 4 left**.
 
 | Part | Deliverables |
 |------|----------------|
-| **3** | `abstract_module::install`/`remove` on throwaway module keys; `Tax::fetch` edge cases (zero rate zone) |
 | **4** | One content module with real rows (`cm_login_form` or breadcrumb product path); customer seed from sample SQL where applicable |
 
 **Beyond part 4 (wave 4 or late wave 3):** GDPR, listings, cart persistence; coordinate with HTTP acceptance.

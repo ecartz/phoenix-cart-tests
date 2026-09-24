@@ -30,4 +30,20 @@ final class tax_fetch_test extends mysql_test_case
         $this->assertSame($first, $second);
         $this->assertEqualsWithDelta(7.0, (float) $first['rate'], 0.001);
     }
+
+    public function test_fetch_returns_zero_rate_when_zone_has_no_tax_row(): void
+    {
+        $tax = Tax::fetch(1, 223, 999);
+
+        $this->assertSame(0.0, (float) $tax['rate']);
+        $this->assertSame(TEXT_UNKNOWN_TAX_RATE, $tax['description']);
+    }
+
+    public function test_fetch_returns_zero_rate_for_country_without_geo_match(): void
+    {
+        $tax = Tax::fetch(1, 1, 1);
+
+        $this->assertSame(0.0, (float) $tax['rate']);
+        $this->assertSame(TEXT_UNKNOWN_TAX_RATE, $tax['description']);
+    }
 }
