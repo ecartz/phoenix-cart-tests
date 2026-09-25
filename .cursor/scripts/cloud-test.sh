@@ -19,4 +19,19 @@ if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
 
-exec composer test:all
+HTTP_PID=""
+cleanup() {
+  if [[ -n "$HTTP_PID" ]]; then
+    kill "$HTTP_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
+  bash scripts/http-server.sh &
+  HTTP_PID=$!
+  sleep 1
+fi
+
+composer test:all
+exit $?

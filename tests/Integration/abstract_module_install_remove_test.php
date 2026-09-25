@@ -15,14 +15,30 @@ final class abstract_module_install_remove_test extends mysql_test_case
 {
     private const STATUS_KEY = 'MODULE_PHOENIX_INTEGRATION_PROBE_STATUS';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->purge_throwaway_configuration();
+    }
+
     protected function tearDown(): void
     {
-        $module = new integration_throwaway_module();
-        if ($module->check() > 0) {
-            $module->remove();
-        }
+        $this->purge_throwaway_configuration();
 
         parent::tearDown();
+    }
+
+    /**
+     * Direct SQL cleanup — {@see abstract_module::remove()} calls keys(), which can
+     * re-insert missing constants before DELETE and throw duplicate-key errors.
+     */
+    private function purge_throwaway_configuration(): void
+    {
+        $prefix = integration_throwaway_module::CONFIG_KEY_BASE;
+        $this->db()->query(
+            "DELETE FROM configuration WHERE configuration_key LIKE '"
+            . $this->db()->escape($prefix) . "%'"
+        );
     }
 
     public function test_install_writes_configuration_rows(): void
