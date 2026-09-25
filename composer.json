@@ -20,7 +20,8 @@
         "test:mysql": "phpunit --testsuite Integration",
         "test:http": "phpunit --testsuite Http",
         "test:all": "phpunit",
-        "test:stack": "phpunit --testsuite Unit --testsuite Integration --testsuite Http"
+        "test:stack": "phpunit --testsuite Unit --testsuite Integration --testsuite Http",
+        "cloud-test": "bash .cursor/scripts/cloud-test.sh"
     },
     "config": {
         "sort-packages": true
