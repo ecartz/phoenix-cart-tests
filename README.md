@@ -55,6 +55,19 @@ composer test:http
 
 See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
+### Browser (wave 5)
+
+```bash
+bash fixtures/import-mysql-fixtures.sh
+bash scripts/http-server.sh
+export PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
+npm ci
+npx playwright install chromium
+composer test:browser
+```
+
+See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+
 ## Layout
 
 | Path | Purpose |
@@ -66,6 +79,8 @@ See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 | `tests/Unit/` | Unit and mock-db tests |
 | `tests/Integration/` | `@group mysql` tests against fixture SQL |
 | `tests/Http/` | `@group http` acceptance tests (running shop + DB) |
+| `tests/browser/` | Playwright specs (wave 5) |
+| `playwright.config.ts` | Playwright config |
 | `scripts/http-server.sh` | PHP built-in server for wave 4 |
 | `fixtures/phoenix.sql` | Vendored CE install schema + seed |
 | `fixtures/phoenix_data_sample.sql` | Vendored CE sample catalog (import after `phoenix.sql`) |

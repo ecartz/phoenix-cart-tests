@@ -179,21 +179,24 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 **Not required yet:** Selenium — server-rendered HTML and cookies are enough for most catalog/cart flows.
 
-### Wave 5 — Browser automation (JS, checkout UI, admin)
+### Wave 5 — Browser automation (Playwright)
 
-**Goal:** Flows where **JavaScript**, layout, or payment iframes matter.
+**Status:** **Part 1** — Playwright harness + homepage carousel interaction. Design: [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+
+**Goal:** Flows where **JavaScript**, layout, or payment iframes matter — not duplicated by Symfony HttpClient.
 
 **Tooling:**
 
-- **Playwright** (recommended default for new work), or
-- **Selenium WebDriver** (same role if you standardize on WebDriver/grid), or
-- **Cypress** (Node runner alongside PHP in this repo)
+- **Playwright** (`@playwright/test`, TypeScript) in [`tests/browser/`](tests/browser/)
+- **`composer test:browser`** (requires `PHOENIX_HTTP_BASE_URL`, running shop, `npm ci`, `npx playwright install chromium`)
 
-**Examples:**
+**Examples (roadmap):**
 
-- Checkout and payment modules (Stripe SCA, PayPal), sliders, admin UI, GDPR flows with client behavior
+- Carousel / navbar JS (part 1)
+- Checkout and payment modules (Stripe SCA, PayPal) — later parts
+- Admin UI, GDPR flows with client behavior
 
-PHPUnit remains the runner for waves 1–3; browser suites are usually **separate commands** invoked from the same CE-PhoenixCart CI workflow.
+PHPUnit remains the runner for waves 1–4; browser suites are **separate commands** invoked from the same CI workflow when Node is available.
 
 ### Wave 6 — Release hardening (optional)
 
@@ -213,7 +216,7 @@ PHPUnit remains the runner for waves 1–3; browser suites are usually **separat
 | 2b | PHPUnit + **`$GLOBALS['db']` mock** | Same as wave 1 (no MySQL service) |
 | 3 | PHPUnit + MySQL fixtures | DB service, import fixture SQL from this repo |
 | 4 | HTTP acceptance (Guzzle / Codeception / Behat+Goutte) | DB + web server + HTTP suite |
-| 5 | Playwright / Selenium / Cypress | DB + web server + browser image |
+| 5 | Playwright (`tests/browser/`) | DB + web server + Node + Chromium |
 | 6 | Mixed | Secrets, optional external services |
 
 ```text
@@ -240,7 +243,8 @@ Wave 6   Visual / perf / payment sandbox
 | `tests/Integration/` | Additional wave 2b / wave 3 (MySQL) — *optional split later* |
 | `tests/Support/` | Shared test support (for example `mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`) |
 | `tests/Http/` | Wave 4 HTTP acceptance (`#[Group('http')]`) |
-| `tests/Browser/` or external `e2e/` | Wave 5 — *not present yet* |
+| `tests/browser/` | Wave 5 Playwright specs |
+| `playwright.config.ts` | Playwright base URL + Chromium project |
 | `fixtures/` | SQL seeds (wave 3); [`fixtures/http/README.md`](fixtures/http/README.md) documents configure for wave 4 |
 | `SKIPPED.md` | Explicit deferrals; add a **Wave** column when listing new skips |
 

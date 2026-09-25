@@ -21,6 +21,7 @@
         "test:http": "phpunit --testsuite Http",
         "test:all": "phpunit",
         "test:stack": "phpunit --testsuite Unit --testsuite Integration --testsuite Http",
+        "test:browser": "npx playwright test",
         "cloud-test": "bash .cursor/scripts/cloud-test.sh"
     },
     "config": {

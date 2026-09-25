@@ -62,4 +62,6 @@ Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQ
 
 HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
+Browser (wave 5): same shop URL as HTTP; `npm ci`, `npx playwright install chromium`, `export PHOENIX_HTTP_BASE_URL=...`, then `composer test:browser`. See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+
 Never add `CLAUDE.md` to the Phoenix Cart fork.
