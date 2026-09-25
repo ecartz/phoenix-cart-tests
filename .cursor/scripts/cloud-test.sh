@@ -15,6 +15,12 @@ set -a
 source "$ENV_FILE"
 set +a
 
+# Warm Cloud VMs may keep an older cloud.env without HTTP acceptance vars.
+export PHOENIX_HTTP_ENABLED="${PHOENIX_HTTP_ENABLED:-1}"
+export PHOENIX_HTTP_BASE_URL="${PHOENIX_HTTP_BASE_URL:-http://127.0.0.1:8765}"
+export PHOENIX_HTTP_HOST="${PHOENIX_HTTP_HOST:-127.0.0.1}"
+export PHOENIX_HTTP_PORT="${PHOENIX_HTTP_PORT:-8765}"
+
 if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
