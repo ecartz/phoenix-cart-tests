@@ -111,7 +111,7 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 ## Part 2 — product and category GET (delivered)
 
 1. **`product_info_test.php`** — `product_info.php?products_id=1` shows sample **Oranges** / **ORA-1**.
-2. **`category_listing_test.php`** — `index.php?cPath=1` (Fruit) and `cPath=1_4` (Citrus) list sample catalog rows from `phoenix_data_sample.sql`.
+2. **`category_listing_test.php`** — `index.php?cPath=1` (Fruit) lists sample subcategories; `cPath=1_4` (Citrus) lists **Oranges** / **Lemons** per `phoenix_data_sample.sql` category assignments.
 
 ---
 

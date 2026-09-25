@@ -17,6 +17,6 @@ final class index_smoke_test extends http_test_case
         $this->assertSame(200, $response->getStatusCode());
 
         $body = $response->getContent(false);
-        $this->assertStringContainsString('Oranges', $body);
+        $this->assertStringContainsString('Our Farm', $body);
     }
 }

@@ -22,7 +22,7 @@ final class category_listing_test extends http_test_case
 
         $body = $response->getContent(false);
         $this->assertStringContainsString('Fruit', $body);
-        $this->assertStringContainsString('Oranges', $body);
+        $this->assertStringContainsString('Citrus Fruit', $body);
     }
 
     public function test_citrus_subcategory_lists_sample_lemons(): void
@@ -37,6 +37,7 @@ final class category_listing_test extends http_test_case
 
         $body = $response->getContent(false);
         $this->assertStringContainsString('Citrus Fruit', $body);
+        $this->assertStringContainsString('Oranges', $body);
         $this->assertStringContainsString('Lemons', $body);
     }
 }
