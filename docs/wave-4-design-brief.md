@@ -97,7 +97,7 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 
 ---
 
-## Part 1 checklist (implementation)
+## Part 1 — HTTP harness (delivered)
 
 1. Add `symfony/http-client` to `composer.json`.
 2. Add `tests/Support/http_bootstrap.php`, `http_test_case.php`.
@@ -105,3 +105,19 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 4. Add `tests/Http/index_smoke_test.php`.
 5. Extend `phpunit.xml`, `composer.json` scripts.
 6. Update `TESTING.md`, `AGENTS.md` pointer, `SKIPPED.md` where relevant.
+
+---
+
+## Part 2 — product and category GET (delivered)
+
+1. **`product_info_test.php`** — `product_info.php?products_id=1` shows sample **Oranges** / **ORA-1**.
+2. **`category_listing_test.php`** — `index.php?cPath=1` (Fruit) and `cPath=1_4` (Citrus) list sample catalog rows from `phoenix_data_sample.sql`.
+
+---
+
+## Parts 3–4 (remaining wave 4)
+
+| Part | Deliverables |
+|------|----------------|
+| **3** | Cart session: `buy_now` / `shopping_cart.php` with cookie jar |
+| **4** | `info.php` / slug pages; optional redirect-heavy `Request` paths |

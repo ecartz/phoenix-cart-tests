@@ -162,7 +162,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 4 — HTTP acceptance (no browser)
 
-**Status:** **Part 1 delivered** — Symfony HttpClient harness, runtime `includes/local/configure.php`, `scripts/http-server.sh`, `tests/Http/index_smoke_test.php`. Design: [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md). Parts **2–4** (product/listing URLs, cart session, info pages) remain.
+**Status:** **Parts 1–2 delivered** — HTTP harness, homepage smoke, `product_info` and category `cPath` listing tests. Design: [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md). Parts **3–4** (cart session, info pages) remain.
 
 **Goal:** Black-box **HTTP** against a running shop + fixture DB: pages, actions, segments reached via URLs.
 
