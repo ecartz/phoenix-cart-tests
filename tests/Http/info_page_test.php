@@ -49,4 +49,15 @@ final class info_page_test extends http_test_case
         $this->assertStringContainsString('Cookie Usage', $body);
         $this->assertStringContainsString('Cookie Privacy and Security', $body);
     }
+
+    public function test_ssl_check_php_shows_slug_page_from_seed(): void
+    {
+        $response = $this->get_http()->request('GET', '/ssl_check.php');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('Security Check', $body);
+        $this->assertStringContainsString('Privacy and Security', $body);
+    }
 }

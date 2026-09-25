@@ -125,8 +125,15 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 ## Part 4 — info pages (delivered)
 
 1. **`fixtures/http/publish_info_pages.sql`** — publish install slugs `privacy`, `conditions`, `shipping` so `info.php` serves them (imported with wave 3 fixtures).
-2. **`info_page_test.php`** — `info.php?pages_id=` for the three footer pages; **`cookie_usage.php`** slug entry from seed HTML.
-3. **`Request::check_*` redirect paths** — still out of scope; see `SKIPPED.md` (no `ssl_check.php` Http coverage).
+2. **`info_page_test.php`** — `info.php?pages_id=` for the three footer pages; **`cookie_usage.php`** and **`ssl_check.php`** slug pages from seed HTML.
+
+---
+
+## Wave 4 finish — session security (delivered)
+
+1. **`fixtures/http/enable_session_security_checks.sql`** — `SESSION_CHECK_USER_AGENT` and `SESSION_CHECK_IP_ADDRESS` = `True` for HTTP runs.
+2. **`request_security_test.php`** — after session cookie, changed `User-Agent` or `X-Forwarded-For` → **302** `login.php` (Application hooks; not in-process `Request::check_*` calls).
+3. **`SESSION_CHECK_SSL_SESSION_ID`** — still deferred on plain HTTP; see `SKIPPED.md`.
 
 ---
 

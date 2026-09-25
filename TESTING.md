@@ -162,7 +162,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 4 — HTTP acceptance (no browser)
 
-**Status:** **Parts 1–4 delivered** — HTTP harness through cart `buy_now`, `shopping_cart.php`, and install info pages (`info.php`, `cookie_usage.php`). Design: [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
+**Status:** **Complete (parts 1–4 + finish)** — HTTP harness, cart/info pages, redirect hardening, `ssl_check.php`, and Request user-agent/IP mismatch redirects. Design: [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md). **Wave 5** is browser automation (Playwright, etc.).
 
 **Goal:** Black-box **HTTP** against a running shop + fixture DB: pages, actions, segments reached via URLs.
 

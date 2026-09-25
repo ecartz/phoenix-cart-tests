@@ -1,6 +1,9 @@
 # Wave 4 HTTP fixtures
 
-Wave 4 adds **`publish_info_pages.sql`** (applied by `fixtures/import-mysql-fixtures.sh` after the wave 3 seeds). CE install leaves footer info pages as draft (`pages_status=0`); `info.php` only renders **published** pages (`pages_status=1`).
+Wave 4 adds HTTP fixture SQL (applied by [`fixtures/import-mysql-fixtures.sh`](../import-mysql-fixtures.sh) after the wave 3 seeds):
+
+- **`publish_info_pages.sql`** — publish footer slugs so `info.php` serves them (`pages_status=1`).
+- **`enable_session_security_checks.sql`** — turn on `SESSION_CHECK_USER_AGENT` and `SESSION_CHECK_IP_ADDRESS` for Request mismatch HTTP tests (install defaults are `False`).
 
 This folder also documents **catalog configure** for acceptance tests.
 

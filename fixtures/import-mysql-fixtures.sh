@@ -15,5 +15,6 @@ MYSQL=(mysql -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -
 "${MYSQL[@]}" < fixtures/phoenix.sql
 "${MYSQL[@]}" < fixtures/phoenix_data_sample.sql
 "${MYSQL[@]}" < fixtures/http/publish_info_pages.sql
+"${MYSQL[@]}" < fixtures/http/enable_session_security_checks.sql
 
-echo "Imported fixtures/phoenix.sql, fixtures/phoenix_data_sample.sql, and fixtures/http/publish_info_pages.sql into ${PHOENIX_DB_NAME}."
+echo "Imported fixtures/phoenix.sql, fixtures/phoenix_data_sample.sql, and fixtures/http/*.sql into ${PHOENIX_DB_NAME}."
