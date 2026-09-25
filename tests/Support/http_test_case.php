@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 abstract class http_test_case extends phoenix_test_case
 {
-    protected static HttpClientInterface $http;
+    private HttpClientInterface $http;
 
     public static function setUpBeforeClass(): void
     {
@@ -21,10 +21,11 @@ abstract class http_test_case extends phoenix_test_case
         }
 
         http_bootstrap::write_local_configure();
-        self::$http = http_bootstrap::client();
+
+        $probe = http_bootstrap::client();
 
         try {
-            $response = self::$http->request('GET', '/');
+            $response = $probe->request('GET', '/');
             $status = $response->getStatusCode();
             if ($status >= 500) {
                 throw new \RuntimeException('Shop returned HTTP ' . $status);
@@ -38,8 +39,19 @@ abstract class http_test_case extends phoenix_test_case
         }
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->http = http_bootstrap::client();
+    }
+
     protected function get_http(): HttpClientInterface
     {
-        return self::$http;
+        return $this->http;
+    }
+
+    protected function get_http_without_redirects(): HttpClientInterface
+    {
+        return http_bootstrap::client(0);
     }
 }

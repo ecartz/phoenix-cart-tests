@@ -24,4 +24,19 @@ final class product_info_test extends http_test_case
         $this->assertStringContainsString('Oranges', $body);
         $this->assertStringContainsString('ORA-1', $body);
     }
+
+    public function test_unknown_product_shows_not_found_page_not_oranges(): void
+    {
+        $response = $this->get_http()->request('GET', '/product_info.php', [
+            'query' => [
+                'products_id' => '999999',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $body = $response->getContent(false);
+        $this->assertStringNotContainsString('ORA-1', $body);
+        $this->assertStringContainsString('cm-pinf-message', $body);
+    }
 }

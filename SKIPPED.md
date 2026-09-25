@@ -2,7 +2,6 @@
 
 | Class / area | Reason | Wave |
 |--------------|--------|------|
-| `Href::redirect()` | Sends HTTP headers and terminates the request | 4+ |
 | `Request::check_ssl_session_id()` / `check_user_agent()` / `check_ip()` | Destroy session and call `Href::redirect()` on mismatch; not exercised in Http suite (`ssl_check.php` / secure-session hooks) | 5+ |
 | `abstract_module::check()` | Covered by Integration tests (`abstract_module_check_test`) | — |
 | `abstract_module::install` / `remove` | Covered by Integration (`abstract_module_install_remove_test`) | — |
@@ -21,5 +20,7 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 **Wave 3 part 4 covered:** `cm_header_breadcrumb` product path with sample SQL + real `execute()` / Schema output.
 
 **Wave 4 part 4 covered (Http):** install footer pages via `info.php?pages_id=` after `publish_info_pages.sql`; `cookie_usage.php` slug page from seed.
+
+**Wave 4 HTTP redirect coverage:** `Href::redirect()` is exercised via **`href_redirect_test.php`** (302 `Location` on unpublished/missing info pages, missing `products_id`, and `buy_now` → `shopping_cart.php`); not called directly in PHPUnit because it sends headers and exits.
 
 Covered thin content modules (wave 2 style, hand `define()` + stub `Template` / `Linker` / `messageStack` / `$page` / `navigationHistory`): `cm_footer_text`, `cm_login_title`, `cm_cas_title`, `cm_account_title`, `cm_announcement`, `cm_footer_extra_copyright`, `cm_footer_information_links`, `cm_footer_contact_us`, `cm_footer_account`, `cm_cas_message`, `cm_cas_continue_button`, `cm_header_messagestack`, `cm_footer_extra_icons`, `cm_info_title`, `cm_info_text`, `cm_sc_title`, `cm_i_title`, `cm_t_title`, `cm_cs_title`, `cm_pinf_message`, `cm_forgot_password`.

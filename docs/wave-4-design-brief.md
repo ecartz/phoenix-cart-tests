@@ -127,3 +127,11 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 1. **`fixtures/http/publish_info_pages.sql`** — publish install slugs `privacy`, `conditions`, `shipping` so `info.php` serves them (imported with wave 3 fixtures).
 2. **`info_page_test.php`** — `info.php?pages_id=` for the three footer pages; **`cookie_usage.php`** slug entry from seed HTML.
 3. **`Request::check_*` redirect paths** — still out of scope; see `SKIPPED.md` (no `ssl_check.php` Http coverage).
+
+---
+
+## HTTP suite hardening (delivered)
+
+1. **`href_redirect_test.php`** — assert **302** `Location` for `Href::redirect` entrypoints (`info.php` unpublished/missing page, `product_info.php` without `products_id`, `buy_now` with session).
+2. **`http_test_case`** — fresh HttpClient per test method; optional `client(0)` to observe redirects without following.
+3. Stronger smoke/listing/cart/product-not-found assertions aligned with sample SQL and carousel content.
