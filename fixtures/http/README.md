@@ -20,4 +20,4 @@ bash scripts/http-server.sh
 
 `composer cloud-test` drops and re-imports `phoenix_test` on each run so warm Cloud VMs stay aligned with the committed seeds. It also applies default `PHOENIX_HTTP_*` values when an older `.cursor/cloud.env` omits them.
 
-See [`docs/wave-4-design-brief.md`](../../docs/wave-4-design-brief.md).
+See [`documents/wave-4-design-brief.md`](../../documents/wave-4-design-brief.md).

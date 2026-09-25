@@ -140,7 +140,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 3 — Real MySQL and fixture catalog
 
-**Status:** **Wave 3 complete (parts 1–4)** — MySQL harness, fixtures + sample SQL, module install/remove, tax edges, and `cm_header_breadcrumb` product path Integration. Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+**Status:** **Wave 3 complete (parts 1–4)** — MySQL harness, fixtures + sample SQL, module install/remove, tax edges, and `cm_header_breadcrumb` product path Integration. Design: [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
 
 **Goal:** Test classes and segments that need **`configuration`**, products, customers, cart, tax, zones, or checkout segments — without a browser.
 
@@ -162,7 +162,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 4 — HTTP acceptance (no browser)
 
-**Status:** **Parts 1–4 delivered** — HTTP harness through cart `buy_now`, `shopping_cart.php`, and install info pages (`info.php`, `cookie_usage.php`). Design: [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md).
+**Status:** **Parts 1–4 delivered** — HTTP harness through cart `buy_now`, `shopping_cart.php`, and install info pages (`info.php`, `cookie_usage.php`). Design: [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
 **Goal:** Black-box **HTTP** against a running shop + fixture DB: pages, actions, segments reached via URLs.
 

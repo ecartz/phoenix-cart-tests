@@ -37,7 +37,7 @@ export PHOENIX_DB_PASSWORD=phoenix
 composer test:mysql
 ```
 
-See [`fixtures/README.md`](fixtures/README.md) and [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+See [`fixtures/README.md`](fixtures/README.md) and [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
 
 ### HTTP (wave 4)
 
@@ -53,7 +53,7 @@ export PHOENIX_DB_PASSWORD=phoenix
 composer test:http
 ```
 
-See [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md).
+See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
 ## Layout
 
