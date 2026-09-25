@@ -119,5 +119,11 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 
 | Part | Deliverables |
 |------|----------------|
-| **3** | Cart session: `buy_now` / `shopping_cart.php` with cookie jar |
 | **4** | `info.php` / slug pages; optional redirect-heavy `Request` paths |
+
+---
+
+## Part 3 — cart session (delivered)
+
+1. **`http_bootstrap::client()`** — `max_redirects` for `Href::redirect` after actions.
+2. **`shopping_cart_test.php`** — session cookie via initial GET; `index.php?action=buy_now&products_id=` sample products; assert **`shopping_cart.php`** body lists **Oranges** / **Pears**.

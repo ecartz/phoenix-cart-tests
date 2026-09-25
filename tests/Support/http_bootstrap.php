@@ -87,6 +87,7 @@ PHP;
     {
         return HttpClient::create([
             'base_uri' => self::base_url(),
+            'max_redirects' => 10,
             'headers' => [
                 'User-Agent' => 'phoenix-cart-tests-http/1.0',
             ],
