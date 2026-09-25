@@ -19,6 +19,13 @@ if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
 
+mysql -u root <<'SQL'
+DROP DATABASE IF EXISTS phoenix_test;
+CREATE DATABASE phoenix_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+SQL
+
+bash fixtures/import-mysql-fixtures.sh
+
 HTTP_PID=""
 cleanup() {
   if [[ -n "$HTTP_PID" ]]; then

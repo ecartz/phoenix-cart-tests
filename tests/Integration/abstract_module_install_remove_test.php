@@ -41,6 +41,17 @@ final class abstract_module_install_remove_test extends mysql_test_case
         );
     }
 
+    /** Match install seed values so {@see abstract_module::remove()} does not re-insert via keys(). */
+    private function define_throwaway_constants_for_remove(): void
+    {
+        if (!defined('MODULE_PHOENIX_INTEGRATION_PROBE_STATUS')) {
+            define('MODULE_PHOENIX_INTEGRATION_PROBE_STATUS', 'False');
+        }
+        if (!defined('MODULE_PHOENIX_INTEGRATION_PROBE_SORT_ORDER')) {
+            define('MODULE_PHOENIX_INTEGRATION_PROBE_SORT_ORDER', '0');
+        }
+    }
+
     public function test_install_writes_configuration_rows(): void
     {
         $module = new integration_throwaway_module();
@@ -65,6 +76,7 @@ final class abstract_module_install_remove_test extends mysql_test_case
         $module->install();
         $this->assertGreaterThan(0, (new integration_throwaway_module())->check());
 
+        $this->define_throwaway_constants_for_remove();
         $module->remove();
 
         $after = new integration_throwaway_module();

@@ -15,7 +15,8 @@ if ! service mariadb status >/dev/null 2>&1; then
 fi
 
 mysql -u root <<'SQL'
-CREATE DATABASE IF NOT EXISTS phoenix_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS phoenix_test;
+CREATE DATABASE phoenix_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS 'phoenix'@'localhost' IDENTIFIED BY 'phoenix';
 GRANT ALL PRIVILEGES ON phoenix_test.* TO 'phoenix'@'localhost';
 FLUSH PRIVILEGES;
