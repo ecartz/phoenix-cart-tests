@@ -3,7 +3,7 @@
 | Class / area | Reason | Wave |
 |--------------|--------|------|
 | `Href::redirect()` | Sends HTTP headers and terminates the request | 4+ |
-| `Request::check_ssl_session_id()` / `check_user_agent()` / `check_ip()` | Destroy session and call `Href::redirect()` on mismatch | 4+ |
+| `Request::check_ssl_session_id()` / `check_user_agent()` / `check_ip()` | Destroy session and call `Href::redirect()` on mismatch; not exercised in Http suite (`ssl_check.php` / secure-session hooks) | 5+ |
 | `abstract_module::check()` | Covered by Integration tests (`abstract_module_check_test`) | — |
 | `abstract_module::install` / `remove` | Covered by Integration (`abstract_module_install_remove_test`) | — |
 | Product / cart listing / GDPR / navbar / login-form content modules | Need cart/session objects or heavy shop globals (breadcrumb **product SQL path** covered in Integration) | 3 / 4+ |
@@ -19,5 +19,7 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 **Wave 3 part 3 covered:** `abstract_module::install` / `remove` on throwaway module keys; `Tax::fetch` zero-rate / unknown zone paths.
 
 **Wave 3 part 4 covered:** `cm_header_breadcrumb` product path with sample SQL + real `execute()` / Schema output.
+
+**Wave 4 part 4 covered (Http):** install footer pages via `info.php?pages_id=` after `publish_info_pages.sql`; `cookie_usage.php` slug page from seed.
 
 Covered thin content modules (wave 2 style, hand `define()` + stub `Template` / `Linker` / `messageStack` / `$page` / `navigationHistory`): `cm_footer_text`, `cm_login_title`, `cm_cas_title`, `cm_account_title`, `cm_announcement`, `cm_footer_extra_copyright`, `cm_footer_information_links`, `cm_footer_contact_us`, `cm_footer_account`, `cm_cas_message`, `cm_cas_continue_button`, `cm_header_messagestack`, `cm_footer_extra_icons`, `cm_info_title`, `cm_info_text`, `cm_sc_title`, `cm_i_title`, `cm_t_title`, `cm_cs_title`, `cm_pinf_message`, `cm_forgot_password`.

@@ -1,6 +1,8 @@
 # Wave 4 HTTP fixtures
 
-Wave 4 does not add SQL beyond wave 3. This folder documents **catalog configure** for acceptance tests.
+Wave 4 adds **`publish_info_pages.sql`** (applied by `fixtures/import-mysql-fixtures.sh` after the wave 3 seeds). CE install leaves footer info pages as draft (`pages_status=0`); `info.php` only renders **published** pages (`pages_status=1`).
+
+This folder also documents **catalog configure** for acceptance tests.
 
 ## `includes/local/configure.php`
 

@@ -74,7 +74,7 @@ composer test:http
 | **1** | `http_bootstrap`, `http_test_case`, `scripts/http-server.sh`, `index_smoke_test` (GET `/` 200 + sample catalog signal) |
 | **2** | `product_info_test`, category/listing GET (`index.php`, `cPath`, sample SQL categories) |
 | **3** | Cart session: `buy_now` / `shopping_cart.php` with cookie jar; assert line item from sample product |
-| **4** | `info.php` / slug pages from install seed; optional `Request` security paths that need redirects (document limits in `SKIPPED.md`) |
+| **4** | `info_page_test`, `fixtures/http/publish_info_pages.sql`; `cookie_usage.php` slug page; `Request` security redirects documented in `SKIPPED.md` |
 
 **Deferred after part 4:** GDPR modules, full checkout pipeline, payment modules — wave 5 or CE-specific CI secrets.
 
@@ -115,15 +115,15 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 
 ---
 
-## Parts 3–4 (remaining wave 4)
-
-| Part | Deliverables |
-|------|----------------|
-| **4** | `info.php` / slug pages; optional redirect-heavy `Request` paths |
-
----
-
 ## Part 3 — cart session (delivered)
 
 1. **`http_bootstrap::client()`** — `max_redirects` for `Href::redirect` after actions.
 2. **`shopping_cart_test.php`** — session cookie via initial GET; `index.php?action=buy_now&products_id=` sample products; assert **`shopping_cart.php`** body lists **Oranges** / **Pears**.
+
+---
+
+## Part 4 — info pages (delivered)
+
+1. **`fixtures/http/publish_info_pages.sql`** — publish install slugs `privacy`, `conditions`, `shipping` so `info.php` serves them (imported with wave 3 fixtures).
+2. **`info_page_test.php`** — `info.php?pages_id=` for the three footer pages; **`cookie_usage.php`** slug entry from seed HTML.
+3. **`Request::check_*` redirect paths** — still out of scope; see `SKIPPED.md` (no `ssl_check.php` Http coverage).
