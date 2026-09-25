@@ -4,7 +4,7 @@ PHPUnit harness for [CE Phoenix Cart](https://github.com/CE-PhoenixCart/PhoenixC
 
 ## Requirements
 
-- PHP 7.3+ with `mbstring` and `xml` (Integration also needs **`mysqli`**)
+- PHP 7.3+ with `mbstring` and `xml` (Integration also needs **`mysqli`**; HTTP suite needs **PHP 8.2+** for Symfony HttpClient)
 - Composer
 - Phoenix Cart catalog tree (sibling `../PhoenixCart` or shallow clone in `./PhoenixCart`)
 
@@ -39,6 +39,22 @@ composer test:mysql
 
 See [`fixtures/README.md`](fixtures/README.md) and [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
 
+### HTTP (wave 4)
+
+```bash
+bash fixtures/import-mysql-fixtures.sh
+bash scripts/http-server.sh   # separate terminal
+export PHOENIX_HTTP_ENABLED=1
+export PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
+export PHOENIX_DB_HOST=127.0.0.1
+export PHOENIX_DB_NAME=phoenix_test
+export PHOENIX_DB_USER=phoenix
+export PHOENIX_DB_PASSWORD=phoenix
+composer test:http
+```
+
+See [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md).
+
 ## Layout
 
 | Path | Purpose |
@@ -49,6 +65,8 @@ See [`fixtures/README.md`](fixtures/README.md) and [`docs/wave-3-design-brief.md
 | `tests/Support/mock_catalog_database.php` | In-memory `$db` double for wave 2b |
 | `tests/Unit/` | Unit and mock-db tests |
 | `tests/Integration/` | `@group mysql` tests against fixture SQL |
+| `tests/Http/` | `@group http` acceptance tests (running shop + DB) |
+| `scripts/http-server.sh` | PHP built-in server for wave 4 |
 | `fixtures/phoenix.sql` | Vendored CE install schema + seed |
 | `fixtures/phoenix_data_sample.sql` | Vendored CE sample catalog (import after `phoenix.sql`) |
 

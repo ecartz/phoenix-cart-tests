@@ -58,6 +58,8 @@ composer install
 composer test
 ```
 
-Integration (MySQL): import `fixtures/phoenix.sql`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. See [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. See [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+
+HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md).
 
 Never add `CLAUDE.md` to the Phoenix Cart fork.

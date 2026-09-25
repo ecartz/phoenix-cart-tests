@@ -73,7 +73,7 @@ Wave 1 covers a **small fraction** of autoloaded types (~10% by name). That is e
 - [x] `cm_header_breadcrumb` Schema paths (including stubbed category/manufacturer)
 - [x] Tests tagged `#[Group('mockdb')]`; full suite and `--group mockdb` green
 
-**Still wave 3:** `abstract_module::check()` (`mysqli_num_rows`), `Tax::fetch` joins, GDPR/navbar/login/listing/cart modules, `install`/`remove`/`perform`.
+**Still wave 3 (now covered on `main`):** `abstract_module::check()`, `Tax::fetch` joins, `install`/`remove`/`perform`, sample SQL, and breadcrumb product Integration — see **Wave 3** below.
 
 ## Configuration constants and why “wave 2” is not trivial
 
@@ -162,6 +162,8 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 4 — HTTP acceptance (no browser)
 
+**Status:** **Part 1 delivered** — Symfony HttpClient harness, runtime `includes/local/configure.php`, `scripts/http-server.sh`, `tests/Http/index_smoke_test.php`. Design: [`docs/wave-4-design-brief.md`](docs/wave-4-design-brief.md). Parts **2–4** (product/listing URLs, cart session, info pages) remain.
+
 **Goal:** Black-box **HTTP** against a running shop + fixture DB: pages, actions, segments reached via URLs.
 
 **Tooling (choose one stack; keep runners in this repo):**
@@ -237,9 +239,9 @@ Wave 6   Visual / perf / payment sandbox
 | `tests/Unit/` | Waves 1–2 and early **2b** (mock-db tests live here with `#[Group('mockdb')]`, not only under `tests/Integration/`) |
 | `tests/Integration/` | Additional wave 2b / wave 3 (MySQL) — *optional split later* |
 | `tests/Support/` | Shared test support (for example `mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`) |
-| `tests/Acceptance/` or `tests/Http/` | Wave 4 — *not present yet* |
+| `tests/Http/` | Wave 4 HTTP acceptance (`#[Group('http')]`) |
 | `tests/Browser/` or external `e2e/` | Wave 5 — *not present yet* |
-| `fixtures/` | SQL/JSON seeds for wave 3+ — *not present yet* |
+| `fixtures/` | SQL seeds (wave 3); [`fixtures/http/README.md`](fixtures/http/README.md) documents configure for wave 4 |
 | `SKIPPED.md` | Explicit deferrals; add a **Wave** column when listing new skips |
 
 ## Agent and human conventions

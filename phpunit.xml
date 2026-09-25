@@ -13,6 +13,9 @@
         <testsuite name="Integration">
             <directory suffix="_test.php">tests/Integration</directory>
         </testsuite>
+        <testsuite name="Http">
+            <directory suffix="_test.php">tests/Http</directory>
+        </testsuite>
     </testsuites>
     <php>
         <ini name="display_errors" value="1"/>
