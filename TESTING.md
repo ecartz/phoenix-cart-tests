@@ -140,7 +140,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 3 — Real MySQL and fixture catalog
 
-**Status:** **Parts 1–3 delivered** — Integration harness, fixtures, sample SQL, module install/remove, and tax edge paths. **Part 4** remains (one DB-backed content module). Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
+**Status:** **Wave 3 complete (parts 1–4)** — MySQL harness, fixtures + sample SQL, module install/remove, tax edges, and `cm_header_breadcrumb` product path Integration. Design: [`docs/wave-3-design-brief.md`](docs/wave-3-design-brief.md).
 
 **Goal:** Test classes and segments that need **`configuration`**, products, customers, cart, tax, zones, or checkout segments — without a browser.
 

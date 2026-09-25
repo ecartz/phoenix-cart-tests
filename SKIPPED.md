@@ -6,7 +6,7 @@
 | `Request::check_ssl_session_id()` / `check_user_agent()` / `check_ip()` | Destroy session and call `Href::redirect()` on mismatch | 4+ |
 | `abstract_module::check()` | Covered by Integration tests (`abstract_module_check_test`) | — |
 | `abstract_module::install` / `remove` | Covered by Integration (`abstract_module_install_remove_test`) | — |
-| Product / cart listing / GDPR / navbar / login-form content modules | Need DB rows, cart/session objects, or heavy shop globals | 3 |
+| Product / cart listing / GDPR / navbar / login-form content modules | Need cart/session objects or heavy shop globals (breadcrumb **product SQL path** covered in Integration) | 3 / 4+ |
 
 Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_date_formatter']` objects for valid dates; invalid zero-dates assert `false` on CE upstream (no `strict_types` in `Date`, so a false timestamp is treated as falsy).
 
@@ -17,5 +17,7 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 **Wave 3 part 2 covered:** CE sample SQL import; `info_pages` JOIN/helpers; `Product::fetch_name` against sample products.
 
 **Wave 3 part 3 covered:** `abstract_module::install` / `remove` on throwaway module keys; `Tax::fetch` zero-rate / unknown zone paths.
+
+**Wave 3 part 4 covered:** `cm_header_breadcrumb` product path with sample SQL + real `execute()` / Schema output.
 
 Covered thin content modules (wave 2 style, hand `define()` + stub `Template` / `Linker` / `messageStack` / `$page` / `navigationHistory`): `cm_footer_text`, `cm_login_title`, `cm_cas_title`, `cm_account_title`, `cm_announcement`, `cm_footer_extra_copyright`, `cm_footer_information_links`, `cm_footer_contact_us`, `cm_footer_account`, `cm_cas_message`, `cm_cas_continue_button`, `cm_header_messagestack`, `cm_footer_extra_icons`, `cm_info_title`, `cm_info_text`, `cm_sc_title`, `cm_i_title`, `cm_t_title`, `cm_cs_title`, `cm_pinf_message`, `cm_forgot_password`.

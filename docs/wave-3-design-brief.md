@@ -182,15 +182,14 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 ---
 
-## Part 4 (remaining wave 3)
+## Part 4 — content module with real catalog rows (delivered)
 
-Wave 3 is planned as **four commits on `main`**: parts 1–3 delivered; **part 4 left**.
+1. **`mysql_content_module_test_case`** — Template / Linker harness on T1 bootstrap.
+2. **`cm_header_breadcrumb_test.php`** (Integration) — `execute()` product path reads sample `products` / `products_description` (product **1**, model **ORA-1**) and emits Schema JSON-LD.
 
-| Part | Deliverables |
-|------|----------------|
-| **4** | One content module with real rows (`cm_login_form` or breadcrumb product path); customer seed from sample SQL where applicable |
+Wave 3 on **`main`** is **complete** (four parts). Further DB-heavy modules (login, GDPR, listings) defer to wave 4 or late wave 3 per below.
 
-**Beyond part 4 (wave 4 or late wave 3):** GDPR, listings, cart persistence; coordinate with HTTP acceptance.
+**Beyond wave 3 part 4 (wave 4):** GDPR, listings, cart persistence; coordinate with HTTP acceptance.
 
 ---
 
