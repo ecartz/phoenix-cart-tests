@@ -45,6 +45,8 @@ if ! command -v apache2ctl >/dev/null 2>&1 && ! command -v apachectl >/dev/null 
   a2enmod php8.3
 fi
 
+mkdir -p /run/lock/apache2 /var/run/apache2 2>/dev/null || true
+
 ENV_FILE="$ROOT/.cursor/cloud.env"
 cat > "$ENV_FILE" <<EOF
 PHOENIX_MYSQL_ENABLED=1

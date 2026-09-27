@@ -59,10 +59,9 @@ export APACHE_RUN_DIR="${APACHE_RUN_DIR:-$HTTPS_DIR/run}"
 export APACHE_LOCK_DIR="${APACHE_LOCK_DIR:-$HTTPS_DIR/lock}"
 export APACHE_LOG_DIR="${APACHE_LOG_DIR:-$HTTPS_DIR/logs}"
 mkdir -p "$APACHE_RUN_DIR" "$APACHE_LOCK_DIR" "$APACHE_LOG_DIR"
-# Debian apache2ctl sources envvars with APACHE_LOCK_DIR=/var/lock/apache2; warm VMs may lack that path.
-if [[ -d /var/lock ]]; then
-  mkdir -p /var/lock/apache2 2>/dev/null || true
-fi
+# Debian apache2ctl sources envvars with APACHE_LOCK_DIR=/var/lock/apache2 (/run/lock/apache2).
+# Warm Cloud VMs may ship /var/lock -> /run/lock without creating /run/lock first.
+mkdir -p /run/lock/apache2 /var/run/apache2 2>/dev/null || true
 
 SITE_CONF="$HTTPS_DIR/phoenix-cart-tests-ssl.conf"
 cat > "$SITE_CONF" <<EOF
