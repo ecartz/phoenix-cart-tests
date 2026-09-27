@@ -10,7 +10,7 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 
 **Wave 2b covered (mock `$GLOBALS['db']`):** `read_configuration` via `configuration_test_helper`; `Template::build_blocks()` with enabled header_tags/boxes modules; `get_content_modules` from mock-loaded `MODULE_CONTENT_INSTALLED`; `Country` / `Zone` / `Tax::fetch_classes` / `currencies` / `language::load_all` / `Product::fetch_name` / `info_pages` helpers; `abstract_module::isEnabled()`; `cm_header_breadcrumb` Schema paths.
 
-**Wave 3 part 1 covered (real MySQL, `tests/Integration/`):** fixture import smoke; `Tax::fetch` / `get` (FL 7% seed); `abstract_module::check()`; `database_core::perform` on `configuration`.
+**Wave 3 part 1 covered (real MySQL, `tests/integration/`):** fixture import smoke; `Tax::fetch` / `get` (FL 7% seed); `abstract_module::check()`; `database_core::perform` on `configuration`.
 
 **Wave 3 part 2 covered:** CE sample SQL import; `info_pages` JOIN/helpers; `Product::fetch_name` against sample products.
 
@@ -24,7 +24,7 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 
 **Wave 4 HTTP session security (finish):** `Request::check_user_agent()` / `check_ip()` via **`request_security_test.php`** (302 → `login.php` after session + mismatch); **`ssl_check.php`** slug page in **`info_page_test.php`**. Requires **`fixtures/http/enable_session_security_checks.sql`**.
 
-**Wave 7 HTTPS (optional):** `Request::check_ssl_session_id()` via **`ssl_session_id_test.php`** when **`PHOENIX_HTTPS_ENABLED=1`**, Apache **`scripts/https-server.sh`**, and **`fixtures/http/enable_ssl_session_check.sql`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
+**Wave 7 HTTPS (optional):** `Request::check_ssl_session_id()` via **`tests/https/ssl_session_id_test.php`** and **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`**, Apache **`scripts/https-server.sh`**, and **`fixtures/http/enable_ssl_session_check.sql`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
 
 **Wave 6 payment sandbox (optional):** Stripe SCA test keys in env / CI secrets; **`payment_sandbox_stripe_config_test.php`**. Full checkout + Stripe.js iframe flows remain out of scope.
 

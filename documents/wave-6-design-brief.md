@@ -40,7 +40,7 @@ Locked decisions for **release hardening** on top of waves 3–5 (fixture MySQL,
 
 ## Part 1 — timed homepage smoke (delivered)
 
-1. **`tests/Http/homepage_timing_test.php`** — `GET /`, assert **200**, assert Symfony **`total_time`** &lt; budget.
+1. **`tests/http/homepage_timing_test.php`** — `GET /`, assert **200**, assert Symfony **`total_time`** &lt; budget.
 
 ---
 
@@ -63,9 +63,9 @@ Commit the generated PNG under **`tests/browser/homepage_visual.spec.ts-snapshot
 
 ## Part 3 — payment sandbox CI (delivered)
 
-1. **[`tests/Support/payment_sandbox_bootstrap.php`](../tests/Support/payment_sandbox_bootstrap.php)** — apply Stripe SCA **test** keys from env to `configuration`.
+1. **[`tests/support/payment_sandbox_bootstrap.php`](../tests/support/payment_sandbox_bootstrap.php)** — apply Stripe SCA **test** keys from env to `configuration`.
 2. **[`scripts/apply-payment-sandbox-config.php`](../scripts/apply-payment-sandbox-config.php)** — CLI entry (also run from fixture import when **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`**).
-3. **[`tests/Http/payment_sandbox_stripe_config_test.php`](../tests/Http/payment_sandbox_stripe_config_test.php)** — `#[Group('payment_sandbox')]`; **`composer test:payment-sandbox`**.
+3. **[`tests/http/payment_sandbox_stripe_config_test.php`](../tests/http/payment_sandbox_stripe_config_test.php)** — `#[Group('payment_sandbox')]`; **`composer test:payment-sandbox`**.
 4. **[`documents/payment-sandbox-ci.md`](payment-sandbox-ci.md)** — GitHub secret names and runbook.
 5. **[`.github/workflows/payment-sandbox.yml`](../.github/workflows/payment-sandbox.yml)** — manual dispatch with secrets.
 
@@ -74,7 +74,7 @@ Commit the generated PNG under **`tests/browser/homepage_visual.spec.ts-snapshot
 ## Part 4 — release certification (delivered)
 
 1. **[`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt)** — documents vendored fixture CE tag.
-2. **[`scripts/release-certification.sh`](../scripts/release-certification.sh)** — checkout **PhoenixCart** at pin/`PHOENIX_CATALOG_TAG`, import fixtures, run **`composer test:all`** (+ optional **`test:browser`**).
+2. **[`scripts/release-certification.sh`](../scripts/release-certification.sh)** — checkout **PhoenixCart** at pin/`PHOENIX_CATALOG_TAG`, import fixtures, run **`composer test:stack`** (+ optional **`test:browser`**).
 3. **[`documents/release-certification.md`](release-certification.md)** — tag pairing and publish steps.
 4. **[`.github/workflows/release-certification.yml`](../.github/workflows/release-certification.yml)** — runs on **git tag push** (and manual dispatch).
 5. **`composer release-certify`** — local/Cloud entry point.

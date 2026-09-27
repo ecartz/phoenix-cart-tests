@@ -71,9 +71,9 @@ jobs:
           PHOENIX_DB_NAME: phoenix_test
           PHOENIX_DB_USER: phoenix
           PHOENIX_DB_PASSWORD: phoenix
-        run: vendor/bin/phpunit --testsuite Integration
+        run: vendor/bin/phpunit --testsuite integration
 
       - name: Run Unit PHPUnit (regression)
         env:
           PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
-        run: vendor/bin/phpunit --testsuite Unit
+        run: vendor/bin/phpunit --testsuite unit

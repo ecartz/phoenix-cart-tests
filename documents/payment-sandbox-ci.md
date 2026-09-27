@@ -43,7 +43,7 @@ Default **`composer cloud-test`** and **`phpunit-mysql.yml`** do **not** run pay
 
 ## What is tested
 
-[`payment_sandbox_stripe_config_test.php`](../tests/Http/payment_sandbox_stripe_config_test.php) (`#[Group('payment_sandbox')]`) asserts:
+[`payment_sandbox_stripe_config_test.php`](../tests/http/payment_sandbox_stripe_config_test.php) (`#[Group('payment_sandbox')]`) asserts:
 
 - Test keys are written to the `configuration` table (publishable key prefix `pk_test_`).
 - Homepage HTML does not echo the secret key.

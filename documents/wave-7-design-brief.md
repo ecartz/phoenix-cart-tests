@@ -27,23 +27,23 @@ Apache must expose the TLS session id to PHP:
 - Document root **`PHOENIX_CART_ROOT`**, port **8443** (override with **`PHOENIX_HTTPS_PORT`**).
 - Applies [`fixtures/http/enable_ssl_session_check.sql`](../fixtures/http/enable_ssl_session_check.sql) when `mysql` is available (sets **`SESSION_CHECK_SSL_SESSION_ID`** to `True`; install default is `False`).
 
-Does **not** replace [`scripts/http-server.sh`](../scripts/http-server.sh). Opt-in locally with **`composer test:https`**. **`composer cloud-test`** starts Apache on **8443** and runs **`composer test:https`** after the plain-HTTP and browser steps when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`** (PHPUnit **`test:all`** on **8765** keeps **`PHOENIX_HTTPS_ENABLED` unset** so this test skips until the HTTPS phase).
+Does **not** replace [`scripts/http-server.sh`](../scripts/http-server.sh). Opt-in locally with **`composer test:https`**. **`composer cloud-test`** runs **`composer test:stack`** on port **8765**, then Playwright, then Apache on **8443** and **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. **`composer test:all`** includes **`tests/https/`** but HTTPS cases skip without Apache; use **`test:stack`** + **`test:https`** for the same split Cloud uses.
 
 ---
 
 ## Test
 
-[`tests/Http/ssl_session_id_test.php`](../tests/Http/ssl_session_id_test.php):
+[`tests/https/ssl_session_id_test.php`](../tests/https/ssl_session_id_test.php):
 
-- Groups **`http`** and **`https`**.
+- Groups **`https`** ( **`tests/https/`** suite only).
 - Skips unless **`PHOENIX_HTTPS_ENABLED=1`** (before probing the shop).
 - Requires **`PHOENIX_HTTP_ENABLED=1`** so configure is written (set **`PHOENIX_HTTP_BASE_URL`** to the same HTTPS origin as **`PHOENIX_HTTPS_BASE_URL`**).
 - Two separate **`curl`** processes, shared cookie jar, **`-k`**, against **`PHOENIX_HTTPS_BASE_URL`** (default `https://127.0.0.1:8443`).
 - Asserts the second response is **302** with **`Location`** containing **`ssl_check.php`**.
 
-**`composer test:https`** → `phpunit --group https`.
+**`composer test:https`** → `phpunit --testsuite https`.
 
-**`composer test:http`** / **`composer test:all`** still load the class; it skips when the HTTPS flag is unset.
+**`composer test:stack`** runs unit + integration + http only. **`composer test:all`** runs the **`all`** suite (includes **`tests/https/`**; skips when HTTPS is not configured).
 
 ---
 

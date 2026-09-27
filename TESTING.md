@@ -42,12 +42,12 @@ Wave 1 covers a **small fraction** of autoloaded types (~10% by name). That is e
 
 - Support: `Search`, `Request`, `messageStack` / `alertBlock`, `old_password`, `Versions`, expanded date transformers and `page_selection`
 - Html: `Href` when `SESSION_FORCE_COOKIE_USE === 'True'`, `Image` when `IMAGE_REQUIRED === 'false'` (separate process)
-- Content: shared [`content_module_test_case`](tests/Support/content_module_test_case.php); thin modules under `tests/Unit/Content/` (footer/header/login/CAS/info/index/cart/testimonials/checkout-success titles and related stubs)
+- Content: shared [`content_module_test_case`](tests/support/content_module_test_case.php); thin modules under `tests/unit/Content/` (footer/header/login/CAS/info/index/cart/testimonials/checkout-success titles and related stubs)
 - Support stretch: `modular::display_layout()`, `navigationHistory` snapshot/path helpers
 **Wave 2 completion checklist:**
 
 - [x] All **wave 2** rows in [`SKIPPED.md`](SKIPPED.md) covered or re-tagged
-- [x] Stable versioned targets from the wave 2 inventory have PHPUnit classes under `tests/Unit/`
+- [x] Stable versioned targets from the wave 2 inventory have PHPUnit classes under `tests/unit/`
 - [x] Full suite green on PHP 8.3/8.4 against a **CE-PhoenixCart** checkout (`PHOENIX_CART_ROOT`)
 
 **Selecting “stable” catalog classes for tests:** prefer versioned files whose latest `class_index` winner has not changed in git since roughly Sep 2024; avoid churny Html/Select paths unless fixing upstream first.
@@ -58,7 +58,7 @@ Wave 1 covers a **small fraction** of autoloaded types (~10% by name). That is e
 
 **Delivered:**
 
-- Support: [`mock_catalog_database`](tests/Support/mock_catalog_database.php) (case-insensitive `FROM` matching), [`mock_catalog_query_result`](tests/Support/mock_catalog_query_result.php) (`fetch_assoc()`), [`configuration_test_helper`](tests/Support/configuration_test_helper.php) (sets `$GLOBALS['db']` + requires `read_configuration.php`)
+- Support: [`mock_catalog_database`](tests/support/mock_catalog_database.php) (case-insensitive `FROM` matching), [`mock_catalog_query_result`](tests/support/mock_catalog_query_result.php) (`fetch_assoc()`), [`configuration_test_helper`](tests/support/configuration_test_helper.php) (sets `$GLOBALS['db']` + requires `read_configuration.php`)
 - Configuration / Template: `read_configuration_test`, enabled `build_blocks` via `ht_robot_noindex` / `ht_table_click_jquery` / `ht_canonical` / `ht_pages_seo` / `ht_category_title` / `bm_home`, `template_content_modules_mockdb_test`
 - Catalog helpers: `country_test`, `zone_test`, `tax_test` (`fetch_classes` / `get_class_title`), `currencies_test`, `language_test`, `product_test` (`fetch_name`), `info_pages_test`, `abstract_module_enabled_test`
 - Content: `cm_header_breadcrumb_test` (Schema; product / category stub / manufacturer stub)
@@ -98,11 +98,11 @@ So the roadmap splits **“no DB process”** work from **“real SQL”** work.
 
 ### Mocking the database (wave 2b)
 
-Use [`configuration_test_helper::load_from_configuration_rows()`](tests/Support/configuration_test_helper.php) or install [`mock_catalog_database`](tests/Support/mock_catalog_database.php) via `install_as_global()`:
+Use [`configuration_test_helper::load_from_configuration_rows()`](tests/support/configuration_test_helper.php) or install [`mock_catalog_database`](tests/support/mock_catalog_database.php) via `install_as_global()`:
 
 1. Build `configuration_key` / `configuration_value` rows (and optional `table_rows` keyed by table name).
 2. Helper assigns `$GLOBALS['db']` and `require`s `read_configuration.php` so constants match production order; use `#[RunInSeparateProcess]` when redefining keys.
-3. `query()` returns [`mock_catalog_query_result`](tests/Support/mock_catalog_query_result.php) with `fetch_assoc()`; `fetch_all()` accepts a string or that result. Matching is by `FROM {table}` substring only (no WHERE filtering).
+3. `query()` returns [`mock_catalog_query_result`](tests/support/mock_catalog_query_result.php) with `fetch_assoc()`; `fetch_all()` accepts a string or that result. Matching is by `FROM {table}` substring only (no WHERE filtering).
 4. Tag tests `#[Group('mockdb')]`. Run `vendor/bin/phpunit --group mockdb` for the mock subset.
 
 **Covered by the mock today:** configuration load; `build_blocks` / `get_content_modules`; `Country` / `Zone` / `Tax::fetch_classes` / `currencies` / `language` / `Product::fetch_name` / `info_pages`; `cm_header_breadcrumb` Schema paths; `isEnabled()`.
@@ -114,7 +114,7 @@ Use [`configuration_test_helper::load_from_configuration_rows()`](tests/Support/
 - Checkout/order/cart segments write to multiple tables
 - You want CE-PhoenixCart CI to prove the catalog works against a real engine
 
-Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional later split: `tests/Integration/` for heavier mockdb / `@group mysql` for fixtures.
+Mocked-db tests live under `tests/unit/` with `#[Group('mockdb')]`. Optional later split: `tests/integration/` for heavier mockdb / `@group mysql` for fixtures.
 
 ---
 
@@ -203,7 +203,7 @@ PHPUnit remains the runner for waves 1–4; browser suites run via **`composer t
 
 **Status:** **Complete (parts 1–4)** — timed HTTP smoke, Playwright carousel baseline, payment sandbox CI secrets, release certification. Design: [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
 
-**Part 1:** `GET /` must return **200** within **`PHOENIX_HTTP_BUDGET_SECONDS`** (default **10**). Runs with **`composer test:http`** / **`composer test:all`** when **`PHOENIX_HTTP_ENABLED=1`**.
+**Part 1:** `GET /` must return **200** within **`PHOENIX_HTTP_BUDGET_SECONDS`** (default **10**). Runs with **`composer test:http`** / **`composer test:stack`** when **`PHOENIX_HTTP_ENABLED=1`**.
 
 **Part 2:** **`homepage_visual.spec.ts`** compares the homepage carousel to committed Playwright snapshots. Runs with **`composer test:browser`**. To create or refresh baselines on **Linux** (shop + fixtures running):
 
@@ -224,7 +224,20 @@ Commit the PNG under **`tests/browser/homepage_visual.spec.ts-snapshots/`** (e.g
 
 **Skip gate:** **`PHOENIX_HTTPS_ENABLED=1`**. Also set **`PHOENIX_HTTP_ENABLED=1`** and point **`PHOENIX_HTTP_BASE_URL`** / **`PHOENIX_HTTPS_BASE_URL`** at the HTTPS shop (default `https://127.0.0.1:8443`).
 
-**Run:** Locally: `bash scripts/https-server.sh` (Linux), then **`composer test:https`**. **`composer cloud-test`** runs the same test last on port **8443** after PHPUnit and Playwright on **8765** (requires Apache in the Cloud image; **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**). The test applies **`fixtures/http/enable_ssl_session_check.sql`**; default fixture import leaves **`SESSION_CHECK_SSL_SESSION_ID`** at install **`False`**.
+**Run:** Locally: `bash scripts/https-server.sh` (Linux), then **`composer test:https`**. **`composer cloud-test`** runs **`composer test:stack`**, Playwright, then **`composer test:https`** on port **8443** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. The test applies **`fixtures/http/enable_ssl_session_check.sql`**; default fixture import leaves **`SESSION_CHECK_SSL_SESSION_ID`** at install **`False`**.
+
+---
+
+## PHPUnit suites (`phpunit.xml`)
+
+| Composer script | Testsuite | Directories |
+|-----------------|-----------|-------------|
+| **`composer test:all`** | **`all`** | Unit + Integration + Http + Https |
+| **`composer test:stack`** | **`stack`** | Unit + Integration + Http (Cloud / release PHPUnit) |
+| **`composer test`** | **`unit`** | `tests/unit/` |
+| **`composer test:mysql`** | **`integration`** | `tests/integration/` |
+| **`composer test:http`** | **`http`** | `tests/http/` |
+| **`composer test:https`** | **`https`** | `tests/https/` |
 
 ---
 
@@ -263,11 +276,11 @@ Wave 7   SSL session id (Apache HTTPS)
 
 | Path | Role |
 |------|------|
-| `tests/Unit/` | Waves 1–2 and early **2b** (mock-db tests live here with `#[Group('mockdb')]`, not only under `tests/Integration/`) |
-| `tests/Integration/` | Additional wave 2b / wave 3 (MySQL) — *optional split later* |
-| `tests/Support/` | Shared test support (for example `mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`) |
-| `tests/Http/` | Wave 4 HTTP acceptance (`#[Group('http')]`) |
-| `tests/Http/ssl_session_id_test.php` | Wave 7 HTTPS (`#[Group('https')]`, opt-in) |
+| `tests/unit/` | Waves 1–2 and early **2b** (mock-db tests live here with `#[Group('mockdb')]`, not only under `tests/integration/`) |
+| `tests/integration/` | Additional wave 2b / wave 3 (MySQL) — *optional split later* |
+| `tests/support/` | Shared test support (for example `mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`) |
+| `tests/http/` | Wave 4 HTTP acceptance (`#[Group('http')]`) |
+| `tests/https/` | Wave 7 Apache HTTPS (`composer test:https` only) |
 | `tests/browser/` | Wave 5 Playwright specs |
 | `playwright.config.ts` | Playwright base URL + Chromium project |
 | `fixtures/` | SQL seeds (wave 3); [`fixtures/http/README.md`](fixtures/http/README.md) documents configure for wave 4 |

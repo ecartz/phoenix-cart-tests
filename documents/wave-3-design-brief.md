@@ -51,7 +51,7 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 **Session:** **Plain PHP session** from [`tests/bootstrap.php`](../tests/bootstrap.php). Do **not** run `start_session` segment or `mysql_session` in part 1 (avoids `sessions` table writes and cookie/spider branches).
 
-**Configure source:** **`tests/Support/mysql_bootstrap.php`** (new) defines `DB_SERVER`, `DB_SERVER_USERNAME`, `DB_SERVER_PASSWORD`, `DB_DATABASE`, and minimal catalog constants (`HTTP_SERVER`, `DIR_WS_CATALOG`, `DIR_FS_CATALOG` already set) from environment. No committed `includes/local/configure.php` in the catalog tree.
+**Configure source:** **`tests/support/mysql_bootstrap.php`** (new) defines `DB_SERVER`, `DB_SERVER_USERNAME`, `DB_SERVER_PASSWORD`, `DB_DATABASE`, and minimal catalog constants (`HTTP_SERVER`, `DIR_WS_CATALOG`, `DIR_FS_CATALOG` already set) from environment. No committed `includes/local/configure.php` in the catalog tree.
 
 **Support classes (implementation backlog):**
 
@@ -68,9 +68,9 @@ Locked decisions for implementing real-MySQL PHPUnit in `phoenix-cart-tests`. Th
 
 | Item | Decision |
 |------|----------|
-| Directory | **`tests/Integration/`** for all `@group mysql` tests |
+| Directory | **`tests/integration/`** for all `@group mysql` tests |
 | Group | **`#[Group('mysql')]`** on Integration classes |
-| `phpunit.xml` | Second testsuite `Integration` → `tests/Integration`; keep `Unit` → `tests/Unit` |
+| `phpunit.xml` | Second testsuite `integration` → `tests/integration`; keep `unit` → `tests/unit` |
 | Fast default | **`composer test`** runs **`vendor/bin/phpunit --testsuite Unit`** (308 tests today, no DB) |
 | MySQL suite | **`vendor/bin/phpunit --testsuite Integration`** or **`--group mysql`** |
 | Extension | **`mysqli`** required for Integration suite (host PHP 8.4 Windows install checked: **not present** — use Docker Compose or CI) |
@@ -242,12 +242,12 @@ vendor/bin/phpunit --testsuite Integration
 Ordered checklist for part 1 (all done in commit `a48fc13` on `main`):
 
 1. Add `fixtures/phoenix.sql` (copy from catalog) + `fixtures/README.md`.
-2. Add `tests/Support/mysql_bootstrap.php`, `mysql_database_helper.php`, `mysql_test_case.php`.
+2. Add `tests/support/mysql_bootstrap.php`, `mysql_database_helper.php`, `mysql_test_case.php`.
 3. Extend `phpunit.xml` (Integration testsuite); update `composer.json` scripts (`test`, `test:mysql`).
-4. Add `tests/Integration/database_smoke_test.php`.
-5. Add `tests/Integration/tax_fetch_test.php`.
-6. Add `tests/Integration/abstract_module_check_test.php`.
-7. Add `tests/Integration/database_perform_test.php`.
+4. Add `tests/integration/database_smoke_test.php`.
+5. Add `tests/integration/tax_fetch_test.php`.
+6. Add `tests/integration/abstract_module_check_test.php`.
+7. Add `tests/integration/database_perform_test.php`.
 8. Add `.github/workflows/phpunit-mysql.yml`.
 9. Add optional `docker-compose.mysql.yml` for local import.
 10. Update `TESTING.md` / `AGENTS.md` / `README.md` with env contract and commands.

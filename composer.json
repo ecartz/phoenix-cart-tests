@@ -16,12 +16,12 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testsuite Unit",
-        "test:mysql": "phpunit --testsuite Integration",
-        "test:http": "phpunit --testsuite Http",
-        "test:https": "phpunit --group https",
-        "test:all": "phpunit",
-        "test:stack": "phpunit --testsuite Unit --testsuite Integration --testsuite Http",
+        "test": "phpunit --testsuite unit",
+        "test:mysql": "phpunit --testsuite integration",
+        "test:http": "phpunit --testsuite http",
+        "test:https": "phpunit --testsuite https",
+        "test:all": "phpunit --testsuite all",
+        "test:stack": "phpunit --testsuite stack",
         "test:browser": "npx playwright test",
         "test:payment-sandbox": "phpunit --group payment_sandbox",
         "cloud-test": "bash .cursor/scripts/cloud-test.sh",

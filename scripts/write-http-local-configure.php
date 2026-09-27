@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use PhoenixCart\Tests\Support\http_bootstrap;
+use PhoenixCart\Tests\support\http_bootstrap;
 
 if (!http_bootstrap::is_enabled()) {
     fwrite(STDERR, "Set PHOENIX_HTTP_ENABLED=1 before writing includes/local/configure.php.\n");

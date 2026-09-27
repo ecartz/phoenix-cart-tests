@@ -28,7 +28,7 @@ Locked decisions for **Playwright** browser tests against the same running shop 
 | Command | **`composer test:browser`** → `npx playwright test` |
 | Default `composer test` | Still **Unit only** |
 | Skip gate | Specs skip when **`PHOENIX_HTTP_BASE_URL`** is unset |
-| Cloud | **Node 20 + Chromium libs** in [`.cursor/Dockerfile`](../.cursor/Dockerfile); `npm ci` + `playwright install` in cloud install; **`PHOENIX_BROWSER_ENABLED=1`** runs **`composer test:browser`** after **`composer test:all`** in [`cloud-test.sh`](../.cursor/scripts/cloud-test.sh) |
+| Cloud | **Node 20 + Chromium libs** in [`.cursor/Dockerfile`](../.cursor/Dockerfile); `npm ci` + `playwright install` in cloud install; **`PHOENIX_BROWSER_ENABLED=1`** runs **`composer test:browser`** after **`composer test:stack`** in [`cloud-test.sh`](../.cursor/scripts/cloud-test.sh) |
 
 Gitignore: `node_modules/`, `test-results/`, `playwright-report/`.
 
@@ -89,7 +89,7 @@ CE Phoenix has **no core guest checkout**; unauthenticated checkout uses the sam
 
 1. **[`.cursor/Dockerfile`](../.cursor/Dockerfile)** — Node.js 20, Chromium system libraries, bumped **`PHOENIX_CLOUD_ENV_REVISION`**.
 2. **[`.cursor/scripts/cloud-install.sh`](../.cursor/scripts/cloud-install.sh)** — `npm ci`, `npx playwright install chromium`, writes **`PHOENIX_BROWSER_ENABLED=1`** into **`.cursor/cloud.env`**.
-3. **[`.cursor/scripts/cloud-test.sh`](../.cursor/scripts/cloud-test.sh)** — after PHPUnit **`test:all`** (with HTTP server when enabled), runs **`composer test:browser`** when **`PHOENIX_BROWSER_ENABLED=1`**. Set **`PHOENIX_BROWSER_ENABLED=0`** in **`cloud.env`** to skip browser on Cloud.
+3. **[`.cursor/scripts/cloud-test.sh`](../.cursor/scripts/cloud-test.sh)** — after PHPUnit **`test:stack`** (with HTTP server when enabled), runs **`composer test:browser`** when **`PHOENIX_BROWSER_ENABLED=1`**. Set **`PHOENIX_BROWSER_ENABLED=0`** in **`cloud.env`** to skip browser on Cloud.
 
 ---
 

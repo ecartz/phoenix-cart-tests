@@ -5,12 +5,12 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 ## Conventions
 
 - GPL-2.0-or-later, `declare(strict_types=1)`
-- Namespace `PhoenixCart\Tests\Unit\<Area>\...` or `PhoenixCart\Tests\Integration\...`; extend `phoenix_test_case` or `mysql_test_case`
-- Catalog-style **snake_case** for classes under `tests/Support/`, `tests/Unit/` (e.g. `mock_catalog_database`, `tickable_test`, `html_test_case`, `phoenix_test_case`); one class per file, filename matches class name
+- Namespace `PhoenixCart\Tests\unit\<area>\...` or `PhoenixCart\Tests\integration\...` (segments match lowercase directories); extend `phoenix_test_case` or `mysql_test_case`
+- Catalog-style **snake_case** for classes under `tests/support/`, `tests/unit/` (e.g. `mock_catalog_database`, `tickable_test`, `html_test_case`, `phoenix_test_case`); one class per file, filename matches class name
 - Test methods, data providers, and other members in this repo use **snake_case** as well (e.g. `test_real_link`, `real_link_provider`); PHPUnit `#[DataProvider('real_link_provider')]` attributes
-- **`tests/browser/`** Playwright specs: **`const` / `let` bindings** use **snake_case** (Playwright fixture names such as `page` stay as-is); enforced by `tests/Unit/Invariants/browser_spec_snake_case_test.php`
+- **`tests/browser/`** Playwright specs: **`const` / `let` bindings** use **snake_case** (Playwright fixture names such as `page` stay as-is); enforced by `tests/unit/invariants/browser_spec_snake_case_test.php`
 - Prefer data providers; assert behavior, not source text
-- **`tests/Unit/Html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
+- **`tests/unit/html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
 - If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in wave 1
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
 - Do not modify files under `PhoenixCart/` (cloned catalog is read-only for agents)
@@ -30,7 +30,7 @@ There is no `includes/functions/` tree in current Phoenix; legacy procedural hel
 
 **Out of scope (skip and list in `SKIPPED.md`):**
 
-- Real MySQL Integration tests live under `tests/Integration/` with `#[Group('mysql')]` and `PHOENIX_MYSQL_ENABLED=1`; mock `$GLOBALS['db']` remains under `#[Group('mockdb')]` in Unit tests
+- Real MySQL Integration tests live under `tests/integration/` with `#[Group('mysql')]` and `PHOENIX_MYSQL_ENABLED=1`; mock `$GLOBALS['db']` remains under `#[Group('mockdb')]` in unit tests
 - Checkout/application segments that assume a running shop session
 - Installer, admin HTTP, payment modules
 - Booting `application_top.php`
@@ -41,9 +41,9 @@ Content-module `execute()` that only buffers a `tpl_` file is allowed with stub 
 
 | Area | Directory | Example targets |
 |------|-----------|-----------------|
-| Html | `tests/Unit/Html/` | `Href`, `html_element`, `Form`, `Input`, `Select`, `Image`, `Button` |
-| Support | `tests/Unit/Support/` | `Date`, transformers, `Password`, `Path`, `File`, `cc_validation`, `url_query` |
-| Template | `tests/Unit/Template/` | `default_template` mapping, `Template` block/content helpers without `MODULE_*` DB constants |
+| Html | `tests/unit/html/` | `Href`, `html_element`, `Form`, `Input`, `Select`, `Image`, `Button` |
+| Support | `tests/unit/support/` | `Date`, transformers, `Password`, `Path`, `File`, `cc_validation`, `url_query` |
+| Template | `tests/unit/template/` | `default_template` mapping, `Template` block/content helpers without `MODULE_*` DB constants |
 
 ## Cursor Cloud specific instructions
 
@@ -59,7 +59,7 @@ composer install
 composer test
 ```
 
-Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` (MariaDB + HTTP server when `PHOENIX_HTTP_ENABLED=1`; Playwright when `PHOENIX_BROWSER_ENABLED=1` in `.cursor/cloud.env`; Wave 7 HTTPS last when `PHOENIX_HTTPS_ENABLED=1`). After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` runs **`composer test:stack`**, optional **`composer test:browser`**, then **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
 
 HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 

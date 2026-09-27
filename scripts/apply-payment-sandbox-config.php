@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use PhoenixCart\Tests\Support\payment_sandbox_bootstrap;
+use PhoenixCart\Tests\support\payment_sandbox_bootstrap;
 
 if (!payment_sandbox_bootstrap::is_enabled()) {
     fwrite(STDERR, "Set PHOENIX_PAYMENT_SANDBOX_ENABLED=1 and Stripe test key env vars.\n");

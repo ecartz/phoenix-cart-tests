@@ -7,14 +7,28 @@
          failOnWarning="true"
          failOnRisky="true">
     <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="_test.php">tests/Unit</directory>
+        <testsuite name="all">
+            <directory suffix="_test.php">tests/unit</directory>
+            <directory suffix="_test.php">tests/integration</directory>
+            <directory suffix="_test.php">tests/http</directory>
+            <directory suffix="_test.php">tests/https</directory>
         </testsuite>
-        <testsuite name="Integration">
-            <directory suffix="_test.php">tests/Integration</directory>
+        <testsuite name="stack">
+            <directory suffix="_test.php">tests/unit</directory>
+            <directory suffix="_test.php">tests/integration</directory>
+            <directory suffix="_test.php">tests/http</directory>
         </testsuite>
-        <testsuite name="Http">
-            <directory suffix="_test.php">tests/Http</directory>
+        <testsuite name="unit">
+            <directory suffix="_test.php">tests/unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory suffix="_test.php">tests/integration</directory>
+        </testsuite>
+        <testsuite name="http">
+            <directory suffix="_test.php">tests/http</directory>
+        </testsuite>
+        <testsuite name="https">
+            <directory suffix="_test.php">tests/https</directory>
         </testsuite>
     </testsuites>
     <php>

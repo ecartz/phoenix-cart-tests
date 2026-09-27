@@ -12,8 +12,10 @@ PHPUnit harness for [CE Phoenix Cart](https://github.com/CE-PhoenixCart/PhoenixC
 
 ```bash
 composer install
-composer test          # Unit suite only (no database)
-composer test:all      # Unit + Integration
+composer test          # unit suite only (no database)
+composer test:stack    # unit + integration + http (Cloud / release PHPUnit phase)
+composer test:all      # every PHPUnit class including tests/https (opt-in tests may skip)
+composer test:https    # Apache SSL session id only
 ```
 
 Override catalog location:
@@ -77,12 +79,12 @@ Timed homepage check runs with **`composer test:http`**. Carousel screenshots wi
 | Path | Purpose |
 |------|---------|
 | `tests/bootstrap.php` | Locates catalog root, registers `catalog_autoloader` |
-| `tests/Support/phoenix_test_case.php` | Base test case |
-| `tests/Support/mysql_test_case.php` | Integration base (real `Database`, T1 bootstrap) |
-| `tests/Support/mock_catalog_database.php` | In-memory `$db` double for wave 2b |
-| `tests/Unit/` | Unit and mock-db tests |
-| `tests/Integration/` | `@group mysql` tests against fixture SQL |
-| `tests/Http/` | `@group http` acceptance tests (running shop + DB) |
+| `tests/support/phoenix_test_case.php` | Base test case |
+| `tests/support/mysql_test_case.php` | Integration base (real `Database`, T1 bootstrap) |
+| `tests/support/mock_catalog_database.php` | In-memory `$db` double for wave 2b |
+| `tests/unit/` | Unit and mock-db tests |
+| `tests/integration/` | `@group mysql` tests against fixture SQL |
+| `tests/http/` | `@group http` acceptance tests (running shop + DB) |
 | `tests/browser/` | Playwright specs (wave 5) |
 | `playwright.config.ts` | Playwright config |
 | `scripts/http-server.sh` | PHP built-in server for wave 4 |

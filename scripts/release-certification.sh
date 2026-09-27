@@ -81,7 +81,7 @@ if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
   sleep 1
 fi
 
-composer test:all
+composer test:stack
 TEST_EXIT=$?
 
 if [[ "$TEST_EXIT" -eq 0 && "${PHOENIX_BROWSER_ENABLED:-0}" == "1" && "${PHOENIX_HTTP_ENABLED:-0}" == "1" ]]; then

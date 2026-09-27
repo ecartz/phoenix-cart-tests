@@ -34,12 +34,12 @@ Wave 3 **Integration** stays the place for isolated class/SQL tests without HTTP
 
 | Item | Decision |
 |------|----------|
-| Directory | **`tests/Http/`** |
+| Directory | **`tests/http/`** |
 | Group | **`#[Group('http')]`** |
-| Testsuite | **`Http`** in `phpunit.xml` |
+| Testsuite | **`http`** in `phpunit.xml` |
 | Default `composer test` | Still **Unit only** |
-| Http command | **`composer test:http`** → `--testsuite Http` |
-| Full stack | **`composer test:stack`** (or extend `test:all`) → Unit + Integration + Http when env flags set |
+| Http command | **`composer test:http`** → `--testsuite http` |
+| Full stack | **`composer test:stack`** → unit + integration + http when env flags set; **`composer test:all`** adds **`tests/https/`** |
 
 ---
 
@@ -100,9 +100,9 @@ Add `.github/workflows/phpunit-http.yml` after part 1 stabilizes: MariaDB servic
 ## Part 1 — HTTP harness (delivered)
 
 1. Add `symfony/http-client` to `composer.json`.
-2. Add `tests/Support/http_bootstrap.php`, `http_test_case.php`.
+2. Add `tests/support/http_bootstrap.php`, `http_test_case.php`.
 3. Add `scripts/http-server.sh`, `fixtures/http/README.md`.
-4. Add `tests/Http/index_smoke_test.php`.
+4. Add `tests/http/index_smoke_test.php`.
 5. Extend `phpunit.xml`, `composer.json` scripts.
 6. Update `TESTING.md`, `AGENTS.md` pointer, `SKIPPED.md` where relevant.
 
