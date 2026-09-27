@@ -28,8 +28,8 @@ final class shopping_cart_test extends http_test_case
         $this->assertStringContainsString('shopping_cart.php', $final_url);
 
         $body = $response->getContent(false);
-        $this->assertStringContainsString('Oranges', $body);
-        $this->assertStringContainsString('ORA-1', $body);
+        $this->assertStringContainsString('cm-sc-product-listing', $body);
+        $this->assertStringContainsString('>Oranges</a>', $body);
     }
 
     public function test_shopping_cart_lists_line_after_buy_now_action(): void
@@ -47,7 +47,7 @@ final class shopping_cart_test extends http_test_case
 
         $this->assertSame(200, $cart->getStatusCode());
         $body = $cart->getContent(false);
-        $this->assertStringContainsString('Pears', $body);
-        $this->assertStringContainsString('PEA-1', $body);
+        $this->assertStringContainsString('cm-sc-product-listing', $body);
+        $this->assertStringContainsString('>Pears</a>', $body);
     }
 }

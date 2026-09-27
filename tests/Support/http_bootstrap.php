@@ -85,13 +85,15 @@ PHP;
 
     public static function client(int $max_redirects = 10): HttpClientInterface
     {
-        return HttpClient::create([
+        $inner = HttpClient::create([
             'base_uri' => self::base_url(),
             'max_redirects' => $max_redirects,
             'headers' => [
                 'User-Agent' => 'phoenix-cart-tests-http/1.0',
             ],
         ]);
+
+        return new cookie_jar_http_client($inner);
     }
 
     private static function env(string $name, string $default): string

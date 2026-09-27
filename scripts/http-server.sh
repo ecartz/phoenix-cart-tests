@@ -12,6 +12,8 @@ if [[ ! -f "$PHOENIX_CART_ROOT/includes/system/autoloader.php" ]]; then
   exit 1
 fi
 
+ROUTER="$ROOT/scripts/php-built-in-router.php"
+
 echo "Serving $PHOENIX_CART_ROOT at http://${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}/"
 cd "$PHOENIX_CART_ROOT"
-exec php -S "${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}" -t .
+exec php -S "${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}" -t . "$ROUTER"
