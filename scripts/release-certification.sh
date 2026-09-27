@@ -91,6 +91,7 @@ if [[ "$TEST_EXIT" -eq 0 && "${PHOENIX_BROWSER_ENABLED:-0}" == "1" && "${PHOENIX
     fi
     npx playwright install-deps chromium
     npx playwright install chromium
+    php scripts/write-http-local-configure.php
     composer test:browser
     TEST_EXIT=$?
   fi

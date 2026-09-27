@@ -17,6 +17,8 @@ Http tests generate **`$PHOENIX_CART_ROOT/includes/local/configure.php`** at run
 - `PHOENIX_HTTP_BASE_URL` → `HTTP_SERVER`
 - `PHOENIX_DB_*` → `DB_SERVER`, credentials, database name
 
+PHPUnit Http tests and [`scripts/write-http-local-configure.php`](../../scripts/write-http-local-configure.php) write this file when **`PHOENIX_HTTP_ENABLED=1`**. Cloud test and release certification call the script before Playwright so the shop serves the catalog instead of the install welcome page.
+
 Import MySQL fixtures before starting the shop:
 
 ```bash

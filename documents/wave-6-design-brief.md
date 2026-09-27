@@ -57,7 +57,7 @@ export PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
 npx playwright test tests/browser/homepage_visual.spec.ts --update-snapshots
 ```
 
-Commit the generated PNG under **`tests/browser/`** (Playwright names it with the OS, e.g. **`homepage-carousel-chromium-linux.png`**). Release certification runs on Ubuntu; do not commit a Windows baseline from a dev host.
+Commit the generated PNG under **`tests/browser/homepage_visual.spec.ts-snapshots/`** (e.g. **`homepage-carousel-chromium-linux.png`**). Release certification runs on Ubuntu; do not commit a Windows baseline from a dev host.
 
 ---
 

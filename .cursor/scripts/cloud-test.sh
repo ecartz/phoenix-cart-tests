@@ -67,6 +67,7 @@ TEST_EXIT=$?
 
 if [[ "$TEST_EXIT" -eq 0 && "${PHOENIX_BROWSER_ENABLED:-0}" == "1" && "${PHOENIX_HTTP_ENABLED:-0}" == "1" ]]; then
   install_playwright_if_needed
+  php scripts/write-http-local-configure.php
   composer test:browser
   TEST_EXIT=$?
 fi

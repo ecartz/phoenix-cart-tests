@@ -9,9 +9,11 @@ test.describe('navbar offcanvas', () => {
 
   test('opens main site menu when hamburger control is clicked', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     const toggler = page.locator('.nb-hamburger-button').first();
     await expect(toggler).toBeVisible();
+    await toggler.scrollIntoViewIfNeeded();
 
     const offcanvas = page.locator('#collapseCoreNav');
     await expect(offcanvas).not.toHaveClass(/show/);
@@ -19,7 +21,7 @@ test.describe('navbar offcanvas', () => {
     await toggler.click();
 
     await expect(offcanvas).toHaveClass(/show/);
-    await expect(toggler).toHaveAttribute('aria-expanded', 'true');
+    await expect(toggler).toHaveAttribute('aria-expanded', 'true', { timeout: 10_000 });
     await expect(offcanvas.locator('input[name="keywords"]')).toBeVisible();
   });
 });

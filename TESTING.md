@@ -212,7 +212,7 @@ export PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
 npx playwright test tests/browser/homepage_visual.spec.ts --update-snapshots
 ```
 
-Commit the PNG under **`tests/browser/`** (e.g. **`homepage-carousel-chromium-linux.png`**). **`npm run test:update-snapshots`** updates all browser specs; prefer the scoped command above for part 2 only.
+Commit the PNG under **`tests/browser/homepage_visual.spec.ts-snapshots/`** (e.g. **`homepage-carousel-chromium-linux.png`**). **`npm run test:update-snapshots`** updates all browser specs; prefer the scoped command above for part 2 only.
 
 **Part 3:** Optional **`composer test:payment-sandbox`** when **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`** and Stripe test keys are set (GitHub secrets; see [`documents/payment-sandbox-ci.md`](documents/payment-sandbox-ci.md)).
 
