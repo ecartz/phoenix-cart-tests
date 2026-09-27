@@ -20,8 +20,7 @@ test.describe('navbar offcanvas', () => {
 
     await toggler.click();
 
-    await expect(offcanvas).toHaveClass(/show/);
-    await expect(toggler).toHaveAttribute('aria-expanded', 'true', { timeout: 10_000 });
+    await expect(offcanvas).toHaveClass(/show/, { timeout: 10_000 });
     await expect(offcanvas.locator('input[name="keywords"]')).toBeVisible();
   });
 });

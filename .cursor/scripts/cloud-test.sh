@@ -57,6 +57,9 @@ cleanup() {
 trap cleanup EXIT
 
 if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
+  if command -v fuser >/dev/null 2>&1; then
+    fuser -k "${PHOENIX_HTTP_PORT}/tcp" 2>/dev/null || true
+  fi
   bash scripts/http-server.sh &
   HTTP_PID=$!
   sleep 1
