@@ -1,0 +1,3 @@
+# Certified CE-PhoenixCart release tag for vendored fixtures in this repo.
+# Refresh fixtures from PhoenixCart/install/*.sql when bumping; commit with: Fixture from CE tag <tag>
+CE_PHOENIXCART_TAG=1.1.0.8

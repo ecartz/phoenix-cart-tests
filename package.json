@@ -3,7 +3,8 @@
   "private": true,
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:update-snapshots": "playwright test --update-snapshots"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0"

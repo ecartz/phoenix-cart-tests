@@ -8,6 +8,7 @@ Vendored copy of CE-PhoenixCart `install/phoenix.sql` for reproducible Integrati
 |-------|--------|
 | **Source** | `PhoenixCart/install/phoenix.sql` (sibling catalog checkout) |
 | **Pin** | Refresh when CE ships a tagged release; note the tag in the commit message |
+| **Certified tag** | [`catalog_pin.txt`](catalog_pin.txt) — CE tag this tree’s SQL was copied from (wave 6 part 4) |
 | **Charset** | `utf8mb4` / `utf8mb4_unicode_ci` on all tables |
 | **Engine** | MariaDB 10.11+ or MySQL 8.0+ |
 

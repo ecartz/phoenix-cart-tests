@@ -19,10 +19,13 @@
         "test": "phpunit --testsuite Unit",
         "test:mysql": "phpunit --testsuite Integration",
         "test:http": "phpunit --testsuite Http",
+        "test:https": "phpunit --group https",
         "test:all": "phpunit",
         "test:stack": "phpunit --testsuite Unit --testsuite Integration --testsuite Http",
         "test:browser": "npx playwright test",
-        "cloud-test": "bash .cursor/scripts/cloud-test.sh"
+        "test:payment-sandbox": "phpunit --group payment_sandbox",
+        "cloud-test": "bash .cursor/scripts/cloud-test.sh",
+        "release-certify": "bash scripts/release-certification.sh"
     },
     "config": {
         "sort-packages": true

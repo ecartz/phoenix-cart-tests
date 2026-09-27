@@ -21,6 +21,22 @@ export PHOENIX_HTTP_BASE_URL="${PHOENIX_HTTP_BASE_URL:-http://127.0.0.1:8765}"
 export PHOENIX_HTTP_HOST="${PHOENIX_HTTP_HOST:-127.0.0.1}"
 export PHOENIX_HTTP_PORT="${PHOENIX_HTTP_PORT:-8765}"
 
+if [[ ! -v PHOENIX_BROWSER_ENABLED ]]; then
+  if [[ -f "$ROOT/package.json" ]] && command -v npx >/dev/null 2>&1; then
+    export PHOENIX_BROWSER_ENABLED=1
+  else
+    export PHOENIX_BROWSER_ENABLED=0
+  fi
+fi
+
+install_playwright_if_needed() {
+  if [[ ! -d node_modules/@playwright/test ]]; then
+    npm ci --no-audit --no-fund
+  fi
+  npx playwright install-deps chromium
+  npx playwright install chromium
+}
+
 if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
@@ -47,4 +63,12 @@ if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
 fi
 
 composer test:all
-exit $?
+TEST_EXIT=$?
+
+if [[ "$TEST_EXIT" -eq 0 && "${PHOENIX_BROWSER_ENABLED:-0}" == "1" && "${PHOENIX_HTTP_ENABLED:-0}" == "1" ]]; then
+  install_playwright_if_needed
+  composer test:browser
+  TEST_EXIT=$?
+fi
+
+exit "$TEST_EXIT"

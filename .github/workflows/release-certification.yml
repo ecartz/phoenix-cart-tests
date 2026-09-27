@@ -1,0 +1,72 @@
+name: Release certification
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      catalog_tag:
+        description: CE-PhoenixCart git tag (defaults to fixtures/catalog_pin.txt)
+        required: false
+        type: string
+
+jobs:
+  certify:
+    name: Certify tag
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: phoenix_test
+          MYSQL_USER: phoenix
+          MYSQL_PASSWORD: phoenix
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out test repo
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, mysqli
+          coverage: none
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run release certification
+        env:
+          PHOENIX_CATALOG_TAG: ${{ inputs.catalog_tag }}
+          MYSQL_ROOT_PASSWORD: root
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+          PHOENIX_MYSQL_ENABLED: '1'
+          PHOENIX_HTTP_ENABLED: '1'
+          PHOENIX_HTTP_BASE_URL: http://127.0.0.1:8765
+          PHOENIX_BROWSER_ENABLED: '1'
+        run: bash scripts/release-certification.sh

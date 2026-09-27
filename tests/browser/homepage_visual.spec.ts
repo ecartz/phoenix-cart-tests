@@ -1,0 +1,16 @@
+import { expect, test } from '@playwright/test';
+
+const skip_without_shop = !process.env.PHOENIX_HTTP_BASE_URL;
+
+test.describe('homepage visual', () => {
+  test.skip(skip_without_shop, 'Set PHOENIX_HTTP_BASE_URL and start scripts/http-server.sh.');
+
+  test('carousel matches committed screenshot baseline', async ({ page }) => {
+    await page.goto('/');
+
+    const carousel = page.locator('#cm-i-slider.carousel, .carousel').first();
+    await expect(carousel).toBeVisible();
+
+    await expect(carousel).toHaveScreenshot('homepage-carousel.png');
+  });
+});

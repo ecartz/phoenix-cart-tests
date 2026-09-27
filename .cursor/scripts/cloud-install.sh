@@ -29,6 +29,12 @@ export PHOENIX_DB_USER=phoenix
 export PHOENIX_DB_PASSWORD=phoenix
 bash fixtures/import-mysql-fixtures.sh
 
+if [[ -f package.json ]]; then
+  npm ci --no-audit --no-fund
+  npx playwright install-deps chromium
+  npx playwright install chromium
+fi
+
 ENV_FILE="$ROOT/.cursor/cloud.env"
 cat > "$ENV_FILE" <<EOF
 PHOENIX_MYSQL_ENABLED=1
@@ -42,6 +48,7 @@ PHOENIX_HTTP_ENABLED=1
 PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
 PHOENIX_HTTP_HOST=127.0.0.1
 PHOENIX_HTTP_PORT=8765
+PHOENIX_BROWSER_ENABLED=1
 EOF
 
 echo "Cloud install complete. Run: composer cloud-test"

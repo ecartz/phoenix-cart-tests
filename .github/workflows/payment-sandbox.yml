@@ -1,0 +1,73 @@
+name: Payment sandbox
+
+on:
+  workflow_dispatch:
+
+jobs:
+  payment_sandbox:
+    name: Stripe SCA config smoke
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: phoenix_test
+          MYSQL_USER: phoenix
+          MYSQL_PASSWORD: phoenix
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out test repo
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, mysqli
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Clone CE PhoenixCart catalog
+        run: git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+
+      - name: Import fixture SQL
+        env:
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client
+          bash fixtures/import-mysql-fixtures.sh
+
+      - name: Run payment sandbox tests
+        env:
+          PHOENIX_PAYMENT_SANDBOX_ENABLED: '1'
+          PHOENIX_STRIPE_SCA_TEST_PUBLISHABLE_KEY: ${{ secrets.PHOENIX_STRIPE_SCA_TEST_PUBLISHABLE_KEY }}
+          PHOENIX_STRIPE_SCA_TEST_SECRET_KEY: ${{ secrets.PHOENIX_STRIPE_SCA_TEST_SECRET_KEY }}
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+          PHOENIX_MYSQL_ENABLED: '1'
+          PHOENIX_HTTP_ENABLED: '1'
+          PHOENIX_HTTP_BASE_URL: http://127.0.0.1:8765
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: |
+          bash scripts/http-server.sh &
+          sleep 1
+          composer test:payment-sandbox

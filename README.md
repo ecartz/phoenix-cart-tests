@@ -68,6 +68,10 @@ composer test:browser
 
 See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
 
+### Release hardening (wave 6)
+
+Timed homepage check runs with **`composer test:http`**. Carousel screenshots with **`composer test:browser`**. Payment sandbox with **`composer test:payment-sandbox`** (secrets). Release certification with **`composer release-certify`**. See [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
+
 ## Layout
 
 | Path | Purpose |

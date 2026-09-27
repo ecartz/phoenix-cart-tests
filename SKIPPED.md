@@ -2,7 +2,6 @@
 
 | Class / area | Reason | Wave |
 |--------------|--------|------|
-| `Request::check_ssl_session_id()` on HTTPS | Requires secure requests and `SSL_SESSION_ID`; built-in HTTP server is plain HTTP | 5+ |
 | `abstract_module::check()` | Covered by Integration tests (`abstract_module_check_test`) | — |
 | `abstract_module::install` / `remove` | Covered by Integration (`abstract_module_install_remove_test`) | — |
 | Product / cart listing / GDPR / navbar / login-form content modules | Need cart/session objects or heavy shop globals (breadcrumb **product SQL path** covered in Integration) | 3 / 4+ |
@@ -24,5 +23,9 @@ Note: `Date::expound()` / `Date::abridge()` are covered with stub `$GLOBALS['*_d
 **Wave 4 HTTP redirect coverage:** `Href::redirect()` is exercised via **`href_redirect_test.php`** (302 `Location` on unpublished/missing info pages, missing `products_id`, and `buy_now` → `shopping_cart.php`); not called directly in PHPUnit because it sends headers and exits.
 
 **Wave 4 HTTP session security (finish):** `Request::check_user_agent()` / `check_ip()` via **`request_security_test.php`** (302 → `login.php` after session + mismatch); **`ssl_check.php`** slug page in **`info_page_test.php`**. Requires **`fixtures/http/enable_session_security_checks.sql`**.
+
+**Wave 7 HTTPS (optional):** `Request::check_ssl_session_id()` via **`ssl_session_id_test.php`** when **`PHOENIX_HTTPS_ENABLED=1`**, Apache **`scripts/https-server.sh`**, and **`fixtures/http/enable_ssl_session_check.sql`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
+
+**Wave 6 payment sandbox (optional):** Stripe SCA test keys in env / CI secrets; **`payment_sandbox_stripe_config_test.php`**. Full checkout + Stripe.js iframe flows remain out of scope.
 
 Covered thin content modules (wave 2 style, hand `define()` + stub `Template` / `Linker` / `messageStack` / `$page` / `navigationHistory`): `cm_footer_text`, `cm_login_title`, `cm_cas_title`, `cm_account_title`, `cm_announcement`, `cm_footer_extra_copyright`, `cm_footer_information_links`, `cm_footer_contact_us`, `cm_footer_account`, `cm_cas_message`, `cm_cas_continue_button`, `cm_header_messagestack`, `cm_footer_extra_icons`, `cm_info_title`, `cm_info_text`, `cm_sc_title`, `cm_i_title`, `cm_t_title`, `cm_cs_title`, `cm_pinf_message`, `cm_forgot_password`.

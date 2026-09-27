@@ -8,6 +8,7 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 - Namespace `PhoenixCart\Tests\Unit\<Area>\...` or `PhoenixCart\Tests\Integration\...`; extend `phoenix_test_case` or `mysql_test_case`
 - Catalog-style **snake_case** for classes under `tests/Support/`, `tests/Unit/` (e.g. `mock_catalog_database`, `tickable_test`, `html_test_case`, `phoenix_test_case`); one class per file, filename matches class name
 - Test methods, data providers, and other members in this repo use **snake_case** as well (e.g. `test_real_link`, `real_link_provider`); PHPUnit `#[DataProvider('real_link_provider')]` attributes
+- **`tests/browser/`** Playwright specs: **`const` / `let` bindings** use **snake_case** (Playwright fixture names such as `page` stay as-is); enforced by `tests/Unit/Invariants/browser_spec_snake_case_test.php`
 - Prefer data providers; assert behavior, not source text
 - **`tests/Unit/Html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
 - If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in wave 1
@@ -58,10 +59,14 @@ composer install
 composer test
 ```
 
-Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` (MariaDB + optional built-in HTTP server when `PHOENIX_HTTP_ENABLED=1` in `.cursor/cloud.env`). See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` (MariaDB + HTTP server when `PHOENIX_HTTP_ENABLED=1`; Playwright when `PHOENIX_BROWSER_ENABLED=1` in `.cursor/cloud.env`). See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
 
 HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
 Browser (wave 5): same shop URL as HTTP; `npm ci`, `npx playwright install chromium`, `export PHOENIX_HTTP_BASE_URL=...`, then `composer test:browser`. See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+
+Release hardening (wave 6): part 1 timed homepage smoke; part 2 carousel screenshots; part 3 **`composer test:payment-sandbox`** (CI secrets, [`documents/payment-sandbox-ci.md`](documents/payment-sandbox-ci.md)); part 4 **`composer release-certify`**. See [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
+
+HTTPS SSL session (wave 7): Apache **`scripts/https-server.sh`**, **`PHOENIX_HTTPS_ENABLED=1`**, **`composer test:https`**. Not started from **`composer cloud-test`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
 
 Never add `CLAUDE.md` to the Phoenix Cart fork.

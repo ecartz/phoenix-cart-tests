@@ -181,7 +181,7 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 ### Wave 5 — Browser automation (Playwright)
 
-**Status:** **Part 1** — Playwright harness + homepage carousel interaction. Design: [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+**Status:** **Complete (parts 1–4)** — Playwright harness, carousel, navbar offcanvas, checkout-from-scratch, Cloud Node/Chromium + optional browser in **`composer cloud-test`**. Design: [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
 
 **Goal:** Flows where **JavaScript**, layout, or payment iframes matter — not duplicated by Symfony HttpClient.
 
@@ -192,18 +192,39 @@ Mocked-db tests live under `tests/Unit/` with `#[Group('mockdb')]`. Optional lat
 
 **Examples (roadmap):**
 
-- Carousel / navbar JS (part 1)
-- Checkout and payment modules (Stripe SCA, PayPal) — later parts
+- Carousel / navbar JS (parts 1–2)
+- Cart → **`create_account.php`** via checkout login gate; first customer-data field (part 3)
+- Payment modules (Stripe SCA, PayPal) — later parts / wave 6
 - Admin UI, GDPR flows with client behavior
 
-PHPUnit remains the runner for waves 1–4; browser suites are **separate commands** invoked from the same CI workflow when Node is available.
+PHPUnit remains the runner for waves 1–4; browser suites run via **`composer test:browser`** (local) and via **`composer cloud-test`** when **`PHOENIX_BROWSER_ENABLED=1`** in [`.cursor/cloud.env`](.cursor/cloud.env). GitHub Actions today runs PHPUnit only (see [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml)).
 
 ### Wave 6 — Release hardening (optional)
 
-- Visual regression (Playwright screenshots, external diff service)
-- Performance smoke (k6 or timed HTTP checks)
-- Payment sandbox credentials in CI secrets
-- Tagged test repo + tagged PhoenixCart for release certification
+**Status:** **Complete (parts 1–4)** — timed HTTP smoke, Playwright carousel baseline, payment sandbox CI secrets, release certification. Design: [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
+
+**Part 1:** `GET /` must return **200** within **`PHOENIX_HTTP_BUDGET_SECONDS`** (default **10**). Runs with **`composer test:http`** / **`composer test:all`** when **`PHOENIX_HTTP_ENABLED=1`**.
+
+**Part 2:** **`homepage_visual.spec.ts`** compares the homepage carousel to committed Playwright snapshots. Runs with **`composer test:browser`**. To create or refresh baselines on **Linux** (shop + fixtures running):
+
+```bash
+export PHOENIX_HTTP_BASE_URL=http://127.0.0.1:8765
+npx playwright test tests/browser/homepage_visual.spec.ts --update-snapshots
+```
+
+Commit the PNG under **`tests/browser/`** (e.g. **`homepage-carousel-chromium-linux.png`**). **`npm run test:update-snapshots`** updates all browser specs; prefer the scoped command above for part 2 only.
+
+**Part 3:** Optional **`composer test:payment-sandbox`** when **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`** and Stripe test keys are set (GitHub secrets; see [`documents/payment-sandbox-ci.md`](documents/payment-sandbox-ci.md)).
+
+**Part 4:** **`composer release-certify`** checks out CE-PhoenixCart at [`fixtures/catalog_pin.txt`](fixtures/catalog_pin.txt) (or **`PHOENIX_CATALOG_TAG`**) and runs the full PHPUnit stack (+ optional browser). See [`documents/release-certification.md`](documents/release-certification.md). GitHub runs the same on **tag push** via [`.github/workflows/release-certification.yml`](.github/workflows/release-certification.yml).
+
+### Wave 7 — SSL session id (optional)
+
+**Status:** **Complete** — Apache HTTPS acceptance for `Request::check_ssl_session_id()`. Design: [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
+
+**Skip gate:** **`PHOENIX_HTTPS_ENABLED=1`**. Also set **`PHOENIX_HTTP_ENABLED=1`** and point **`PHOENIX_HTTP_BASE_URL`** / **`PHOENIX_HTTPS_BASE_URL`** at the HTTPS shop (default `https://127.0.0.1:8443`).
+
+**Run:** `bash scripts/https-server.sh` (Linux; not wired into **`composer cloud-test`**), then **`composer test:https`**. The test applies **`fixtures/http/enable_ssl_session_check.sql`**; default fixture import leaves **`SESSION_CHECK_SSL_SESSION_ID`** at install **`False`**.
 
 ---
 
@@ -218,6 +239,7 @@ PHPUnit remains the runner for waves 1–4; browser suites are **separate comman
 | 4 | HTTP acceptance (Guzzle / Codeception / Behat+Goutte) | DB + web server + HTTP suite |
 | 5 | Playwright (`tests/browser/`) | DB + web server + Node + Chromium |
 | 6 | Mixed | Secrets, optional external services |
+| 7 | Apache HTTPS + curl | Opt-in Linux host; not default Cloud |
 
 ```text
 Wave 1   PHPUnit, autoload only
@@ -233,6 +255,8 @@ Wave 4   HTTP acceptance
 Wave 5   Browser automation
    ↓
 Wave 6   Visual / perf / payment sandbox
+   ↓
+Wave 7   SSL session id (Apache HTTPS)
 ```
 
 ## Repository layout (evolving)
@@ -243,6 +267,7 @@ Wave 6   Visual / perf / payment sandbox
 | `tests/Integration/` | Additional wave 2b / wave 3 (MySQL) — *optional split later* |
 | `tests/Support/` | Shared test support (for example `mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`) |
 | `tests/Http/` | Wave 4 HTTP acceptance (`#[Group('http')]`) |
+| `tests/Http/ssl_session_id_test.php` | Wave 7 HTTPS (`#[Group('https')]`, opt-in) |
 | `tests/browser/` | Wave 5 Playwright specs |
 | `playwright.config.ts` | Playwright base URL + Chromium project |
 | `fixtures/` | SQL seeds (wave 3); [`fixtures/http/README.md`](fixtures/http/README.md) documents configure for wave 4 |

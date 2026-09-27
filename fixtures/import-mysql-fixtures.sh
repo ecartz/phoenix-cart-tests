@@ -17,4 +17,8 @@ MYSQL=(mysql -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -
 "${MYSQL[@]}" < fixtures/http/publish_info_pages.sql
 "${MYSQL[@]}" < fixtures/http/enable_session_security_checks.sql
 
+if [[ "${PHOENIX_PAYMENT_SANDBOX_ENABLED:-0}" == "1" ]]; then
+  php scripts/apply-payment-sandbox-config.php
+fi
+
 echo "Imported fixtures/phoenix.sql, fixtures/phoenix_data_sample.sql, and fixtures/http/*.sql into ${PHOENIX_DB_NAME}."

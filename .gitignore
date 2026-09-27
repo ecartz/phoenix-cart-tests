@@ -2,6 +2,7 @@
 /.phpunit.cache/
 /PhoenixCart/
 .cursor/cloud.env
+.cursor/https/
 /node_modules/
 /test-results/
 /playwright-report/
