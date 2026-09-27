@@ -67,6 +67,6 @@ Browser (wave 5): same shop URL as HTTP; `npm ci`, `npx playwright install chrom
 
 Release hardening (wave 6): part 1 timed homepage smoke; part 2 carousel screenshots; part 3 **`composer test:payment-sandbox`** (CI secrets, [`documents/payment-sandbox-ci.md`](documents/payment-sandbox-ci.md)); part 4 **`composer release-certify`**. See [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
 
-HTTPS SSL session (wave 7): Apache **`scripts/https-server.sh`**, **`PHOENIX_HTTPS_ENABLED=1`**, **`composer test:https`**. Not started from **`composer cloud-test`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
+HTTPS SSL session (wave 7): Apache **`scripts/https-server.sh`**, **`PHOENIX_HTTPS_ENABLED=1`**, **`composer test:https`**. **`composer cloud-test`** runs Wave 7 last (Apache on 8443 after the `php -S` suite) when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
 
 Never add `CLAUDE.md` to the Phoenix Cart fork.

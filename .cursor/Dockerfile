@@ -1,23 +1,28 @@
 FROM ubuntu:24.04
 
 # Bump when cloud image must rebuild (Cursor keys Dockerfile content).
-ARG PHOENIX_CLOUD_ENV_REVISION=2026-09-26-playwright-install-deps
+ARG PHOENIX_CLOUD_ENV_REVISION=2026-09-27-cloud-apache-https
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    apache2 \
     ca-certificates \
     curl \
     git \
     gnupg \
+    libapache2-mod-php \
     mariadb-client \
     mariadb-server \
+    openssl \
     php-cli \
     php-mbstring \
     php-mysql \
     php-xml \
     unzip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod ssl \
+    && a2enmod php8.3
 
 # Node 20 for Playwright (wave 5 browser tests in Cloud).
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \

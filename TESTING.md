@@ -224,7 +224,7 @@ Commit the PNG under **`tests/browser/homepage_visual.spec.ts-snapshots/`** (e.g
 
 **Skip gate:** **`PHOENIX_HTTPS_ENABLED=1`**. Also set **`PHOENIX_HTTP_ENABLED=1`** and point **`PHOENIX_HTTP_BASE_URL`** / **`PHOENIX_HTTPS_BASE_URL`** at the HTTPS shop (default `https://127.0.0.1:8443`).
 
-**Run:** `bash scripts/https-server.sh` (Linux; not wired into **`composer cloud-test`**), then **`composer test:https`**. The test applies **`fixtures/http/enable_ssl_session_check.sql`**; default fixture import leaves **`SESSION_CHECK_SSL_SESSION_ID`** at install **`False`**.
+**Run:** Locally: `bash scripts/https-server.sh` (Linux), then **`composer test:https`**. **`composer cloud-test`** runs the same test last on port **8443** after PHPUnit and Playwright on **8765** (requires Apache in the Cloud image; **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**). The test applies **`fixtures/http/enable_ssl_session_check.sql`**; default fixture import leaves **`SESSION_CHECK_SSL_SESSION_ID`** at install **`False`**.
 
 ---
 

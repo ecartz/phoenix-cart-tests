@@ -27,7 +27,7 @@ Apache must expose the TLS session id to PHP:
 - Document root **`PHOENIX_CART_ROOT`**, port **8443** (override with **`PHOENIX_HTTPS_PORT`**).
 - Applies [`fixtures/http/enable_ssl_session_check.sql`](../fixtures/http/enable_ssl_session_check.sql) when `mysql` is available (sets **`SESSION_CHECK_SSL_SESSION_ID`** to `True`; install default is `False`).
 
-Does **not** replace [`scripts/http-server.sh`](../scripts/http-server.sh) and is **not** started from **`composer cloud-test`**.
+Does **not** replace [`scripts/http-server.sh`](../scripts/http-server.sh). Opt-in locally with **`composer test:https`**. **`composer cloud-test`** starts Apache on **8443** and runs **`composer test:https`** after the plain-HTTP and browser steps when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`** (PHPUnit **`test:all`** on **8765** keeps **`PHOENIX_HTTPS_ENABLED` unset** so this test skips until the HTTPS phase).
 
 ---
 
