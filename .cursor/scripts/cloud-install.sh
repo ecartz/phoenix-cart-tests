@@ -35,6 +35,16 @@ if [[ -f package.json ]]; then
   npx playwright install chromium
 fi
 
+# Warm VMs may run before Cursor rebuilds .cursor/Dockerfile (Wave 7 needs Apache).
+if ! command -v apache2ctl >/dev/null 2>&1 && ! command -v apachectl >/dev/null 2>&1; then
+  echo "Installing apache2 and libapache2-mod-php for Wave 7 HTTPS (image rebuild pending)." >&2
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    apache2 libapache2-mod-php openssl
+  a2enmod ssl
+  a2enmod php8.3
+fi
+
 ENV_FILE="$ROOT/.cursor/cloud.env"
 cat > "$ENV_FILE" <<EOF
 PHOENIX_MYSQL_ENABLED=1

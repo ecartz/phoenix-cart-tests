@@ -59,7 +59,7 @@ composer install
 composer test
 ```
 
-Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` (MariaDB + HTTP server when `PHOENIX_HTTP_ENABLED=1`; Playwright when `PHOENIX_BROWSER_ENABLED=1` in `.cursor/cloud.env`). See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` (MariaDB + HTTP server when `PHOENIX_HTTP_ENABLED=1`; Playwright when `PHOENIX_BROWSER_ENABLED=1` in `.cursor/cloud.env`; Wave 7 HTTPS last when `PHOENIX_HTTPS_ENABLED=1`). After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
 
 HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
 
