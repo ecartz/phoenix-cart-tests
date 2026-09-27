@@ -59,6 +59,10 @@ export APACHE_RUN_DIR="${APACHE_RUN_DIR:-$HTTPS_DIR/run}"
 export APACHE_LOCK_DIR="${APACHE_LOCK_DIR:-$HTTPS_DIR/lock}"
 export APACHE_LOG_DIR="${APACHE_LOG_DIR:-$HTTPS_DIR/logs}"
 mkdir -p "$APACHE_RUN_DIR" "$APACHE_LOCK_DIR" "$APACHE_LOG_DIR"
+# Debian apache2ctl sources envvars with APACHE_LOCK_DIR=/var/lock/apache2; warm VMs may lack that path.
+if [[ -d /var/lock ]]; then
+  mkdir -p /var/lock/apache2 2>/dev/null || true
+fi
 
 SITE_CONF="$HTTPS_DIR/phoenix-cart-tests-ssl.conf"
 cat > "$SITE_CONF" <<EOF
@@ -78,6 +82,9 @@ LogLevel warn
 
 Listen ${PHOENIX_HTTPS_PORT}
 
+# Server context only (not valid inside VirtualHost); fresh SSL session id per connection for tests.
+SSLSessionCache none
+
 <VirtualHost *:${PHOENIX_HTTPS_PORT}>
     ServerName ${PHOENIX_HTTPS_HOST}
     DocumentRoot ${PHOENIX_CART_ROOT}
@@ -85,7 +92,6 @@ Listen ${PHOENIX_HTTPS_PORT}
     SSLCertificateFile ${CERT}
     SSLCertificateKeyFile ${KEY}
     SSLOptions +StdEnvVars
-    SSLSessionCache none
 
     <Directory ${PHOENIX_CART_ROOT}>
         Options FollowSymLinks
