@@ -11,7 +11,7 @@ CE-PhoenixCart CI runs this suite against the catalog revision under test. This 
 | **Tagged release** (every CE release is tagged) | Same tag on `phoenix-cart-tests` if that tag exists |
 | **Everything else** (PRs, branch pushes, untagged commits) | `main` |
 
-Local and cloud runs set `PHOENIX_CART_ROOT` to the catalog tree (sibling `../PhoenixCart`, `./PhoenixCart`, or env override). See `tests/bootstrap.php`. The reference catalog for local runs and merge gates is **CE-PhoenixCart 1.1.0.8** (or newer CE checkout with compatible Html typing on PHP 8.4).
+Local and cloud runs set `PHOENIX_CART_ROOT` to the catalog tree (sibling `../PhoenixCart`, `./PhoenixCart`, or env override). See `tests/bootstrap.php`. CI and Cloud clone **`master`** via [`fixtures/catalog_pin.txt`](fixtures/catalog_pin.txt) and [`scripts/clone-catalog.sh`](scripts/clone-catalog.sh) (current CE release branch).
 
 ## Wave status
 
@@ -197,7 +197,7 @@ Mocked-db tests live under `tests/unit/` with `#[Group('mockdb')]`. Optional lat
 - Payment modules (Stripe SCA, PayPal) — later parts / wave 6
 - Admin UI, GDPR flows with client behavior
 
-PHPUnit remains the runner for waves 1–4; browser suites run via **`composer test:browser`** (local) and via **`composer cloud-test`** when **`PHOENIX_BROWSER_ENABLED=1`** in [`.cursor/cloud.env`](.cursor/cloud.env). GitHub Actions today runs PHPUnit only (see [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml)).
+PHPUnit remains the runner for waves 1–4; browser suites run via **`composer test:browser`** (local) and via **`composer cloud-test`** when **`PHOENIX_BROWSER_ENABLED=1`** in [`.cursor/cloud.env`](.cursor/cloud.env). GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml) runs the same phases as Cloud via [`scripts/full-stack-test.sh`](scripts/full-stack-test.sh) (stack, Playwright, HTTPS).
 
 ### Wave 6 — Release hardening (optional)
 
@@ -305,7 +305,8 @@ vendor/bin/phpunit
 Clone upstream catalog if needed:
 
 ```bash
-git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+git clone --depth 1 --branch master https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+# or: bash scripts/clone-catalog.sh
 ```
 
 Windows developers may see path-separator or PHP version differences versus Linux CI; treat Linux CI on CE-PhoenixCart as the merge gate once workflows exist.

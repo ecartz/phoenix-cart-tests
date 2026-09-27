@@ -1,4 +1,4 @@
-name: PHPUnit Integration (MySQL)
+name: Full stack (PHPUnit, browser, HTTPS)
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  integration:
-    name: Integration PHP ${{ matrix.php-version }}
+  full-stack:
+    name: Cloud-equivalent stack (PHP 8.4)
     runs-on: ubuntu-latest
 
     services:
@@ -28,11 +28,6 @@ jobs:
           --health-timeout=5s
           --health-retries=10
 
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version: ['8.3', '8.4']
-
     steps:
       - name: Check out test repo
         uses: actions/checkout@v4
@@ -40,15 +35,34 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: '8.4'
           extensions: mbstring, xml, mysqli
           coverage: none
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install OS packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client apache2 libapache2-mod-php openssl
+          sudo a2enmod ssl
+          sudo a2enmod php8.4 2>/dev/null || sudo a2enmod php8.3
+          sudo mkdir -p /run/lock/apache2 /var/run/apache2
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Clone CE PhoenixCart catalog
-        run: git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+      - name: Clone CE PhoenixCart at pinned ref
+        run: bash scripts/clone-catalog.sh
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Import fixture SQL
         env:
@@ -57,12 +71,9 @@ jobs:
           PHOENIX_DB_NAME: phoenix_test
           PHOENIX_DB_USER: phoenix
           PHOENIX_DB_PASSWORD: phoenix
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mariadb-client
-          bash fixtures/import-mysql-fixtures.sh
+        run: bash fixtures/import-mysql-fixtures.sh
 
-      - name: Run Integration PHPUnit
+      - name: Run full stack
         env:
           PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
           PHOENIX_MYSQL_ENABLED: '1'
@@ -71,9 +82,11 @@ jobs:
           PHOENIX_DB_NAME: phoenix_test
           PHOENIX_DB_USER: phoenix
           PHOENIX_DB_PASSWORD: phoenix
-        run: vendor/bin/phpunit --testsuite integration
-
-      - name: Run Unit PHPUnit (regression)
-        env:
-          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
-        run: vendor/bin/phpunit --testsuite unit
+          PHOENIX_HTTP_ENABLED: '1'
+          PHOENIX_HTTP_BASE_URL: http://127.0.0.1:8765
+          PHOENIX_HTTP_HOST: 127.0.0.1
+          PHOENIX_HTTP_PORT: '8765'
+          PHOENIX_BROWSER_ENABLED: '1'
+          PHOENIX_HTTPS_ENABLED: '1'
+          PHOENIX_HTTPS_BASE_URL: https://127.0.0.1:8443
+        run: bash scripts/full-stack-test.sh

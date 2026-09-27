@@ -38,8 +38,10 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Clone CE PhoenixCart catalog
-        run: git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+      - name: Clone CE PhoenixCart at pinned ref
+        run: bash scripts/clone-catalog.sh
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
 
       - name: Import fixture SQL
         env:

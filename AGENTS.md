@@ -55,7 +55,7 @@ Verify with:
 
 ```bash
 composer install
-[ -d PhoenixCart/includes/system/autoloader.php ] || git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+[ -d PhoenixCart/includes/system/autoloader.php ] || bash scripts/clone-catalog.sh
 composer test
 ```
 

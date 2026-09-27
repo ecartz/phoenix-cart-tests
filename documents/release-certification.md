@@ -6,8 +6,8 @@ Certify that **this test repo** at a **git tag** passes the full harness against
 
 | Repo | Tag rule |
 |------|----------|
-| [CE-PhoenixCart/PhoenixCart](https://github.com/CE-PhoenixCart/PhoenixCart) | CE release tag (e.g. `1.1.0.8`) |
-| `phoenix-cart-tests` | **Same tag** when publishing a certified test release; otherwise CI uses `main` (see [`TESTING.md`](../TESTING.md)) |
+| [CE-PhoenixCart/PhoenixCart](https://github.com/CE-PhoenixCart/PhoenixCart) | **`master`** (current release) or a semver tag for certified releases |
+| `phoenix-cart-tests` | **Same ref** as [`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt) when publishing a certified test release; default pin is **`master`** |
 
 ## Catalog pin
 

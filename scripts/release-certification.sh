@@ -34,16 +34,10 @@ export PHOENIX_HTTP_BASE_URL="${PHOENIX_HTTP_BASE_URL:-http://127.0.0.1:8765}"
 export PHOENIX_HTTP_HOST="${PHOENIX_HTTP_HOST:-127.0.0.1}"
 export PHOENIX_HTTP_PORT="${PHOENIX_HTTP_PORT:-8765}"
 
-echo "Release certification: CE-PhoenixCart tag ${CATALOG_TAG}"
+echo "Release certification: CE-PhoenixCart ref ${CATALOG_TAG}"
 
-if [[ -d "$PHOENIX_CART_ROOT/.git" ]]; then
-  git -C "$PHOENIX_CART_ROOT" fetch --tags --depth 1 origin "refs/tags/${CATALOG_TAG}:refs/tags/${CATALOG_TAG}" 2>/dev/null \
-    || git -C "$PHOENIX_CART_ROOT" fetch --tags origin
-  git -C "$PHOENIX_CART_ROOT" checkout --detach "$CATALOG_TAG"
-else
-  rm -rf "$PHOENIX_CART_ROOT"
-  git clone --depth 1 --branch "$CATALOG_TAG" https://github.com/CE-PhoenixCart/PhoenixCart.git "$PHOENIX_CART_ROOT"
-fi
+export PHOENIX_CATALOG_TAG="$CATALOG_TAG"
+bash scripts/clone-catalog.sh
 
 composer install --no-interaction
 

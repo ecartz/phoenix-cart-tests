@@ -18,9 +18,9 @@ final class catalog_pin_test extends phoenix_test_case
         $this->assertIsString($contents);
 
         $this->assertMatchesRegularExpression(
-            '/^CE_PHOENIXCART_TAG=\d+\.\d+\.\d+\.\d+\s*$/m',
+            '/^CE_PHOENIXCART_TAG=(master|\d+\.\d+\.\d+\.\d+)\s*$/m',
             $contents,
-            'fixtures/catalog_pin.txt must set CE_PHOENIXCART_TAG to a CE release tag (e.g. 1.1.0.8)'
+            'fixtures/catalog_pin.txt must set CE_PHOENIXCART_TAG to master or a CE release tag (e.g. 1.1.0.8)'
         );
     }
 }

@@ -7,7 +7,7 @@ cd "$ROOT"
 composer install --no-interaction
 
 if [[ ! -f PhoenixCart/includes/system/autoloader.php ]]; then
-  git clone --depth 1 https://github.com/CE-PhoenixCart/PhoenixCart.git PhoenixCart
+  bash scripts/clone-catalog.sh
 fi
 
 if ! service mariadb status >/dev/null 2>&1; then

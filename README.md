@@ -93,4 +93,4 @@ Timed homepage check runs with **`composer test:http`**. Carousel screenshots wi
 
 ## License
 
-GPL-2.0-or-later, same as Phoenix Cart.
+GPL-2.0-or-later, same as Phoenix Cart. See [`LICENSE`](LICENSE).
