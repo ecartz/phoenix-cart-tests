@@ -64,11 +64,13 @@ abstract class install_test_case extends phoenix_test_case
 
     protected static function parse_hidden_input(string $html, string $name): string
     {
-        if (preg_match('/name="' . preg_quote($name, '/') . '"\s+value="([^"]*)"/', $html, $matches) === 1) {
+        $quoted = preg_quote($name, '/');
+
+        if (preg_match('/name="' . $quoted . '"[^>]*\svalue="([^"]*)"/', $html, $matches) === 1) {
             return $matches[1];
         }
 
-        if (preg_match('/value="([^"]*)"\s+name="' . preg_quote($name, '/') . '"/', $html, $matches) === 1) {
+        if (preg_match('/value="([^"]*)"[^>]*\sname="' . $quoted . '"/', $html, $matches) === 1) {
             return $matches[1];
         }
 
