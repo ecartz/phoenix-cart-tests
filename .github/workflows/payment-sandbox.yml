@@ -28,6 +28,9 @@ jobs:
       - name: Check out test repo
         uses: actions/checkout@v4
 
+      - name: Verify shell scripts are executable in git
+        run: bash scripts/verify-shell-script-modes.sh
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:

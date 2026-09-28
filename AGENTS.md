@@ -13,6 +13,7 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 - **`tests/unit/html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
 - If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in isolated unit tests
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
+- New shell scripts under `scripts/`, `.cursor/scripts/`, or `fixtures/` must be committed executable (`git add --chmod=+x`); CI runs `scripts/verify-shell-script-modes.sh`
 - Do not modify files under `PhoenixCart/` (cloned catalog is read-only for agents)
 
 ## Phoenix architecture (for test targeting)
