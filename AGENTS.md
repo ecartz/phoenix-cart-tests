@@ -11,7 +11,7 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 - **`tests/browser/`** Playwright specs: **`const` / `let` bindings** use **snake_case** (Playwright fixture names such as `page` stay as-is); enforced by `tests/unit/invariants/browser_spec_snake_case_test.php`
 - Prefer data providers; assert behavior, not source text
 - **`tests/unit/html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
-- If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in wave 1
+- If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in isolated unit tests
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
 - Do not modify files under `PhoenixCart/` (cloned catalog is read-only for agents)
 
@@ -28,7 +28,7 @@ There is no `includes/functions/` tree in current Phoenix; legacy procedural hel
 
 **In scope:** pure unit tests for classes that do not need a live database or full `application_top.php`.
 
-**Out of scope (skip and list in `SKIPPED.md`):**
+**Out of scope (defer and list in [`SKIPPED.md`](SKIPPED.md) until covered):**
 
 - Real MySQL Integration tests live under `tests/integration/` with `#[Group('mysql')]` and `PHOENIX_MYSQL_ENABLED=1`; mock `$GLOBALS['db']` remains under `#[Group('mockdb')]` in unit tests
 - Checkout/application segments that assume a running shop session
@@ -59,14 +59,14 @@ composer install
 composer test
 ```
 
-Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` runs **`composer test:stack`**, optional **`composer test:browser`**, then **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` runs **`composer test:stack`**, optional **`composer test:browser`**, then **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/integration-tests.md`](documents/integration-tests.md).
 
-HTTP (wave 4): after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
+HTTP: after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/http-tests.md`](documents/http-tests.md).
 
-Browser (wave 5): same shop URL as HTTP; `npm ci`, `npx playwright install chromium`, `export PHOENIX_HTTP_BASE_URL=...`, then `composer test:browser`. See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+Browser: same shop URL as HTTP; `npm ci`, `npx playwright install chromium`, `export PHOENIX_HTTP_BASE_URL=...`, then `composer test:browser`. See [`documents/browser-tests.md`](documents/browser-tests.md).
 
-Release hardening (wave 6): part 1 timed homepage smoke; part 2 carousel screenshots; part 3 **`composer test:payment-sandbox`** (CI secrets, [`documents/payment-sandbox-ci.md`](documents/payment-sandbox-ci.md)); part 4 **`composer release-certify`**. See [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
+Release certification and optional checks: timed homepage smoke (`composer test:http`), carousel screenshots (`composer test:browser`), **`composer test:payment-sandbox`** ([`documents/payment-sandbox.md`](documents/payment-sandbox.md)), **`composer release-certify`** ([`documents/release-certification.md`](documents/release-certification.md)).
 
-HTTPS SSL session (wave 7): Apache **`scripts/https-server.sh`**, **`PHOENIX_HTTPS_ENABLED=1`**, **`composer test:https`**. **`composer cloud-test`** runs Wave 7 last (Apache on 8443 after the `php -S` suite) when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. See [`documents/wave-7-design-brief.md`](documents/wave-7-design-brief.md).
+HTTPS: Apache **`scripts/https-server.sh`**, **`PHOENIX_HTTPS_ENABLED=1`**, **`composer test:https`**. **`composer cloud-test`** runs HTTPS last (Apache on 8443 after the `php -S` suite) when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. See [`documents/https-tests.md`](documents/https-tests.md).
 
 Never add `CLAUDE.md` to the Phoenix Cart fork.

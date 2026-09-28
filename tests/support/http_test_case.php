@@ -8,6 +8,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 abstract class http_test_case extends phoenix_test_case
 {
+    protected const FIXTURE_CUSTOMER_EMAIL = 'phoenix-http-fixture@example.com';
+
+    protected const FIXTURE_CUSTOMER_PASSWORD = 'phoenix-test';
+
     private HttpClientInterface $http;
 
     public static function setUpBeforeClass(): void
@@ -53,5 +57,42 @@ abstract class http_test_case extends phoenix_test_case
     protected function get_http_without_redirects(): HttpClientInterface
     {
         return http_bootstrap::client(0);
+    }
+
+    protected function login_fixture_customer(): void
+    {
+        $this->get_http()->request('GET', '/');
+
+        $login_page = $this->get_http()->request('GET', '/login.php');
+        $this->assertSame(200, $login_page->getStatusCode());
+
+        $html = $login_page->getContent(false);
+        $formid = self::parse_hidden_input($html, 'formid');
+        $this->assertNotSame('', $formid, 'login form must expose formid hidden input');
+
+        $response = $this->get_http()->request('POST', '/login.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $formid,
+                'email_address' => self::FIXTURE_CUSTOMER_EMAIL,
+                'password' => self::FIXTURE_CUSTOMER_PASSWORD,
+            ],
+        ]);
+
+        $status = $response->getStatusCode();
+        $this->assertContains($status, [200, 302], 'login POST should succeed or redirect');
+    }
+
+    protected static function parse_hidden_input(string $html, string $name): string
+    {
+        if (preg_match('/name="' . preg_quote($name, '/') . '"\s+value="([^"]*)"/', $html, $matches) === 1) {
+            return $matches[1];
+        }
+
+        if (preg_match('/value="([^"]*)"\s+name="' . preg_quote($name, '/') . '"/', $html, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return '';
     }
 }

@@ -21,6 +21,7 @@ final class category_listing_test extends http_test_case
         $this->assertSame(200, $response->getStatusCode());
 
         $body = $response->getContent(false);
+        $this->assertStringContainsString('cm-in-category-listing', $body);
         $this->assertStringContainsString('Fruit', $body);
         $this->assertStringContainsString('Citrus Fruit', $body);
     }
@@ -36,6 +37,7 @@ final class category_listing_test extends http_test_case
         $this->assertSame(200, $response->getStatusCode());
 
         $body = $response->getContent(false);
+        $this->assertStringContainsString('cm-ip-product-listing', $body);
         $this->assertStringContainsString('Citrus Fruit', $body);
         $this->assertStringContainsString('Oranges', $body);
         $this->assertStringContainsString('Lemons', $body);

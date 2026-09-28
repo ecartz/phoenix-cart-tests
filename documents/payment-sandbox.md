@@ -1,6 +1,6 @@
-# Payment sandbox (wave 6 part 3)
+# Payment sandbox
 
-Optional **Stripe SCA test mode** wiring for CI and local runs. Secrets stay in environment or GitHub Actions secrets — never in git.
+Optional **Stripe SCA test mode** wiring for manual CI and local runs. Secrets stay in environment or GitHub Actions secrets — never in git.
 
 ## Enable
 
@@ -28,6 +28,8 @@ export PHOENIX_PAYMENT_SANDBOX_ENABLED=1
 bash fixtures/import-mysql-fixtures.sh   # runs apply when flag is set
 ```
 
+[`tests/support/payment_sandbox_bootstrap.php`](../tests/support/payment_sandbox_bootstrap.php) writes test keys into the `configuration` table. [`scripts/apply-payment-sandbox-config.php`](../scripts/apply-payment-sandbox-config.php) is the CLI entry.
+
 ## GitHub Actions secrets
 
 Add repository secrets (names must match env vars):
@@ -39,7 +41,7 @@ Add repository secrets (names must match env vars):
 
 Run manually: [`.github/workflows/payment-sandbox.yml`](../.github/workflows/payment-sandbox.yml) (`workflow_dispatch`).
 
-Default **`composer cloud-test`** and **`phpunit-mysql.yml`** do **not** run payment sandbox tests.
+Default **`composer cloud-test`**, **`composer test:stack`**, and the main PHPUnit workflow do **not** run payment sandbox tests.
 
 ## What is tested
 
@@ -48,4 +50,4 @@ Default **`composer cloud-test`** and **`phpunit-mysql.yml`** do **not** run pay
 - Test keys are written to the `configuration` table (publishable key prefix `pk_test_`).
 - Homepage HTML does not echo the secret key.
 
-Full checkout / Stripe.js / iframe flows remain out of scope.
+Full checkout, Stripe.js, and iframe flows are out of scope.

@@ -1,6 +1,7 @@
 /vendor/
 /.phpunit.cache/
 /PhoenixCart/
+/working/
 .cursor/cloud.env
 .cursor/https/
 /node_modules/

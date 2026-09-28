@@ -8,7 +8,7 @@ use integration_throwaway_module;
 use PhoenixCart\Tests\support\mysql_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
-require_once __DIR__ . '/../Support/integration_throwaway_module.php';
+require_once __DIR__ . '/../support/integration_throwaway_module.php';
 
 #[Group('mysql')]
 final class abstract_module_install_remove_test extends mysql_test_case

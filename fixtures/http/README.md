@@ -1,14 +1,13 @@
-# Wave 4 HTTP fixtures
+# HTTP fixture SQL and configure
 
-Wave 4 adds HTTP fixture SQL (applied by [`fixtures/import-mysql-fixtures.sh`](../import-mysql-fixtures.sh) after the wave 3 seeds):
+Additional SQL applied by [`fixtures/import-mysql-fixtures.sh`](import-mysql-fixtures.sh) after the base install and sample catalog:
 
 - **`publish_info_pages.sql`** — publish footer slugs so `info.php` serves them (`pages_status=1`).
 - **`enable_session_security_checks.sql`** — turn on `SESSION_CHECK_USER_AGENT` and `SESSION_CHECK_IP_ADDRESS` for Request mismatch HTTP tests (install defaults are `False`).
-- **`enable_ssl_session_check.sql`** — turn on `SESSION_CHECK_SSL_SESSION_ID` for wave 7 HTTPS tests only (not applied by default import; see [`scripts/https-server.sh`](../../scripts/https-server.sh) or test bootstrap).
+- **`seed_customer.sql`** — one fixture customer (`phoenix-http-fixture@example.com` / password `phoenix-test`) for HTTP login, `account.php`, and `gdpr.php` tests.
+- **`enable_ssl_session_check.sql`** — turn on `SESSION_CHECK_SSL_SESSION_ID` for HTTPS tests only (not applied by default import; see [`scripts/https-server.sh`](../../scripts/https-server.sh) or test bootstrap).
 
-Wave 6 part 3: when **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`**, fixture import also runs **`php scripts/apply-payment-sandbox-config.php`** (Stripe test keys from env). See [`documents/payment-sandbox-ci.md`](../../documents/payment-sandbox-ci.md).
-
-This folder also documents **catalog configure** for acceptance tests.
+When **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`**, fixture import also runs **`php scripts/apply-payment-sandbox-config.php`** (Stripe test keys from env). See [`documents/payment-sandbox.md`](../../documents/payment-sandbox.md).
 
 ## `includes/local/configure.php`
 
@@ -28,4 +27,4 @@ bash scripts/http-server.sh
 
 `composer cloud-test` drops and re-imports `phoenix_test` on each run so warm Cloud VMs stay aligned with the committed seeds. It also applies default `PHOENIX_HTTP_*` values when an older `.cursor/cloud.env` omits them. When **`PHOENIX_BROWSER_ENABLED=1`** (default after cloud install), it runs **`composer test:browser`** after PHPUnit.
 
-See [`documents/wave-4-design-brief.md`](../../documents/wave-4-design-brief.md), [`documents/wave-5-design-brief.md`](../../documents/wave-5-design-brief.md), and [`documents/wave-7-design-brief.md`](../../documents/wave-7-design-brief.md).
+See [`documents/http-tests.md`](../../documents/http-tests.md), [`documents/browser-tests.md`](../../documents/browser-tests.md), and [`documents/https-tests.md`](../../documents/https-tests.md).

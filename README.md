@@ -25,7 +25,7 @@ export PHOENIX_CART_ROOT=/path/to/PhoenixCart
 composer test
 ```
 
-### Integration (wave 3 / MySQL)
+### Integration (MySQL)
 
 ```bash
 docker compose -f docker-compose.mysql.yml up -d
@@ -39,9 +39,9 @@ export PHOENIX_DB_PASSWORD=phoenix
 composer test:mysql
 ```
 
-See [`fixtures/README.md`](fixtures/README.md) and [`documents/wave-3-design-brief.md`](documents/wave-3-design-brief.md).
+See [`fixtures/README.md`](fixtures/README.md) and [`documents/integration-tests.md`](documents/integration-tests.md).
 
-### HTTP (wave 4)
+### HTTP
 
 ```bash
 bash fixtures/import-mysql-fixtures.sh
@@ -55,9 +55,9 @@ export PHOENIX_DB_PASSWORD=phoenix
 composer test:http
 ```
 
-See [`documents/wave-4-design-brief.md`](documents/wave-4-design-brief.md).
+See [`documents/http-tests.md`](documents/http-tests.md).
 
-### Browser (wave 5)
+### Browser
 
 ```bash
 bash fixtures/import-mysql-fixtures.sh
@@ -68,11 +68,11 @@ npx playwright install chromium
 composer test:browser
 ```
 
-See [`documents/wave-5-design-brief.md`](documents/wave-5-design-brief.md).
+See [`documents/browser-tests.md`](documents/browser-tests.md).
 
-### Release hardening (wave 6)
+### Release certification and optional checks
 
-Timed homepage check runs with **`composer test:http`**. Carousel screenshots with **`composer test:browser`**. Payment sandbox with **`composer test:payment-sandbox`** (secrets). Release certification with **`composer release-certify`**. See [`documents/wave-6-design-brief.md`](documents/wave-6-design-brief.md).
+Timed homepage check runs with **`composer test:http`**. Carousel screenshots with **`composer test:browser`**. Payment sandbox with **`composer test:payment-sandbox`** (secrets). Release certification with **`composer release-certify`**. See [`documents/README.md`](documents/README.md).
 
 ## Layout
 
@@ -81,13 +81,13 @@ Timed homepage check runs with **`composer test:http`**. Carousel screenshots wi
 | `tests/bootstrap.php` | Locates catalog root, registers `catalog_autoloader` |
 | `tests/support/phoenix_test_case.php` | Base test case |
 | `tests/support/mysql_test_case.php` | Integration base (real `Database`, T1 bootstrap) |
-| `tests/support/mock_catalog_database.php` | In-memory `$db` double for wave 2b |
+| `tests/support/mock_catalog_database.php` | In-memory `$db` double for `#[Group('mockdb')]` unit tests |
 | `tests/unit/` | Unit and mock-db tests |
 | `tests/integration/` | `@group mysql` tests against fixture SQL |
 | `tests/http/` | `@group http` acceptance tests (running shop + DB) |
-| `tests/browser/` | Playwright specs (wave 5) |
+| `tests/browser/` | Playwright specs |
 | `playwright.config.ts` | Playwright config |
-| `scripts/http-server.sh` | PHP built-in server for wave 4 |
+| `scripts/http-server.sh` | PHP built-in server for HTTP acceptance |
 | `fixtures/phoenix.sql` | Vendored CE install schema + seed |
 | `fixtures/phoenix_data_sample.sql` | Vendored CE sample catalog (import after `phoenix.sql`) |
 

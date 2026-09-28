@@ -24,6 +24,7 @@
         "test:stack": "phpunit --testsuite stack",
         "test:browser": "npx playwright test",
         "test:payment-sandbox": "phpunit --group payment_sandbox",
+        "test:installer": "bash scripts/run-installer-tests.sh",
         "cloud-test": "bash .cursor/scripts/cloud-test.sh",
         "release-certify": "bash scripts/release-certification.sh"
     },
