@@ -78,13 +78,13 @@ final class installer_bootstrap
     {
         $inner = HttpClient::create([
             'base_uri' => self::base_url(),
-            'max_redirects' => $max_redirects,
+            'max_redirects' => 0,
             'headers' => [
                 'User-Agent' => 'phoenix-cart-tests-installer/1.0',
             ],
         ]);
 
-        return new cookie_jar_http_client($inner);
+        return new cookie_jar_http_client($inner, $max_redirects);
     }
 
     public static function prepare_catalog(): void
@@ -128,28 +128,41 @@ final class installer_bootstrap
     public static function reset_installer_database(): void
     {
         $name = self::installer_db_name();
-        $mysqli = new \mysqli(
-            self::db_host(),
-            self::db_user(),
-            self::db_password(),
-            '',
-            (int) self::db_port()
-        );
+        $host = self::db_host();
+        $port = (int) self::db_port();
+        $escaped = str_replace('`', '``', $name);
 
-        if ($mysqli->connect_errno) {
-            throw new \RuntimeException('MySQL connection failed: ' . $mysqli->connect_error);
+        $credentials = [
+            ['root', (string) (getenv('PHOENIX_MYSQL_ROOT_PASSWORD') ?: '')],
+            [self::db_user(), self::db_password()],
+        ];
+
+        $last_error = 'MySQL connection failed';
+        foreach ($credentials as [$user, $password]) {
+            $mysqli = new \mysqli($host, $user, $password, '', $port);
+            if ($mysqli->connect_errno) {
+                $last_error = $mysqli->connect_error;
+                continue;
+            }
+
+            if (!$mysqli->query("DROP DATABASE IF EXISTS `{$escaped}`")) {
+                $last_error = 'DROP DATABASE failed: ' . $mysqli->error;
+                $mysqli->close();
+                continue;
+            }
+
+            if (!$mysqli->query("CREATE DATABASE `{$escaped}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")) {
+                $last_error = 'CREATE DATABASE failed: ' . $mysqli->error;
+                $mysqli->close();
+                continue;
+            }
+
+            $mysqli->close();
+
+            return;
         }
 
-        $escaped = $mysqli->real_escape_string($name);
-        if (!$mysqli->query("DROP DATABASE IF EXISTS `{$escaped}`")) {
-            throw new \RuntimeException('DROP DATABASE failed: ' . $mysqli->error);
-        }
-
-        if (!$mysqli->query("CREATE DATABASE `{$escaped}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")) {
-            throw new \RuntimeException('CREATE DATABASE failed: ' . $mysqli->error);
-        }
-
-        $mysqli->close();
+        throw new \RuntimeException($last_error);
     }
 
     public static function catalog_filesystem_root(): string

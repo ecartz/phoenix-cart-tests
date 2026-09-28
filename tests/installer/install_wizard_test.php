@@ -121,7 +121,10 @@ final class install_wizard_test extends install_test_case
             ],
         ]);
         $this->assertContains($admin_login->getStatusCode(), [200, 302]);
-        $admin_final_url = (string) ($admin_login->getInfo('url') ?? '');
-        $this->assertStringNotContainsString('login.php', $admin_final_url);
+
+        $admin_home = $this->get_http()->request('GET', '/admin/index.php');
+        $this->assertSame(200, $admin_home->getStatusCode());
+        $admin_home_url = (string) ($admin_home->getInfo('url') ?? '');
+        $this->assertStringNotContainsString('login.php', $admin_home_url);
     }
 }

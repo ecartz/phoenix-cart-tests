@@ -26,4 +26,9 @@ SQL
 
 bash fixtures/import-mysql-fixtures.sh
 
+# Prefer image Node 24 over older nvm shims when both exist on warm Cloud VMs.
+if [[ -x /usr/bin/node && -d /usr/lib/node_modules/npm ]]; then
+  export PATH="/usr/bin:${PATH}"
+fi
+
 exec bash scripts/full-stack-test.sh

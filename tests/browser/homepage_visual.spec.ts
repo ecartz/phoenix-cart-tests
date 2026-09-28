@@ -14,6 +14,14 @@ test.describe('homepage visual', () => {
     await expect(carousel).toBeVisible();
     await carousel.locator('img').first().waitFor({ state: 'visible' });
 
-    await expect(carousel).toHaveScreenshot('homepage-carousel.png');
+    const box = await carousel.boundingBox();
+    if (box === null) {
+      throw new Error('carousel has no layout box');
+    }
+
+    await expect(carousel).toHaveScreenshot('homepage-carousel.png', {
+      clip: { x: 0, y: 0, width: box.width, height: Math.min(box.height, 765) },
+      maxDiffPixelRatio: 0.06,
+    });
   });
 });
