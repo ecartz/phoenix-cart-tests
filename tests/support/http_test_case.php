@@ -81,6 +81,14 @@ abstract class http_test_case extends phoenix_test_case
 
         $status = $response->getStatusCode();
         $this->assertContains($status, [200, 302], 'login POST should succeed or redirect');
+
+        $account_probe = $this->get_http()->request('GET', '/account.php');
+        $account_body = $account_probe->getContent(false);
+        $this->assertStringContainsString(
+            'cm-account-title',
+            $account_body,
+            'fixture customer login must reach account dashboard'
+        );
     }
 
     protected static function parse_hidden_input(string $html, string $name): string

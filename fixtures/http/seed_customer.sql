@@ -26,7 +26,7 @@ INSERT INTO customers (
   1,
   '555-0100',
   NULL,
-  '$2y$12$i9X1DLk.IWgBNgJNZ/CoOO3y1d1iPZwHzrRnhLsJoU2sAsWMPiZvS',
+  '$2y$12$aFtprFTlzb15.1YH1kSqzu49zsgUhur0GW9csi9UxTT2iHOSMjYw.',
   '0',
   1
 );

@@ -36,6 +36,12 @@ Commit with message: `Fixture from CE tag <tag>`.
 
 ## Import (local or CI)
 
+On a **non-empty** database, `import-mysql-fixtures.sh` can fail or leave partial data. Reset first on warm Cloud VMs or repeated local runs:
+
+```bash
+bash scripts/reset-phoenix-test-database.sh
+```
+
 Preferred — base install plus sample catalog:
 
 ```bash
