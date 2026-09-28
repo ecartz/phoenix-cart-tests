@@ -87,13 +87,13 @@ PHP;
     {
         $inner = HttpClient::create([
             'base_uri' => self::base_url(),
-            'max_redirects' => $max_redirects,
+            'max_redirects' => 0,
             'headers' => [
                 'User-Agent' => 'phoenix-cart-tests-http/1.0',
             ],
         ]);
 
-        return new cookie_jar_http_client($inner);
+        return new cookie_jar_http_client($inner, $max_redirects);
     }
 
     private static function env(string $name, string $default): string
