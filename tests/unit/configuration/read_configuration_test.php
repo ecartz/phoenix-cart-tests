@@ -34,4 +34,22 @@ final class read_configuration_test extends phoenix_test_case
         $this->assertSame('header/cm_header_menu;footer/cm_footer_text', MODULE_CONTENT_INSTALLED);
         $this->assertSame('boxes;header_tags', TEMPLATE_BLOCK_GROUPS);
     }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function test_load_skips_constants_already_defined_in_process(): void
+    {
+        define('STORE_NAME', 'Acme Shop');
+
+        $rows = [
+            [
+                'configuration_key' => 'STORE_NAME',
+                'configuration_value' => 'Fixture Shop',
+            ],
+        ];
+
+        configuration_test_helper::load_from_configuration_rows($rows, new mock_catalog_database($rows));
+
+        $this->assertSame('Acme Shop', STORE_NAME);
+    }
 }

@@ -6,6 +6,8 @@ namespace PhoenixCart\Tests\unit\content;
 
 use cm_footer_contact_us;
 use PhoenixCart\Tests\support\content_module_test_case;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 final class cm_footer_contact_us_test extends content_module_test_case
 {
@@ -30,6 +32,8 @@ final class cm_footer_contact_us_test extends content_module_test_case
         ]);
     }
 
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
     public function test_execute_buffers_contact_block_into_footer_group(): void
     {
         $this->execute_module(cm_footer_contact_us::class);

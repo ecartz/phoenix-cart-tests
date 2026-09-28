@@ -37,7 +37,7 @@ final class mysql_database_helper
         $db = self::connection();
 
         if (!self::$bootstrapped) {
-            require DIR_FS_CATALOG . 'includes/system/segments/application/read_configuration.php';
+            read_configuration_loader::load_from_global_database();
             mysql_bootstrap::define_catalog_language_constants();
             self::$bootstrapped = true;
         }

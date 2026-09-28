@@ -23,7 +23,7 @@ final class configuration_test_helper
         $database->install_as_global();
         $db = $database;
 
-        require DIR_FS_CATALOG . 'includes/system/segments/application/read_configuration.php';
+        read_configuration_loader::load_from_global_database();
 
         return $database;
     }

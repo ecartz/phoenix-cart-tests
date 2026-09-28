@@ -6,6 +6,8 @@ namespace PhoenixCart\Tests\unit\content;
 
 use cm_i_title;
 use PhoenixCart\Tests\support\content_module_test_case;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 final class cm_i_title_test extends content_module_test_case
 {
@@ -21,6 +23,8 @@ final class cm_i_title_test extends content_module_test_case
         ]);
     }
 
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
     public function test_execute_buffers_store_welcome_into_index_group(): void
     {
         $this->execute_module(cm_i_title::class);
