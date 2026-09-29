@@ -1,7 +1,7 @@
 FROM ubuntu:24.04
 
 # Bump when cloud image must rebuild (Cursor keys Dockerfile content).
-ARG PHOENIX_CLOUD_ENV_REVISION=2026-09-28-cloud-install-harness
+ARG PHOENIX_CLOUD_ENV_REVISION=2026-09-29-php-curl
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mariadb-server \
     openssl \
     php-cli \
+    php-curl \
     php-mbstring \
     php-mysql \
     php-xml \

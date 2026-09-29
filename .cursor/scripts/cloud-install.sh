@@ -48,6 +48,12 @@ if ! command -v apache2ctl >/dev/null 2>&1 && ! command -v apachectl >/dev/null 
   a2enmod php8.3
 fi
 
+if ! php -r 'exit(extension_loaded("curl") ? 0 : 1);'; then
+  echo "Installing php-curl for Phoenix admin HTTP helpers (image rebuild pending)." >&2
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends php-curl
+fi
+
 mkdir -p /run/lock/apache2 /var/run/apache2 2>/dev/null || true
 
 ENV_FILE="$ROOT/.cursor/cloud.env"

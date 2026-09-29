@@ -39,7 +39,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, xml, mysqli
+          extensions: mbstring, xml, mysqli, curl
           coverage: none
 
       - name: Set up Node
