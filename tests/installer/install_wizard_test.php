@@ -106,15 +106,17 @@ final class install_wizard_test extends install_test_case
         $this->assertSame(200, $category->getStatusCode());
         $this->assertStringContainsString('Citrus Fruit', $category->getContent(false));
 
-        $admin_login_page = $this->get_http()->request('GET', '/admin/login.php');
+        $admin_http = installer_bootstrap::client();
+
+        $admin_login_page = $admin_http->request('GET', '/admin/login.php');
         $this->assertSame(200, $admin_login_page->getStatusCode());
         $admin_html = $admin_login_page->getContent(false);
         $formid = self::parse_hidden_input($admin_html, 'formid');
         $this->assertNotSame('', $formid);
 
-        $admin_login = $this->get_http()->request('POST', '/admin/login.php', [
+        $admin_login = $admin_http->request('POST', '/admin/login.php', [
+            'query' => ['action' => 'process'],
             'body' => [
-                'action' => 'process',
                 'formid' => $formid,
                 'username' => self::ADMIN_USERNAME,
                 'password' => self::ADMIN_PASSWORD,
@@ -122,9 +124,10 @@ final class install_wizard_test extends install_test_case
         ]);
         $this->assertContains($admin_login->getStatusCode(), [200, 302]);
 
-        $admin_home = $this->get_http()->request('GET', '/admin/index.php');
+        $admin_home = $admin_http->request('GET', '/admin/index.php');
         $this->assertSame(200, $admin_home->getStatusCode());
         $admin_home_url = (string) ($admin_home->getInfo('url') ?? '');
         $this->assertStringNotContainsString('login.php', $admin_home_url);
+        $this->assertStringContainsString('display-4', $admin_home->getContent(false));
     }
 }

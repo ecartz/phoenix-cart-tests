@@ -128,17 +128,16 @@ final class installer_bootstrap
     public static function reset_installer_database(): void
     {
         $name = self::installer_db_name();
-        $host = self::db_host();
         $port = (int) self::db_port();
         $escaped = str_replace('`', '``', $name);
 
         $credentials = [
-            ['root', (string) (getenv('PHOENIX_MYSQL_ROOT_PASSWORD') ?: '')],
-            [self::db_user(), self::db_password()],
+            ['localhost', 'root', (string) (getenv('PHOENIX_MYSQL_ROOT_PASSWORD') ?: '')],
+            [self::db_host(), self::db_user(), self::db_password()],
         ];
 
         $last_error = 'MySQL connection failed';
-        foreach ($credentials as [$user, $password]) {
+        foreach ($credentials as [$host, $user, $password]) {
             $mysqli = new \mysqli($host, $user, $password, '', $port);
             if ($mysqli->connect_errno) {
                 $last_error = $mysqli->connect_error;

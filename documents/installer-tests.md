@@ -16,7 +16,7 @@ The installer suite is **not** part of **`composer test:stack`**, **`composer cl
 ## Prerequisites
 
 - Cloned catalog at **`PHOENIX_CART_ROOT`** (default `./PhoenixCart`)
-- MySQL/MariaDB credentials (**`PHOENIX_DB_*`**) with permission to `CREATE DATABASE`
+- MySQL/MariaDB credentials (**`PHOENIX_DB_*`**) with permission to `CREATE DATABASE`, or local **`mysql -u root`** socket access for **`scripts/reset-installer-database.sh`** (MariaDB rejects TCP `root@127.0.0.1` when `unix_socket` auth is enabled)
 - Bash (for **`scripts/run-installer-tests.sh`**)
 
 ## Environment
