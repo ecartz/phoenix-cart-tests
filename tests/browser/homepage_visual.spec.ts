@@ -14,8 +14,12 @@ test.describe('homepage visual', () => {
     await expect(carousel).toBeVisible();
     await carousel.locator('img').first().waitFor({ state: 'visible' });
 
+    await carousel.evaluate((element) => {
+      element.style.maxHeight = '765px';
+      element.style.overflow = 'hidden';
+    });
+
     await expect(carousel).toHaveScreenshot('homepage-carousel.png', {
-      clip: { x: 0, y: 0, width: 1116, height: 765 },
       maxDiffPixelRatio: 0.06,
     });
   });

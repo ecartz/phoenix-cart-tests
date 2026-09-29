@@ -138,7 +138,13 @@ final class installer_bootstrap
 
         $last_error = 'MySQL connection failed';
         foreach ($credentials as [$host, $user, $password]) {
-            $mysqli = new \mysqli($host, $user, $password, '', $port);
+            try {
+                $mysqli = new \mysqli($host, $user, $password, '', $port);
+            } catch (\mysqli_sql_exception $exception) {
+                $last_error = $exception->getMessage();
+                continue;
+            }
+
             if ($mysqli->connect_errno) {
                 $last_error = $mysqli->connect_error;
                 continue;
@@ -161,7 +167,22 @@ final class installer_bootstrap
             return;
         }
 
-        throw new \RuntimeException($last_error);
+        self::reset_installer_database_via_shell($last_error);
+    }
+
+    private static function reset_installer_database_via_shell(string $prior_error): void
+    {
+        $script = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'reset-installer-database.sh';
+        if (!is_file($script)) {
+            throw new \RuntimeException($prior_error);
+        }
+
+        $command = 'bash ' . escapeshellarg($script);
+        exec($command, $output, $exit_code);
+        if ($exit_code !== 0) {
+            $detail = $output !== [] ? implode("\n", $output) : $prior_error;
+            throw new \RuntimeException('reset-installer-database.sh failed: ' . $detail);
+        }
     }
 
     public static function catalog_filesystem_root(): string
