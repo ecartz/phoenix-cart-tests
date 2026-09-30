@@ -93,3 +93,58 @@ jobs:
           PHOENIX_HTTPS_ENABLED: '1'
           PHOENIX_HTTPS_BASE_URL: https://127.0.0.1:8443
         run: bash scripts/full-stack-test.sh
+
+  installer:
+    name: Installer and admin (PHP 8.4)
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: phoenix_test
+          MYSQL_USER: phoenix
+          MYSQL_PASSWORD: phoenix
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out test repo
+        uses: actions/checkout@v5
+
+      - name: Verify shell scripts are executable in git
+        run: bash scripts/verify-shell-script-modes.sh
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, mysqli, curl
+          coverage: none
+
+      - name: Install OS packages
+        run: sudo apt-get update && sudo apt-get install -y mariadb-client
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Clone CE PhoenixCart at pinned ref
+        run: bash scripts/clone-catalog.sh
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+
+      - name: Run installer tests
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+          PHOENIX_MYSQL_ROOT_PASSWORD: root
+        run: composer test:installer

@@ -20,11 +20,13 @@ abstract class install_test_case extends phoenix_test_case
             );
         }
 
-        if (!is_dir(installer_bootstrap::catalog_copy_root() . DIRECTORY_SEPARATOR . 'install')) {
+        if (!is_dir(installer_bootstrap::catalog_copy_root())) {
             throw new \RuntimeException(
                 'Installer catalog missing at ' . installer_bootstrap::catalog_copy_root() . '. Run scripts/prepare-installer-catalog.sh first.'
             );
         }
+
+        installer_bootstrap::ensure_install_directory();
 
         installer_bootstrap::reset_installer_database();
 
@@ -45,12 +47,6 @@ abstract class install_test_case extends phoenix_test_case
         }
     }
 
-    public static function tearDownAfterClass(): void
-    {
-        installer_bootstrap::cleanup_catalog();
-        parent::tearDownAfterClass();
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -60,6 +56,42 @@ abstract class install_test_case extends phoenix_test_case
     protected function get_http(): HttpClientInterface
     {
         return $this->http;
+    }
+
+    protected function login_installed_admin(): HttpClientInterface
+    {
+        $admin_http = installer_bootstrap::client();
+
+        $admin_login_page = $admin_http->request('GET', '/admin/login.php');
+        $this->assertSame(200, $admin_login_page->getStatusCode());
+        $admin_html = $admin_login_page->getContent(false);
+        $formid = self::parse_hidden_input($admin_html, 'formid');
+        $this->assertNotSame('', $formid);
+
+        $admin_login = $admin_http->request('POST', '/admin/login.php', [
+            'query' => ['action' => 'process'],
+            'body' => [
+                'formid' => $formid,
+                'username' => installer_wizard::ADMIN_USERNAME,
+                'password' => installer_wizard::ADMIN_PASSWORD,
+            ],
+        ]);
+        $this->assertContains($admin_login->getStatusCode(), [200, 302]);
+
+        return $admin_http;
+    }
+
+    protected function assert_admin_get_page(
+        HttpClientInterface $admin_http,
+        string $path,
+        array $query,
+        string $body_contains,
+    ): void {
+        $response = $admin_http->request('GET', $path, ['query' => $query]);
+        $this->assertSame(200, $response->getStatusCode());
+        $final_url = (string) ($response->getInfo('url') ?? '');
+        $this->assertStringNotContainsString('login.php', $final_url);
+        $this->assertStringContainsString($body_contains, $response->getContent(false));
     }
 
     protected static function parse_hidden_input(string $html, string $name): string

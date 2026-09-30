@@ -60,7 +60,9 @@ composer install
 composer test
 ```
 
-Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. Cloud: `composer cloud-test` runs **`composer test:stack`**, optional **`composer test:browser`**, then **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/integration-tests.md`](documents/integration-tests.md).
+Integration (MySQL): `bash fixtures/import-mysql-fixtures.sh`, set `PHOENIX_MYSQL_ENABLED=1` and `PHOENIX_DB_*`, then `composer test:mysql`. GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml) runs **`composer test:stack`** (plus browser/HTTPS) in **`full-stack`** and **`composer test:installer`** in a parallel **`installer`** job (`PHOENIX_MYSQL_ROOT_PASSWORD=root` for TCP database reset). Cloud: `composer cloud-test` runs **`composer test:stack`**, optional **`composer test:browser`**, then **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** in **`.cursor/cloud.env`**. After changing [`.cursor/Dockerfile`](.cursor/Dockerfile), bump `PHOENIX_CLOUD_ENV_REVISION` and start a fresh Cloud environment so the image includes Apache; [`cloud-install.sh`](.cursor/scripts/cloud-install.sh) can still `apt install` Apache on warm VMs until rebuild. See [`documents/integration-tests.md`](documents/integration-tests.md).
+
+Installer: **`composer test:installer`** (wizard + admin HTTP on disposable catalog, port 8766). See [`documents/installer-tests.md`](documents/installer-tests.md).
 
 HTTP: after fixtures + `bash scripts/http-server.sh`, set `PHOENIX_HTTP_ENABLED=1` and `PHOENIX_HTTP_BASE_URL`, then `composer test:http`. See [`documents/http-tests.md`](documents/http-tests.md).
 
