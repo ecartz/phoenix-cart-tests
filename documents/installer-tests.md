@@ -74,7 +74,45 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/modules.php?set=order_total`** — sub-total order-total module
 - **`advert_manager.php?action=set_flag`** — toggles the sample carousel advert inactive and back (GET, includes `formid` as in the admin UI)
 
-Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (five classes → five installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
+[`admin_tools_test.php`](../tests/installer/admin_tools_test.php) covers admin tools, layout, hooks, and navbar modules, plus a reversible info-page status toggle:
+
+- **`/admin/database_tables.php`**, **`/admin/server_info.php`**, **`/admin/security_checks.php`**, **`/admin/templates.php`**
+- **`/admin/language_explorer.php`**, **`/admin/modules_hooks.php`**, **`/admin/sec_dir_permissions.php`**
+- **`/admin/modules.php?set=navbar_modules`** — shopping-cart navbar module
+- **`info_pages.php?action=set_flag`** — enables a sample info page, then restores inactive status (GET, includes `formid` as in the admin UI)
+
+[`admin_reports_test.php`](../tests/installer/admin_reports_test.php) covers reports, managers, and remaining module sets, plus a reversible testimonials status toggle:
+
+- **`/admin/stats_products_purchased.php`**, **`/admin/stats_customers.php`**, **`/admin/whos_online.php`**
+- **`/admin/action_recorder.php`**, **`/admin/store_logo.php`**, **`/admin/newsletters.php`**
+- **`/admin/modules.php?set=content`**, **`/admin/modules.php?set=header_tags`**, **`/admin/modules.php?set=dashboard`**, **`/admin/modules.php?set=customer_data`**
+- **`testimonials.php?action=set_flag`** — toggles the sample testimonial inactive and back (GET, as in the admin UI)
+
+[`admin_remaining_test.php`](../tests/installer/admin_remaining_test.php) covers the remaining read-only admin pages and module sets not opened in the reports class:
+
+- **`/admin/modules.php?set=action_recorder`** — `ar_admin_login` action-recorder module
+- **`/admin/modules.php?set=notifications`** — Checkout notification module
+- **`/admin/pulse_analytics.php`** — Pulse analytics
+- **`/admin/modules_actions.php`** — Actions module set
+- **`/admin/importers.php`** — Importers list (empty table is valid)
+
+[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, `buy_now` product **Pears**, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, and **`/admin/invoice.php`** and **`/admin/packingslip.php`** with that order’s **`oID`** show **Pears** and the customer name.
+
+[`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
+
+- **`reviews.php?action=set_flag`** — disables the sample review and restores active status
+- **`newsletters.php?action=insert`** — draft **`newsletter`** module row, then **`delete_confirm`** (no send)
+- **`modules.php?set=boxes`** — install **`bm_categories`** from **`list=new`**, then remove
+- **`configuration.php?gID=3`** — **`MAX_ADDRESS_BOOK_ENTRIES`** `5` → `6` → `5`
+
+[`admin_side_effect_test.php`](../tests/installer/admin_side_effect_test.php) loads side-effect admin tool pages with GET only (no mail send, backup dump, or mutating commands):
+
+- **`/admin/version_check.php`** — page-load smoke (`Version Checker` heading). Does **not** assert RSS upgrade text (feed-dependent).
+- **`/admin/mail.php`** — compose form only
+- **`/admin/backup.php`** — backup manager list only
+- **`/admin/command_runner.php?cmd=help`** — available-commands list only (not `verb subject` execution)
+
+Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (eleven classes → eleven installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
 
 Step 1’s browser `fetch` calls are exercised directly via HttpClient (no Playwright). **`rpc.php` passes the database password in the query string** — do not log request URLs.
 
