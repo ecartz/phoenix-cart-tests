@@ -9,9 +9,9 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_cod_test extends http_test_case
+final class checkout_moneyorder_test extends http_test_case
 {
-    public function test_logged_in_customer_completes_checkout_with_cod(): void
+    public function test_logged_in_customer_completes_checkout_with_money_order(): void
     {
         $this->login_fixture_customer();
 
@@ -40,7 +40,7 @@ final class checkout_cod_test extends http_test_case
         ]);
         $this->assertSame(200, $payment_page->getStatusCode());
         $payment_html = $payment_page->getContent(false);
-        $this->assertStringContainsString('Cash on Delivery', $payment_html);
+        $this->assertStringContainsString('Check/Money Order', $payment_html);
 
         $payment_formid = self::parse_hidden_input($payment_html, 'formid');
         $this->assertNotSame('', $payment_formid);
@@ -48,13 +48,14 @@ final class checkout_cod_test extends http_test_case
         $confirmation_page = $this->get_http()->request('POST', '/checkout_confirmation.php', [
             'body' => [
                 'formid' => $payment_formid,
-                'payment' => 'cod',
+                'payment' => 'moneyorder',
             ],
         ]);
         $this->assertSame(200, $confirmation_page->getStatusCode());
         $confirmation_html = $confirmation_page->getContent(false);
         $this->assertStringContainsString('Pears', $confirmation_html);
-        $this->assertStringContainsString('Cash on Delivery', $confirmation_html);
+        $this->assertStringContainsString('Check/Money Order', $confirmation_html);
+        $this->assertStringContainsString('Your Store', $confirmation_html);
 
         $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
         $this->assertNotSame('', $confirm_formid);
@@ -72,14 +73,8 @@ final class checkout_cod_test extends http_test_case
         $this->assertStringContainsString('cm-cs-thank-you', $success_body);
 
         $this->assertSame(
-            'Cash on Delivery',
+            'Check/Money Order',
             http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
         );
-
-        $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
-        $tax_row = http_orders_lookup::ot_tax_row_for_order($orders_id);
-        $this->assertNotNull($tax_row);
-        $this->assertGreaterThan(0.0, $tax_row['value']);
-        $this->assertStringContainsString('FL TAX', $tax_row['text']);
     }
 }

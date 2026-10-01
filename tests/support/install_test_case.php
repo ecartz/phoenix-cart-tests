@@ -108,4 +108,28 @@ abstract class install_test_case extends phoenix_test_case
 
         return '';
     }
+
+    protected function require_installer_mail_capture(): void
+    {
+        if (!installer_mail_capture::is_enabled()) {
+            $this->markTestSkipped(
+                'Installer mail capture is disabled. Run composer test:installer (or scripts/installer-server.sh with sendmail_path) on Linux.'
+            );
+        }
+    }
+
+    protected function clear_captured_mail(): void
+    {
+        installer_mail_capture::clear();
+    }
+
+    protected function assert_captured_mail_contains(string $needle): void
+    {
+        $body = installer_mail_capture::read_combined();
+        $this->assertStringContainsString(
+            $needle,
+            $body,
+            'Expected captured installer mail to contain: ' . $needle,
+        );
+    }
 }

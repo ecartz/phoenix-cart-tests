@@ -9,11 +9,12 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_cod_test extends http_test_case
+final class checkout_new_account_test extends http_test_case
 {
-    public function test_logged_in_customer_completes_checkout_with_cod(): void
+    public function test_logged_out_checkout_creates_account_and_completes_cod(): void
     {
-        $this->login_fixture_customer();
+        $email = 'phoenix-http-new-checkout-' . uniqid('', true) . '@example.com';
+        $password = 'phoenix-test';
 
         $this->get_http()->request('GET', '/index.php', [
             'query' => [
@@ -22,11 +23,37 @@ final class checkout_cod_test extends http_test_case
             ],
         ]);
 
+        $shipping_entry = $this->get_http()->request('GET', '/checkout_shipping.php');
+        $entry_url = (string) ($shipping_entry->getInfo('url') ?? '');
+        $this->assertStringContainsString('create_account.php', $entry_url);
+
+        $create_html = $shipping_entry->getContent(false);
+        $create_formid = self::parse_hidden_input($create_html, 'formid');
+        $this->assertNotSame('', $create_formid);
+
+        $registered = $this->get_http()->request('POST', '/create_account.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $create_formid,
+                'firstname' => 'Checkout',
+                'lastname' => 'Newbie',
+                'email_address' => $email,
+                'password' => $password,
+                'street_address' => '1 Test Street',
+                'city' => 'Testville',
+                'postcode' => '90210',
+                'country_id' => '223',
+                'state' => 'Florida',
+                'telephone' => '555-0100',
+                'newsletter' => '1',
+                'matc' => '1',
+            ],
+        ]);
+        $this->assertContains($registered->getStatusCode(), [200, 302]);
+
         $shipping_page = $this->get_http()->request('GET', '/checkout_shipping.php');
         $this->assertSame(200, $shipping_page->getStatusCode());
         $shipping_html = $shipping_page->getContent(false);
-        $this->assertStringContainsString('Fixture', $shipping_html);
-        $this->assertStringContainsString('Flat Rate', $shipping_html);
 
         $shipping_formid = self::parse_hidden_input($shipping_html, 'formid');
         $this->assertNotSame('', $shipping_formid);
@@ -53,9 +80,6 @@ final class checkout_cod_test extends http_test_case
         ]);
         $this->assertSame(200, $confirmation_page->getStatusCode());
         $confirmation_html = $confirmation_page->getContent(false);
-        $this->assertStringContainsString('Pears', $confirmation_html);
-        $this->assertStringContainsString('Cash on Delivery', $confirmation_html);
-
         $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
         $this->assertNotSame('', $confirm_formid);
 
@@ -68,18 +92,9 @@ final class checkout_cod_test extends http_test_case
         $final_url = (string) ($success->getInfo('url') ?? '');
         $this->assertStringContainsString('checkout_success.php', $final_url);
 
-        $success_body = $success->getContent(false);
-        $this->assertStringContainsString('cm-cs-thank-you', $success_body);
-
         $this->assertSame(
             'Cash on Delivery',
-            http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
+            http_orders_lookup::latest_payment_method_for_email($email)
         );
-
-        $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
-        $tax_row = http_orders_lookup::ot_tax_row_for_order($orders_id);
-        $this->assertNotNull($tax_row);
-        $this->assertGreaterThan(0.0, $tax_row['value']);
-        $this->assertStringContainsString('FL TAX', $tax_row['text']);
     }
 }

@@ -29,6 +29,8 @@ The installer suite is **not** part of **`composer test:stack`** or **`composer 
 | **`PHOENIX_INSTALLER_DB_NAME`** | `phoenix_install` | Empty database created/dropped per run |
 | **`PHOENIX_DB_HOST`**, **`PHOENIX_DB_USER`**, **`PHOENIX_DB_PASSWORD`**, **`PHOENIX_DB_PORT`** | same as integration | Server credentials for `rpc.php` and step 4 |
 | **`PHOENIX_MYSQL_ROOT_PASSWORD`** | (unset) | When set, **`reset-installer-database.sh`** and PHP reset use TCP **`root`** and grant **`phoenix@%`** (GitHub Actions); when unset, socket **`root`** and **`phoenix@localhost`** (Cloud/local MariaDB) |
+| **`PHOENIX_INSTALLER_MAIL_CAPTURE`** | (unset) | Set to **`1`** by **`scripts/run-installer-tests.sh`** / **`scripts/installer-server.sh`** so **`admin_mail_test.php`** can assert captured messages (Linux **`sendmail_path`**) |
+| **`PHOENIX_INSTALLER_MAIL_DIR`** | `working/installer-mail` | Directory where [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) writes captured **`mail()`** output (gitignored) |
 
 ## Manual run
 
@@ -105,14 +107,62 @@ vendor/bin/phpunit --testsuite installer
 - **`modules.php?set=boxes`** — install **`bm_categories`** from **`list=new`**, then remove
 - **`configuration.php?gID=3`** — **`MAX_ADDRESS_BOOK_ENTRIES`** `5` → `6` → `5`
 
-[`admin_side_effect_test.php`](../tests/installer/admin_side_effect_test.php) loads side-effect admin tool pages with GET only (no mail send, backup dump, or mutating commands):
+[`admin_side_effect_test.php`](../tests/installer/admin_side_effect_test.php) exercises side-effect admin tools (no mail send, backup restore, or `command_runner` execution):
 
-- **`/admin/version_check.php`** — page-load smoke (`Version Checker` heading). Does **not** assert RSS upgrade text (feed-dependent).
+- **`/admin/version_check.php`** — `Version Checker` heading plus one live-feed outcome: latest Phoenix, an upgrade-available line (`is the latest version available.`), or server failure to load versions (CI may be offline).
 - **`/admin/mail.php`** — compose form only
-- **`/admin/backup.php`** — backup manager list only
+- **`/admin/backup.php?action=backup`** — POST **`backup_now`** with `compress=no` (not `download=yes`); asserts the manager list shows a `db_`…`.sql` file. Requires a writable **`DIR_FS_BACKUP`** on the disposable catalog (no restore).
+- **`/admin/backup.php`** — backup manager list smoke (`Database Backup Manager` heading)
 - **`/admin/command_runner.php?cmd=help`** — available-commands list only (not `verb subject` execution)
 
-Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (eleven classes → eleven installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
+[`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
+
+- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid)
+- **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates
+- **`/admin/modules.php?set=layout`** — layout (`&pi;`) modules
+- **`/admin/modules.php?set=currencies`** — **`c_ecb`** update-currency module
+
+[`admin_forms_test.php`](../tests/installer/admin_forms_test.php) exercises admin entity forms on the disposable shop (each flow restores or removes test data):
+
+- **`catalog.php?action=insert_product`** / **`delete_product_confirm`** on `cPath=1` — add **`Phoenix Installer Product`**, then delete from category `1`
+- Storefront register + COD order, then **`customers.php?action=update`** — last name **`CustomerEdited`** → **`Customer`**
+- **`orders.php?action=update_order`** — status **Processing** with a comment, then **Pending** (no **`notify`** / mail)
+
+[`admin_mail_test.php`](../tests/installer/admin_mail_test.php) asserts admin mail is captured under **`working/installer-mail/`** (Linux **`sendmail_path`** on [`scripts/installer-server.sh`](../scripts/installer-server.sh), not delivered to a real inbox):
+
+- **`mail.php`** preview and **`send_email_to_user`** to the registered storefront customer
+- Locked newsletter **`confirm_send`** (customer opted into the newsletter at registration)
+- **`orders.php?action=update_order`** with **`notify=on`** after COD checkout
+
+[`admin_reference_writes_test.php`](../tests/installer/admin_reference_writes_test.php) inserts and deletes localization and catalog metadata rows (each entity uses a unique name, asserts the list, then **`delete_confirm`**):
+
+- **`languages.php`**, **`countries.php`**, **`zones.php`**, **`tax_classes.php`**, **`tax_rates.php`**, **`geo_zones.php`** (`new_zone` / **`insert_zone`** / **`delete_confirm_zone`**), **`currencies.php`**, **`manufacturers.php`**, **`orders_status.php`**
+
+[`admin_content_writes_test.php`](../tests/installer/admin_content_writes_test.php) registers a storefront customer, then inserts and deletes content rows (no outbound mail):
+
+- **`specials.php?action=insert`** on sample product **Pears** with a short expiry
+- **`reviews.php?action=add_new`**, **`testimonials.php?action=add_new`**, **`info_pages.php?action=add_new`**, **`advert_manager.php?action=add_new`** (HTML text advert), **`outgoing_tpl.php?action=insert`**
+
+[`admin_people_test.php`](../tests/installer/admin_people_test.php) covers people and orders:
+
+- **`administrators.php?action=insert`** / **`delete_confirm`**
+- Storefront customer, then **`customers.php?action=delete_confirm`**
+- Second customer with COD checkout, then **`orders.php?action=delete_confirm`**
+
+[`admin_modules_config_test.php`](../tests/installer/admin_modules_config_test.php) installs one module from **`list=new`** per **`modules.php`** set (skips empty sets), removes it, and round-trips one plain **`configuration_value`** key in visible groups **`4`**, **`7`**, **`8`**, **`9`**, **`10`**, **`12`**, **`13`**, **`14`**, **`15`**, and **`16`** (groups **`1`**, **`3`**, hidden **`6`**, and invisible **`11`** are skipped).
+
+[`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php) exercises reversible catalog writes on the disposable shop:
+
+- **`catalog.php?action=insert_category`** / **`delete_category_confirm`** under **`cPath=1`**
+- **`insert_product`**, **`update_product`** (renamed product), **`delete_product_confirm`**
+- **`copy_to_confirm`** with **`copy_as=duplicate`** into the new category (copy deleted afterward)
+- **`move_product_confirm`** into the new category and back to category **`1`**
+
+[`admin_attributes_test.php`](../tests/installer/admin_attributes_test.php) on **`products_attributes.php`** adds an option and value, links them to sample product **Pears** (`products_id=3`) with a **`+`** price prefix, then removes the link, value, and option.
+
+[`admin_store_logo_test.php`](../tests/installer/admin_store_logo_test.php) uploads [`fixtures/installer-store-logo-test.png`](../fixtures/installer-store-logo-test.png) via **`store_logo.php?action=save`**, asserts the storefront references the new file, then re-uploads the backed-up original logo from the disposable catalog copy.
+
+Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-one classes → twenty-one installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
 
 Step 1’s browser `fetch` calls are exercised directly via HttpClient (no Playwright). **`rpc.php` passes the database password in the query string** — do not log request URLs.
 

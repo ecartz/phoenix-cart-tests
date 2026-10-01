@@ -6,6 +6,8 @@ cd "$ROOT"
 
 export PHOENIX_INSTALLER_ENABLED=1
 export PHOENIX_INSTALLER_BASE_URL="${PHOENIX_INSTALLER_BASE_URL:-http://127.0.0.1:8766}"
+export PHOENIX_INSTALLER_MAIL_CAPTURE=1
+export PHOENIX_INSTALLER_MAIL_DIR="${PHOENIX_INSTALLER_MAIL_DIR:-$ROOT/working/installer-mail}"
 
 bash scripts/prepare-installer-catalog.sh
 bash scripts/reset-installer-database.sh

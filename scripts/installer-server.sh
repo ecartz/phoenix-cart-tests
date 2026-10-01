@@ -14,7 +14,12 @@ if [[ ! -f "$PHOENIX_INSTALLER_CATALOG_ROOT/includes/system/autoloader.php" ]]; 
 fi
 
 ROUTER="$ROOT/scripts/php-built-in-router.php"
+CAPTURE_MAIL="$ROOT/scripts/capture-installer-mail.php"
+export PHOENIX_INSTALLER_MAIL_DIR="${PHOENIX_INSTALLER_MAIL_DIR:-$ROOT/working/installer-mail}"
+export PHOENIX_INSTALLER_MAIL_CAPTURE=1
+mkdir -p "$PHOENIX_INSTALLER_MAIL_DIR"
 
 echo "Serving installer catalog at http://${PHOENIX_INSTALLER_HTTP_HOST}:${PHOENIX_INSTALLER_HTTP_PORT}/"
+echo "Installer mail capture: $PHOENIX_INSTALLER_MAIL_DIR"
 cd "$PHOENIX_INSTALLER_CATALOG_ROOT"
-exec php -S "${PHOENIX_INSTALLER_HTTP_HOST}:${PHOENIX_INSTALLER_HTTP_PORT}" -t . "$ROUTER"
+exec php -d "sendmail_path=$CAPTURE_MAIL -t -i" -S "${PHOENIX_INSTALLER_HTTP_HOST}:${PHOENIX_INSTALLER_HTTP_PORT}" -t . "$ROUTER"

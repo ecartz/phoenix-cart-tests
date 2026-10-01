@@ -5,6 +5,8 @@ Additional SQL applied by [`fixtures/import-mysql-fixtures.sh`](import-mysql-fix
 - **`publish_info_pages.sql`** — publish footer slugs so `info.php` serves them (`pages_status=1`).
 - **`enable_session_security_checks.sql`** — turn on `SESSION_CHECK_USER_AGENT` and `SESSION_CHECK_IP_ADDRESS` for Request mismatch HTTP tests (install defaults are `False`).
 - **`seed_customer.sql`** — one fixture customer (`phoenix-http-fixture@example.com` / password `phoenix-test`) for HTTP login, `account.php`, and `gdpr.php` tests.
+- **`http_local_redirect.php`**, **`http_local_redirect.lang.php`**, and **`http_local_redirect_return.php`** — harness payment module and `ext/modules/payment/http_local_redirect/return.php` copied into the catalog only during [`checkout_local_redirect_test.php`](../../tests/http/checkout_local_redirect_test.php) (see [`http_local_redirect_bootstrap.php`](../../tests/support/http_local_redirect_bootstrap.php)).
+- Checkout edge HTTP tests may insert temporary catalog rows (virtual download attribute on product 3, geo zone for COD zone) via [`http_checkout_fixture_sql.php`](../../tests/support/http_checkout_fixture_sql.php); [`http_orders_lookup.php`](../../tests/support/http_orders_lookup.php) reads `orders.payment_method` for assertions.
 - **`enable_ssl_session_check.sql`** — turn on `SESSION_CHECK_SSL_SESSION_ID` for HTTPS tests only (not applied by default import; see [`scripts/https-server.sh`](../../scripts/https-server.sh) or test bootstrap).
 
 When **`PHOENIX_PAYMENT_SANDBOX_ENABLED=1`**, fixture import also runs **`php scripts/apply-payment-sandbox-config.php`** (Stripe test keys from env). See [`documents/payment-sandbox.md`](../../documents/payment-sandbox.md).

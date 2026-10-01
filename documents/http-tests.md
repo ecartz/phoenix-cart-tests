@@ -36,8 +36,24 @@ Unset **`PHOENIX_HTTP_ENABLED`** and the Http suite skips (same pattern as **`PH
 Examples in this suite:
 
 - Homepage and category/product GET (`index_smoke_test`, `product_info_test`, `category_listing_test`)
-- Cart session via `buy_now` and `shopping_cart.php` (`shopping_cart_test`)
-- Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql))
+- Cart session via `buy_now`, quantity updates, line removal, and a non-download attribute line (`shopping_cart_test`)
+- Logged-in account pages, profile edit, and logoff redirect (`account_pages_test`)
+- Address book insert and delete (`address_book_test`)
+- Password forgotten → reset key from MySQL → new password login (`password_reset_test`; restores seed hash in `tearDown`)
+- Contact form success message (`contact_us_test`)
+- Search, specials, new products, testimonials, and manufacturer browse (`catalog_browse_test`)
+- Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql)); asserts stored `orders.payment_method` is **Cash on Delivery** and the latest order has Florida **`ot_tax`**
+- Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
+- Checkout with a secondary address on shipping/payment address steps (`checkout_alternate_address_test`)
+- Stock block redirect when `STOCK_ALLOW_CHECKOUT` is false and product quantity is zero (`checkout_stock_test`)
+- Item, zone, and table shipping modules plus flat geo-zone hide and free-shipping confirmation (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
+- Mixed virtual + physical cart still shows shipping and COD (`checkout_mixed_cart_test`)
+- Money-order virtual order download after status **Processing** (`checkout_download_test`; writes `download/http-test-download.zip` under the catalog root for the test)
+- Same flow with Check/Money Order (`checkout_moneyorder_test`; confirmation shows fixture payee **Your Store** from `MODULE_PAYMENT_MONEYORDER_PAYTO`); asserts `payment_method` **Check/Money Order**
+- Virtual download cart skips shipping, hides COD, completes with money order (`checkout_virtual_cod_test`; temporary attribute/download rows on product 3 via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
+- COD payment zone excludes the fixture Florida address (`checkout_geo_zone_cod_test`; temporary geo zone + `MODULE_PAYMENT_COD_ZONE`)
+- Logged-out checkout creates an account mid-flow then completes COD (`checkout_new_account_test`)
+- Off-site confirmation form pipeline without PayPal/Stripe (`checkout_local_redirect_test`; copies [`fixtures/http/http_local_redirect.php`](../fixtures/http/http_local_redirect.php) and [`fixtures/http/http_local_redirect_return.php`](../fixtures/http/http_local_redirect_return.php) into the catalog `ext/` tree for the test, exercises good/bad tokens on `ext/modules/payment/http_local_redirect/return.php` and `checkout_process.php`, asserts `payment_method` **HTTP Local Redirect Fixture**)
 - Info and slug pages (`info_page_test`); extra SQL in [`fixtures/http/`](../fixtures/http/)
 - Redirect hardening for `Href::redirect` entrypoints (`href_redirect_test`)
 - Request user-agent / IP mismatch → login redirect (`request_security_test`; uses `enable_session_security_checks.sql`)
