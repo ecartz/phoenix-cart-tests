@@ -121,7 +121,9 @@ final class admin_forms_test extends install_test_case
             $customer_id,
             self::CUSTOMER_LASTNAME_EDITED,
         );
-        $customers_after_edit = $admin_http->request('GET', '/admin/customers.php');
+        $customers_after_edit = $admin_http->request('GET', '/admin/customers.php', [
+            'query' => ['search' => self::CUSTOMER_EMAIL],
+        ]);
         $this->assertSame(200, $customers_after_edit->getStatusCode());
         $this->assertStringContainsString(
             self::CUSTOMER_FIRSTNAME . ' ' . self::CUSTOMER_LASTNAME_EDITED,
@@ -129,7 +131,9 @@ final class admin_forms_test extends install_test_case
         );
 
         $this->update_customer_last_name($admin_http, $customer_id, self::CUSTOMER_LASTNAME);
-        $customers_after_restore = $admin_http->request('GET', '/admin/customers.php');
+        $customers_after_restore = $admin_http->request('GET', '/admin/customers.php', [
+            'query' => ['search' => self::CUSTOMER_EMAIL],
+        ]);
         $this->assertSame(200, $customers_after_restore->getStatusCode());
         $this->assertStringContainsString(
             self::CUSTOMER_FIRSTNAME . ' ' . self::CUSTOMER_LASTNAME,
@@ -216,7 +220,9 @@ final class admin_forms_test extends install_test_case
 
     private function parse_customer_id_from_list(HttpClientInterface $admin_http): string
     {
-        $customers_page = $admin_http->request('GET', '/admin/customers.php');
+        $customers_page = $admin_http->request('GET', '/admin/customers.php', [
+            'query' => ['search' => self::CUSTOMER_EMAIL],
+        ]);
         $this->assertSame(200, $customers_page->getStatusCode());
         $html = $customers_page->getContent(false);
         $this->assertStringContainsString(self::CUSTOMER_EMAIL, $html);

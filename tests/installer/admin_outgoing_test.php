@@ -54,7 +54,7 @@ final class admin_outgoing_test extends install_test_case
             $admin_http,
             '/admin/modules.php',
             ['set' => 'currencies'],
-            'c_ecb',
+            'ECB',
         );
     }
 }

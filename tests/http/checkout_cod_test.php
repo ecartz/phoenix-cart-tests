@@ -80,6 +80,6 @@ final class checkout_cod_test extends http_test_case
         $tax_row = http_orders_lookup::ot_tax_row_for_order($orders_id);
         $this->assertNotNull($tax_row);
         $this->assertGreaterThan(0.0, $tax_row['value']);
-        $this->assertStringContainsString('FL TAX', $tax_row['text']);
+        $this->assertStringContainsString('FL TAX', $tax_row['title']);
     }
 }

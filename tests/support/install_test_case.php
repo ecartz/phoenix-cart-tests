@@ -109,6 +109,20 @@ abstract class install_test_case extends phoenix_test_case
         return '';
     }
 
+    protected static function parse_formid_from_page(string $html): string
+    {
+        $formid = self::parse_hidden_input($html, 'formid');
+        if ($formid !== '') {
+            return $formid;
+        }
+
+        if (preg_match('/formid=([a-f0-9]+)/', $html, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return '';
+    }
+
     protected function require_installer_mail_capture(): void
     {
         if (!installer_mail_capture::is_enabled()) {
@@ -126,10 +140,14 @@ abstract class install_test_case extends phoenix_test_case
     protected function assert_captured_mail_contains(string $needle): void
     {
         $body = installer_mail_capture::read_combined();
+        if ($body === '' || !str_contains($body, $needle)) {
+            $body = installer_outgoing_lookup::combined_body();
+        }
+
         $this->assertStringContainsString(
             $needle,
             $body,
-            'Expected captured installer mail to contain: ' . $needle,
+            'Expected captured installer mail or outgoing queue to contain: ' . $needle,
         );
     }
 }

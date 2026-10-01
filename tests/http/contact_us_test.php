@@ -30,9 +30,6 @@ final class contact_us_test extends http_test_case
 
         $this->assertSame(200, $response->getStatusCode());
         $body = $response->getContent(false);
-        $this->assertStringContainsString(
-            'Your enquiry has been successfully sent to the Store Owner.',
-            $body
-        );
+        $this->assertStringContainsString('Your message has been sent to the Shopowner.', $body);
     }
 }

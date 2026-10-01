@@ -107,7 +107,7 @@ final class http_orders_lookup
     }
 
     /**
-     * @return array{text: string, value: float}|null
+     * @return array{title: string, text: string, value: float}|null
      */
     public static function ot_tax_row_for_order(int $orders_id): ?array
     {
@@ -140,6 +140,7 @@ final class http_orders_lookup
         }
 
         return [
+            'title' => (string) $row['title'],
             'text' => (string) $row['text'],
             'value' => (float) $row['value'],
         ];

@@ -63,7 +63,8 @@ final class checkout_stock_test extends http_test_case
             ],
         ]);
 
-        $final_url = (string) ($blocked->getInfo('url') ?? '');
-        $this->assertStringContainsString('shopping_cart.php', $final_url);
+        $this->assertSame(302, $blocked->getStatusCode());
+        $location = (string) ($blocked->getHeaders(false)['location'][0] ?? '');
+        $this->assertStringContainsString('shopping_cart.php', $location);
     }
 }

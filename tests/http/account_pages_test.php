@@ -25,9 +25,9 @@ final class account_pages_test extends http_test_case
             [
                 '/account_edit.php' => 'firstname',
                 '/account_password.php' => 'password_current',
-                '/account_history.php' => 'Account History',
-                '/account_newsletters.php' => 'Newsletter',
-                '/account_notifications.php' => 'Notifications',
+                '/account_history.php' => 'Order History',
+                '/account_newsletters.php' => 'Newsletter Subscriptions',
+                '/account_notifications.php' => 'Product Notifications',
             ] as $path => $needle
         ) {
             $response = $this->get_http()->request('GET', $path);

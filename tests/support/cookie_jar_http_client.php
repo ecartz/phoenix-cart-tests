@@ -72,6 +72,14 @@ final class cookie_jar_http_client implements HttpClientInterface
         return $clone;
     }
 
+    public function with_max_redirects(int $max_redirects): self
+    {
+        $clone = new self($this->client, $max_redirects);
+        $clone->cookies = $this->cookies;
+
+        return $clone;
+    }
+
     /**
      * @param array<string, list<string>> $headers
      */

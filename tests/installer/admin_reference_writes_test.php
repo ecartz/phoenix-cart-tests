@@ -77,11 +77,21 @@ final class admin_reference_writes_test extends install_test_case
             'address_format_id' => '1',
         ]);
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/countries.php', [], self::COUNTRY_NAME);
+        $list_html = $this->assert_admin_list_contains(
+            $admin_http,
+            '/admin/countries.php',
+            ['search' => self::COUNTRY_NAME],
+            self::COUNTRY_NAME,
+        );
         $country_id = $this->parse_entity_id_near_needle($list_html, self::COUNTRY_NAME, 'cID');
 
         $this->confirm_admin_delete($admin_http, '/admin/countries.php', 'cID', $country_id);
-        $this->assert_admin_list_not_contains($admin_http, '/admin/countries.php', [], self::COUNTRY_NAME);
+        $this->assert_admin_list_not_contains(
+            $admin_http,
+            '/admin/countries.php',
+            ['search' => self::COUNTRY_NAME],
+            self::COUNTRY_NAME,
+        );
     }
 
     private function insert_and_delete_language(HttpClientInterface $admin_http): void

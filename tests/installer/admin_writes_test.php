@@ -85,13 +85,13 @@ final class admin_writes_test extends install_test_case
         $this->assertStringContainsString(self::NEWSLETTER_TITLE, $list_after_insert);
         $newsletter_id = $this->parse_newsletter_id_from_list($list_after_insert, self::NEWSLETTER_TITLE);
 
-        $list_formid = self::parse_hidden_input($list_after_insert, 'formid');
+        $list_formid = self::parse_formid_from_page($list_after_insert);
         if ($list_formid === '') {
             $selected = $admin_http->request('GET', '/admin/newsletters.php', [
                 'query' => ['nID' => $newsletter_id],
             ]);
             $this->assertSame(200, $selected->getStatusCode());
-            $list_formid = self::parse_hidden_input($selected->getContent(false), 'formid');
+            $list_formid = self::parse_formid_from_page($selected->getContent(false));
         }
         $this->assertNotSame('', $list_formid);
 

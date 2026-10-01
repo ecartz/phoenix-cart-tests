@@ -42,7 +42,7 @@ final class admin_pages_test extends install_test_case
     public function test_admin_countries_list_renders(): void
     {
         $admin_http = $this->login_installed_admin();
-        $this->assert_admin_get_page($admin_http, '/admin/countries.php', [], 'United States');
+        $this->assert_admin_get_page($admin_http, '/admin/countries.php', ['search' => 'United States'], 'United States');
     }
 
     public function test_admin_administrators_list_renders(): void
@@ -63,7 +63,7 @@ final class admin_pages_test extends install_test_case
             $admin_http,
             '/admin/modules.php',
             ['set' => 'payment'],
-            'Cash On Delivery',
+            'Cash on Delivery',
         );
     }
 

@@ -86,7 +86,7 @@ final class admin_people_test extends install_test_case
         $list_html = $this->assert_admin_list_contains(
             $admin_http,
             '/admin/customers.php',
-            [],
+            ['search' => self::CUSTOMER_EMAIL],
             self::CUSTOMER_EMAIL,
         );
         $customer_id = $this->parse_entity_id_near_needle($list_html, self::CUSTOMER_EMAIL, 'cID');

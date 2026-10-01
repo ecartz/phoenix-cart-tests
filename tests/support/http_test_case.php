@@ -56,7 +56,46 @@ abstract class http_test_case extends phoenix_test_case
 
     protected function get_http_without_redirects(): HttpClientInterface
     {
+        if ($this->http instanceof cookie_jar_http_client) {
+            return $this->http->with_max_redirects(0);
+        }
+
         return http_bootstrap::client(0);
+    }
+
+    /**
+     * @param array<string, string> $extra_body
+     */
+    protected function post_add_product_to_cart(int $products_id, array $extra_body = []): void
+    {
+        $product_page = $this->get_http()->request('GET', '/product_info.php', [
+            'query' => ['products_id' => (string) $products_id],
+        ]);
+        $this->assertSame(200, $product_page->getStatusCode());
+        $formid = self::parse_hidden_input($product_page->getContent(false), 'formid');
+        $this->assertNotSame('', $formid);
+
+        $this->get_http()->request('POST', '/product_info.php', [
+            'query' => [
+                'products_id' => (string) $products_id,
+                'action' => 'add_product',
+            ],
+            'body' => array_merge(['formid' => $formid], $extra_body),
+        ]);
+    }
+
+    protected static function parse_formid_from_page(string $html): string
+    {
+        $formid = self::parse_hidden_input($html, 'formid');
+        if ($formid !== '') {
+            return $formid;
+        }
+
+        if (preg_match('/formid=([a-f0-9]+)/', $html, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return '';
     }
 
     protected function login_fixture_customer(): void

@@ -41,7 +41,7 @@ final class admin_catalog_test extends install_test_case
     public function test_admin_catalog_list_renders(): void
     {
         $admin_http = $this->login_installed_admin();
-        $this->assert_admin_get_page($admin_http, '/admin/catalog.php', ['cPath' => '1'], 'Citrus Fruit');
+        $this->assert_admin_get_page($admin_http, '/admin/catalog.php', ['cPath' => '1_3'], 'Pears');
     }
 
     public function test_admin_catalog_toggles_product_status(): void
@@ -89,6 +89,7 @@ final class admin_catalog_test extends install_test_case
     private function fetch_catalog_html_with_active_product(HttpClientInterface $admin_http): string
     {
         $paths_to_try = [
+            ['cPath' => '1_3'],
             ['cPath' => '1'],
             [],
         ];

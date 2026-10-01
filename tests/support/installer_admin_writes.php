@@ -122,7 +122,7 @@ trait installer_admin_writes
     ): void {
         $delete_query = array_merge([$id_param => $entity_id, 'action' => $delete_view_action], $extra_query);
         $delete_page = $this->fetch_admin_page($admin_http, $path, $delete_query);
-        $formid = self::parse_hidden_input($delete_page, 'formid');
+        $formid = self::parse_formid_from_page($delete_page);
         $this->assertNotSame('', $formid);
 
         $confirm_query = array_merge([$id_param => $entity_id, 'action' => $delete_confirm_action], $extra_query);

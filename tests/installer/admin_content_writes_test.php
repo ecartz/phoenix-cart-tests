@@ -256,7 +256,9 @@ final class admin_content_writes_test extends install_test_case
     private function parse_customer_id_from_admin(): string
     {
         $admin_http = $this->login_installed_admin();
-        $customers_page = $admin_http->request('GET', '/admin/customers.php');
+        $customers_page = $admin_http->request('GET', '/admin/customers.php', [
+            'query' => ['search' => self::CUSTOMER_EMAIL],
+        ]);
         $this->assertSame(200, $customers_page->getStatusCode());
         $html = $customers_page->getContent(false);
         $this->assertStringContainsString(self::CUSTOMER_EMAIL, $html);

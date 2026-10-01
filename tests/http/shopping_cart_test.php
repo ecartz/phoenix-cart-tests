@@ -109,14 +109,8 @@ final class shopping_cart_test extends http_test_case
             $option_id = http_checkout_fixture_sql::cart_option_id();
             $value_id = http_checkout_fixture_sql::cart_value_id();
 
-            $this->get_http()->request('POST', '/product_info.php', [
-                'query' => [
-                    'products_id' => '3',
-                    'action' => 'add_product',
-                ],
-                'body' => [
-                    'id[' . $option_id . ']' => (string) $value_id,
-                ],
+            $this->post_add_product_to_cart(3, [
+                'id[' . $option_id . ']' => (string) $value_id,
             ]);
 
             $cart = $this->get_http()->request('GET', '/shopping_cart.php');

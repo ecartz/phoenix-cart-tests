@@ -29,7 +29,7 @@ final class address_book_test extends http_test_case
         $new_page = $this->get_http()->request('GET', '/address_book_process.php');
         $this->assertSame(200, $new_page->getStatusCode());
         $new_html = $new_page->getContent(false);
-        $formid = self::parse_hidden_input($new_html, 'formid');
+        $formid = self::parse_formid_from_page($new_html);
         $this->assertNotSame('', $formid);
 
         $city = 'HTTP Alt City';
@@ -60,7 +60,7 @@ final class address_book_test extends http_test_case
             ],
         ]);
         $delete_html = $delete_page->getContent(false);
-        $delete_formid = self::parse_hidden_input($delete_html, 'formid');
+        $delete_formid = self::parse_formid_from_page($delete_html);
         $this->assertNotSame('', $delete_formid);
 
         $this->get_http()->request('POST', '/address_book_process.php', [

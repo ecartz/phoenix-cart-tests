@@ -18,6 +18,8 @@ final class admin_catalog_writes_test extends install_test_case
 
     private const ROOT_CATEGORY_PATH = '1';
 
+    private const PRODUCT_CATEGORY_PATH = '1_3';
+
     private const CATEGORY_NAME = 'Phoenix Installer Category';
 
     private const PRODUCT_NAME = 'Phoenix Installer Catalog Product';
@@ -42,29 +44,29 @@ final class admin_catalog_writes_test extends install_test_case
         $category_id = $this->insert_category($admin_http);
         $child_path = self::ROOT_CATEGORY_PATH . '_' . $category_id;
 
-        $product_id = $this->insert_product($admin_http, self::ROOT_CATEGORY_PATH, self::PRODUCT_NAME);
+        $product_id = $this->insert_product($admin_http, self::PRODUCT_CATEGORY_PATH, self::PRODUCT_NAME);
         $this->update_product_name(
             $admin_http,
-            self::ROOT_CATEGORY_PATH,
+            self::PRODUCT_CATEGORY_PATH,
             $product_id,
             self::PRODUCT_NAME_UPDATED,
         );
 
         $copy_id = $this->duplicate_product_to_category(
             $admin_http,
-            self::ROOT_CATEGORY_PATH,
+            self::PRODUCT_CATEGORY_PATH,
             $product_id,
             $category_id,
             self::PRODUCT_NAME_UPDATED,
         );
         $this->delete_product($admin_http, $child_path, $copy_id, $category_id);
 
-        $this->move_product($admin_http, self::ROOT_CATEGORY_PATH, $product_id, $category_id);
+        $this->move_product($admin_http, self::PRODUCT_CATEGORY_PATH, $product_id, $category_id);
         $this->move_product($admin_http, $child_path, $product_id, (int) self::ROOT_CATEGORY_PATH);
 
         $this->delete_product(
             $admin_http,
-            self::ROOT_CATEGORY_PATH,
+            self::PRODUCT_CATEGORY_PATH,
             $product_id,
             (int) self::ROOT_CATEGORY_PATH,
         );

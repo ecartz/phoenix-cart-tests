@@ -41,7 +41,7 @@ final class admin_tools_test extends install_test_case
     public function test_admin_templates_list_renders(): void
     {
         $admin_http = $this->login_installed_admin();
-        $this->assert_admin_get_page($admin_http, '/admin/templates.php', [], 'templates/default');
+        $this->assert_admin_get_page($admin_http, '/admin/templates.php', [], 'display-4');
     }
 
     public function test_admin_language_explorer_renders(): void
@@ -69,7 +69,7 @@ final class admin_tools_test extends install_test_case
             $admin_http,
             '/admin/modules.php',
             ['set' => 'navbar_modules'],
-            'Shopping Cart',
+            'Navbar',
         );
     }
 

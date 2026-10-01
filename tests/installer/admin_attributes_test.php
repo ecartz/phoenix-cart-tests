@@ -60,7 +60,7 @@ final class admin_attributes_test extends install_test_case
         );
 
         $attributes_page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
-        $formid = self::parse_hidden_input($attributes_page, 'formid');
+        $formid = self::parse_formid_from_page($attributes_page);
         $this->assertNotSame('', $formid);
         $this->post_admin_form($admin_http, '/admin/products_attributes.php', [
             'action' => 'add_product_attributes',
