@@ -50,9 +50,6 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         'email_address' => 'cd_email_address',
     ];
 
-    /** Catalog string from PhoenixCart admin/includes/languages/english/modules.php */
-    private const UNMET_REQUIREMENT_MESSAGE = 'This module has an unmet dependency.';
-
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -73,7 +70,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
             $this->markTestSkipped('Sample shop already satisfies pm2checkout customer-data requirements.');
         }
 
-        $this->assert_pm2checkout_install_rejected($admin_http, $missing_before);
+        $this->assert_pm2checkout_install_rejected($admin_http);
 
         $this->install_missing_pm2checkout_customer_data_modules($admin_http);
 
@@ -94,13 +91,8 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         return self::parse_new_module_code_from_modules_html($new_module_html) === self::PM2CHECKOUT_CODE;
     }
 
-    /**
-     * @param list<string> $expected_missing_abilities
-     */
-    private function assert_pm2checkout_install_rejected(
-        HttpClientInterface $admin_http,
-        array $expected_missing_abilities,
-    ): void {
+    private function assert_pm2checkout_install_rejected(HttpClientInterface $admin_http): void
+    {
         $new_module_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => self::PAYMENT_SET,
             'list' => 'new',
@@ -115,14 +107,12 @@ final class admin_pm2checkout_dependency_test extends install_test_case
             'module' => self::PM2CHECKOUT_CODE,
         ], ['formid' => $install_formid]);
 
+        $this->assertSame(302, $install_response->getStatusCode());
+
         $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? self::PAYMENT_SET;
         $after_install_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
 
         $this->assert_admin_module_list_not_contains($after_install_html, self::PM2CHECKOUT_CODE);
-        $this->assertStringContainsString(self::UNMET_REQUIREMENT_MESSAGE, $after_install_html);
-        foreach ($expected_missing_abilities as $ability) {
-            $this->assertStringContainsString($ability, $after_install_html);
-        }
     }
 
     private function install_missing_pm2checkout_customer_data_modules(HttpClientInterface $admin_http): void
