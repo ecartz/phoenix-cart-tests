@@ -484,6 +484,8 @@ trait installer_admin_writes
 
     protected function admin_module_list_needle(string $list_html, string $module_code): string
     {
+        $list_html = str_replace('&amp;', '&', $list_html);
+
         if (preg_match('/[?&]module=' . preg_quote($module_code, '/') . '(?:&|"|\'|$)/', $list_html) === 1) {
             return $module_code;
         }

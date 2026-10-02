@@ -40,4 +40,28 @@ HTML;
 
         $this->assertSame('cod', self::parse_new_module_code_from_modules_html($html));
     }
+
+    public function test_module_list_needle_decodes_amp_in_installed_row_onclick(): void {
+        $html = <<<'HTML'
+<table class="table table-striped table-hover">
+<thead class="table-dark"><tr><th>Modules</th></tr></thead>
+<tbody>
+<tr onclick="document.location.href='modules.php?set=payment&amp;module=pm2checkout'"><td>Pay</td></tr>
+</tbody>
+</table>
+HTML;
+
+        $this->assertSame(
+            'pm2checkout',
+            $this->module_list_needle_for_test($html, 'pm2checkout'),
+        );
+    }
+
+    private function module_list_needle_for_test(string $html, string $module_code): string
+    {
+        return $this->admin_module_list_needle(
+            $this->admin_list_html_for_needle_assertion($html),
+            $module_code,
+        );
+    }
 }
