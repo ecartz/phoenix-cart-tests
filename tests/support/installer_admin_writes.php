@@ -434,7 +434,8 @@ trait installer_admin_writes
             'list' => 'new',
             'module' => $module_code,
         ]);
-        $this->assert_admin_module_list_contains($new_modules, $module_code);
+        $this->assertStringContainsString($module_code, $new_modules);
+        $this->assertSame($module_code, self::parse_new_module_code_from_modules_html($new_modules));
         $install_formid = self::parse_hidden_input($new_modules, 'formid');
         $this->assertNotSame('', $install_formid);
 

@@ -160,7 +160,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_attributes_test.php`](../tests/installer/admin_attributes_test.php) on **`products_attributes.php`** adds an option and value, links them to sample product **Pears** (`products_id=3`) with a **`+`** price prefix, then removes the link, value, and option.
 
-[`admin_store_logo_test.php`](../tests/installer/admin_store_logo_test.php) uploads [`fixtures/installer-store-logo-test.png`](../fixtures/installer-store-logo-test.png) via **`store_logo.php?action=save`**, asserts the storefront references the new file, then re-uploads the backed-up original logo from the disposable catalog copy.
+[`admin_store_logo_test.php`](../tests/installer/admin_store_logo_test.php) uploads [`fixtures/installer-store-logo-test.png`](../fixtures/installer-store-logo-test.png) via **`store_logo.php?action=save`**, asserts **`STORE_LOGO`** and **`/admin/store_logo.php`** show the new file, then re-uploads the backed-up original logo from the disposable catalog copy.
 
 Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-one classes → twenty-one installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
 

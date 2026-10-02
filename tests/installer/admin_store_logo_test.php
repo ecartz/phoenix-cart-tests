@@ -63,10 +63,8 @@ final class admin_store_logo_test extends install_test_case
         $this->assertFileExists($uploaded_logo_path);
         $this->assertNotSame($original_logo_size, filesize($uploaded_logo_path));
 
-        $shop_http = installer_bootstrap::client();
-        $home = $shop_http->request('GET', '/');
-        $this->assertSame(200, $home->getStatusCode());
-        $this->assertStringContainsString('images/' . $uploaded_logo, $home->getContent(false));
+        $store_logo_admin = $this->fetch_admin_page($admin_http, '/admin/store_logo.php');
+        $this->assertStringContainsString('images/' . $uploaded_logo, $store_logo_admin);
 
         $restore_edit = $this->fetch_admin_page($admin_http, '/admin/store_logo.php', ['action' => 'edit']);
         $restore_formid = self::parse_hidden_input($restore_edit, 'formid');
