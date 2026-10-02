@@ -8,10 +8,9 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class homepage_timing_test extends http_test_case
-{
-    public function test_homepage_responds_within_budget(): void
-    {
+final class homepage_timing_test extends http_test_case {
+
+    public function test_homepage_responds_within_budget(): void {
         $budget = $this->http_budget_seconds();
 
         $response = $this->get_http()->request('GET', '/');
@@ -26,13 +25,10 @@ final class homepage_timing_test extends http_test_case
         );
     }
 
-    private function http_budget_seconds(): float
-    {
+    private function http_budget_seconds(): float {
         $raw = getenv('PHOENIX_HTTP_BUDGET_SECONDS');
-        if ($raw !== false && $raw !== '') {
-            return (float) $raw;
-        }
 
-        return 10.0;
+        return ($raw === false || $raw === '') ? 10.0 : (float) $raw;
     }
+
 }

@@ -11,10 +11,9 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpClient\HttpClient;
 
 #[Group('https')]
-final class ssl_session_id_test extends phoenix_test_case
-{
-    public static function setUpBeforeClass(): void
-    {
+final class ssl_session_id_test extends phoenix_test_case {
+
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         if (!https_bootstrap::is_enabled()) {
@@ -52,8 +51,7 @@ final class ssl_session_id_test extends phoenix_test_case
         }
     }
 
-    public function test_changed_ssl_session_id_redirects_to_ssl_check(): void
-    {
+    public function test_changed_ssl_session_id_redirects_to_ssl_check(): void {
         $base = https_bootstrap::base_url() . '/';
         $jar = tempnam(sys_get_temp_dir(), 'phoenix_ssl_cookies_');
         $this->assertNotFalse($jar);
@@ -80,8 +78,7 @@ final class ssl_session_id_test extends phoenix_test_case
     /**
      * @return array{exit: int, output: string, headers: string}
      */
-    private static function curl_headers(string $url, string $cookie_jar, bool $reuse_cookies): array
-    {
+    protected static function curl_headers(string $url, string $cookie_jar, bool $reuse_cookies): array {
         $sink = PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null';
         $parts = [
             'curl',
@@ -118,28 +115,20 @@ final class ssl_session_id_test extends phoenix_test_case
         ];
     }
 
-    private static function split_response_headers(string $raw): string
-    {
+    protected static function split_response_headers(string $raw): string {
         $parts = preg_split("/\r\n\r\n|\n\n/", $raw, 2);
 
         return is_array($parts) ? $parts[0] : $raw;
     }
 
-    private static function parse_status_line(string $headers): int
-    {
-        if (!preg_match('/^HTTP\/\S+\s+(\d+)/m', $headers, $matches)) {
-            return 0;
-        }
-
-        return (int) $matches[1];
+    protected static function parse_status_line(string $headers): int {
+        return preg_match('/^HTTP\/\S+\s+(\d+)/m', $headers, $matches)
+             ? (int) $matches[1] : 0;
     }
 
-    private static function parse_header(string $headers, string $name): string
-    {
-        if (!preg_match('/^' . preg_quote($name, '/') . ':\s*(.+)$/mi', $headers, $matches)) {
-            return '';
-        }
-
-        return trim($matches[1]);
+    protected static function parse_header(string $headers, string $name): string {
+        return preg_match('/^' . preg_quote($name, '/') . ':\s*(.+)$/mi', $headers, $matches)
+             ? trim($matches[1]) : '';
     }
+
 }
