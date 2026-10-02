@@ -32,7 +32,7 @@ final class installer_outgoing_lookup
         $mysqli->set_charset('utf8mb4');
 
         $result = $mysqli->query(
-            'SELECT email_address, fname, slug FROM outgoing ORDER BY id DESC LIMIT 50'
+            'SELECT email_address, fname, lname, slug, merge_tags FROM outgoing ORDER BY id DESC LIMIT 50'
         );
 
         if ($result === false) {
@@ -49,7 +49,20 @@ final class installer_outgoing_lookup
 
             $parts[] = (string) $row['email_address'];
             $parts[] = (string) $row['fname'];
+            $parts[] = (string) $row['lname'];
             $parts[] = (string) $row['slug'];
+            $merge_tags = (string) $row['merge_tags'];
+            if ($merge_tags !== '') {
+                $parts[] = $merge_tags;
+                $decoded = json_decode($merge_tags, true);
+                if (is_array($decoded)) {
+                    array_walk_recursive($decoded, static function ($value) use (&$parts): void {
+                        if (is_string($value) && $value !== '') {
+                            $parts[] = $value;
+                        }
+                    });
+                }
+            }
         }
 
         $result->free();

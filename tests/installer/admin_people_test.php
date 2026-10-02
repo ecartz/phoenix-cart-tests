@@ -83,20 +83,34 @@ final class admin_people_test extends install_test_case
         );
 
         $admin_http = $this->login_installed_admin();
+        $customer_label = self::CUSTOMER_LASTNAME . ', ' . self::CUSTOMER_FIRSTNAME;
         $list_html = $this->assert_admin_list_contains(
             $admin_http,
             '/admin/customers.php',
             ['search' => self::CUSTOMER_EMAIL],
-            self::CUSTOMER_EMAIL,
+            $customer_label,
         );
-        $customer_id = $this->parse_entity_id_near_needle($list_html, self::CUSTOMER_EMAIL, 'cID');
+        $customer_id = $this->parse_entity_id_near_needle(
+            $list_html,
+            $customer_label,
+            'cID',
+        );
 
-        $this->confirm_admin_delete($admin_http, '/admin/customers.php', 'cID', $customer_id);
+        $this->confirm_admin_delete(
+            $admin_http,
+            '/admin/customers.php',
+            'cID',
+            $customer_id,
+            'delete_confirm',
+            [],
+            [],
+            'confirm',
+        );
         $this->assert_admin_list_not_contains(
             $admin_http,
             '/admin/customers.php',
-            [],
-            self::CUSTOMER_EMAIL,
+            ['search' => self::CUSTOMER_EMAIL],
+            $customer_label,
         );
     }
 

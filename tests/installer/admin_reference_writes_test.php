@@ -38,7 +38,8 @@ final class admin_reference_writes_test extends install_test_case
 
     private const ORDER_STATUS_NAME = 'Phoenix Installer Status';
 
-    private const US_COUNTRY_ID = '223';
+    /** Country with no pre-installed zones so new rows appear on the first list page. */
+    private const ZONE_COUNTRY_ID = '240';
 
     public static function setUpBeforeClass(): void
     {
@@ -69,23 +70,31 @@ final class admin_reference_writes_test extends install_test_case
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
 
-        $this->post_admin_form($admin_http, '/admin/countries.php', ['action' => 'insert'], [
-            'formid' => $formid,
-            'countries_name' => self::COUNTRY_NAME,
-            'countries_iso_code_2' => 'QZ',
-            'countries_iso_code_3' => 'QZX',
-            'address_format_id' => '1',
+        $insert = $admin_http->request('POST', '/admin/countries.php', [
+            'query' => ['action' => 'insert'],
+            'body' => [
+                'formid' => $formid,
+                'countries_name' => self::COUNTRY_NAME,
+                'countries_iso_code_2' => 'QZ',
+                'countries_iso_code_3' => 'QZX',
+                'address_format_id' => '1',
+            ],
         ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $country_id = $this->parse_id_from_redirect_url((string) ($insert->getInfo('url') ?? ''), 'cID');
+        if ($country_id === '') {
+            $detail_html = $this->fetch_admin_page($admin_http, '/admin/countries.php', [
+                'search' => self::COUNTRY_NAME,
+            ]);
+            $this->assertStringContainsString(self::COUNTRY_NAME, $detail_html);
+            $country_id = $this->parse_entity_id_near_needle($detail_html, self::COUNTRY_NAME, 'cID');
+        }
 
-        $list_html = $this->assert_admin_list_contains(
-            $admin_http,
-            '/admin/countries.php',
-            ['search' => self::COUNTRY_NAME],
-            self::COUNTRY_NAME,
-        );
-        $country_id = $this->parse_entity_id_near_needle($list_html, self::COUNTRY_NAME, 'cID');
+        $this->assertNotSame('', $country_id);
 
-        $this->confirm_admin_delete($admin_http, '/admin/countries.php', 'cID', $country_id);
+        $this->confirm_admin_delete($admin_http, '/admin/countries.php', 'cID', $country_id, 'delete_confirm', [
+            'search' => self::COUNTRY_NAME,
+        ]);
         $this->assert_admin_list_not_contains(
             $admin_http,
             '/admin/countries.php',
@@ -100,20 +109,28 @@ final class admin_reference_writes_test extends install_test_case
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
 
-        $this->post_admin_form($admin_http, '/admin/languages.php', ['action' => 'insert'], [
-            'formid' => $formid,
-            'name' => self::LANGUAGE_NAME,
-            'code' => self::LANGUAGE_CODE,
-            'image' => 'icon.gif',
-            'directory' => 'english',
-            'sort_order' => '99',
+        $insert = $admin_http->request('POST', '/admin/languages.php', [
+            'query' => ['action' => 'insert'],
+            'body' => [
+                'formid' => $formid,
+                'name' => self::LANGUAGE_NAME,
+                'code' => self::LANGUAGE_CODE,
+                'image' => 'icon.gif',
+                'directory' => 'english',
+                'sort_order' => '99',
+            ],
         ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $language_id = $this->parse_id_from_redirect_url((string) ($insert->getInfo('url') ?? ''), 'lID');
+        if ($language_id === '') {
+            $list_html = $this->assert_admin_list_contains($admin_http, '/admin/languages.php', [], self::LANGUAGE_NAME);
+            $language_id = $this->parse_entity_id_near_needle($list_html, self::LANGUAGE_NAME, 'lID');
+        }
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/languages.php', [], self::LANGUAGE_NAME);
-        $language_id = $this->parse_entity_id_near_needle($list_html, self::LANGUAGE_NAME, 'lID');
+        $this->assertNotSame('', $language_id);
 
         $this->confirm_admin_delete($admin_http, '/admin/languages.php', 'lID', $language_id);
-        $this->assert_admin_list_not_contains($admin_http, '/admin/languages.php', [], self::LANGUAGE_NAME);
+        $this->assert_admin_list_not_contains($admin_http, '/admin/languages.php', [], self::LANGUAGE_CODE);
     }
 
     private function insert_and_delete_zone(HttpClientInterface $admin_http): void
@@ -126,7 +143,7 @@ final class admin_reference_writes_test extends install_test_case
             'formid' => $formid,
             'zone_name' => self::ZONE_NAME,
             'zone_code' => 'PIZ',
-            'zone_country_id' => self::US_COUNTRY_ID,
+            'zone_country_id' => self::ZONE_COUNTRY_ID,
         ]);
 
         $list_html = $this->assert_admin_list_contains($admin_http, '/admin/zones.php', [], self::ZONE_NAME);
@@ -161,15 +178,24 @@ final class admin_reference_writes_test extends install_test_case
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
 
-        $this->post_admin_form($admin_http, '/admin/geo_zones.php', ['action' => 'insert_zone'], [
-            'formid' => $formid,
-            'geo_zone_name' => self::GEO_ZONE_NAME,
-            'geo_zone_description' => 'Installer acceptance geo zone.',
+        $insert = $admin_http->request('POST', '/admin/geo_zones.php', [
+            'query' => ['action' => 'insert_zone'],
+            'body' => [
+                'formid' => $formid,
+                'geo_zone_name' => self::GEO_ZONE_NAME,
+                'geo_zone_description' => 'Installer acceptance geo zone.',
+            ],
         ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $geo_zone_id = $this->parse_id_from_redirect_url((string) ($insert->getInfo('url') ?? ''), 'zID');
+        if ($geo_zone_id === '') {
+            $list_html = $this->assert_admin_list_contains($admin_http, '/admin/geo_zones.php', [], self::GEO_ZONE_NAME);
+            $geo_zone_id = $this->parse_entity_id_near_needle($list_html, self::GEO_ZONE_NAME, 'zID');
+        }
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/geo_zones.php', [], self::GEO_ZONE_NAME);
+        $this->assertNotSame('', $geo_zone_id);
 
-        return $this->parse_entity_id_near_needle($list_html, self::GEO_ZONE_NAME, 'zID');
+        return $geo_zone_id;
     }
 
     private function insert_and_delete_tax_rate(HttpClientInterface $admin_http, string $geo_zone_id): void
@@ -187,11 +213,11 @@ final class admin_reference_writes_test extends install_test_case
             'tax_priority' => '1',
         ]);
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/tax_rates.php', [], self::TAX_RATE_DESCRIPTION);
-        $tax_rate_id = $this->parse_entity_id_near_needle($list_html, self::TAX_RATE_DESCRIPTION, 'tID');
+        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/tax_rates.php', [], self::GEO_ZONE_NAME);
+        $tax_rate_id = $this->parse_entity_id_near_needle($list_html, self::GEO_ZONE_NAME, 'tID');
 
         $this->confirm_admin_delete($admin_http, '/admin/tax_rates.php', 'tID', $tax_rate_id);
-        $this->assert_admin_list_not_contains($admin_http, '/admin/tax_rates.php', [], self::TAX_RATE_DESCRIPTION);
+        $this->assert_admin_list_not_contains($admin_http, '/admin/tax_rates.php', [], self::GEO_ZONE_NAME);
     }
 
     private function delete_geo_zone(HttpClientInterface $admin_http, string $geo_zone_id): void

@@ -60,18 +60,30 @@ final class admin_attributes_test extends install_test_case
         );
 
         $attributes_page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
-        $formid = self::parse_formid_from_page($attributes_page);
+        $formid = self::parse_formid_for_admin_action($attributes_page, 'add_product_attributes');
         $this->assertNotSame('', $formid);
-        $this->post_admin_form($admin_http, '/admin/products_attributes.php', [
-            'action' => 'add_product_attributes',
-        ], [
+
+        $attribute_body = [
             'formid' => $formid,
             'products_id' => self::PEARS_PRODUCT_ID,
             'options_id' => $option_id,
             'values_id' => $value_id,
             'value_price' => self::ATTRIBUTE_PRICE,
             'price_prefix' => '+',
-        ]);
+        ];
+        if (str_contains($attributes_page, 'products_attributes_filename')) {
+            $attribute_body['products_attributes_filename'] = '';
+            $attribute_body['products_attributes_maxdays'] = '';
+            $attribute_body['products_attributes_maxcount'] = '';
+        }
+
+        $this->post_admin_form($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'action' => 'add_product_attributes',
+            'formid' => $formid,
+        ], $attribute_body);
 
         $linked_html = $this->assert_admin_list_contains(
             $admin_http,
@@ -101,7 +113,7 @@ final class admin_attributes_test extends install_test_case
         string $option_id,
         array $language_ids,
     ): void {
-        $formid = self::parse_hidden_input($page_html, 'formid');
+        $formid = self::parse_formid_for_admin_action($page_html, 'add_product_options');
         $this->assertNotSame('', $formid);
 
         $body = [
@@ -114,7 +126,11 @@ final class admin_attributes_test extends install_test_case
         }
 
         $this->post_admin_form($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
             'action' => 'add_product_options',
+            'formid' => $formid,
         ], $body);
     }
 
@@ -128,7 +144,7 @@ final class admin_attributes_test extends install_test_case
         string $value_id,
         array $language_ids,
     ): void {
-        $formid = self::parse_hidden_input($page_html, 'formid');
+        $formid = self::parse_formid_for_admin_action($page_html, 'add_product_option_values');
         $this->assertNotSame('', $formid);
 
         $body = [
@@ -142,17 +158,33 @@ final class admin_attributes_test extends install_test_case
         }
 
         $this->post_admin_form($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
             'action' => 'add_product_option_values',
+            'formid' => $formid,
         ], $body);
     }
 
     private function delete_product_attribute(HttpClientInterface $admin_http, string $attribute_id): void
     {
+        $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
+        $formid = self::parse_formid_from_page($page);
+        $this->assertNotSame('', $formid);
+
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_product_attribute',
             'attribute_id' => $attribute_id,
         ]);
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_attribute',
             'attribute_id' => $attribute_id,
         ]);
@@ -160,11 +192,23 @@ final class admin_attributes_test extends install_test_case
 
     private function delete_option_value(HttpClientInterface $admin_http, string $value_id): void
     {
+        $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
+        $formid = self::parse_formid_from_page($page);
+        $this->assertNotSame('', $formid);
+
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_option_value',
             'value_id' => $value_id,
         ]);
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_value',
             'value_id' => $value_id,
         ]);
@@ -172,11 +216,23 @@ final class admin_attributes_test extends install_test_case
 
     private function delete_product_option(HttpClientInterface $admin_http, string $option_id): void
     {
+        $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
+        $formid = self::parse_formid_from_page($page);
+        $this->assertNotSame('', $formid);
+
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_product_option',
             'option_id' => $option_id,
         ]);
         $this->fetch_admin_page($admin_http, '/admin/products_attributes.php', [
+            'option_page' => '1',
+            'value_page' => '1',
+            'attribute_page' => '1',
+            'formid' => $formid,
             'action' => 'delete_option',
             'option_id' => $option_id,
         ]);
