@@ -479,6 +479,17 @@ trait installer_admin_writes
         $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
         $this->assert_admin_module_list_contains($installed_html, $module_code);
 
+        $this->remove_installed_module($admin_http, $list_set, $module_code);
+
+        $after_remove = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
+        $this->assert_admin_module_list_not_contains($after_remove, $module_code);
+    }
+
+    protected function remove_installed_module(
+        HttpClientInterface $admin_http,
+        string $list_set,
+        string $module_code,
+    ): void {
         $remove_page = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => $list_set,
             'module' => $module_code,
@@ -491,9 +502,6 @@ trait installer_admin_writes
             'action' => 'remove',
             'module' => $module_code,
         ], ['formid' => $remove_formid]);
-
-        $after_remove = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
-        $this->assert_admin_module_list_not_contains($after_remove, $module_code);
     }
 
     protected function assert_admin_module_list_contains(string $html, string $module_code): void
@@ -539,12 +547,70 @@ trait installer_admin_writes
         $installed_scope = $this->admin_list_html_for_needle_assertion($installed_html);
 
         foreach (self::parse_new_module_codes_from_modules_html($html) as $module_code) {
-            if ($this->admin_module_list_needle($installed_scope, $module_code) === '') {
-                return $module_code;
+            if ($this->admin_module_list_needle($installed_scope, $module_code) !== '') {
+                continue;
             }
+
+            if (!$this->new_module_detail_page_has_install_form($admin_http, $set, $module_code)) {
+                continue;
+            }
+
+            $list_set = $this->probe_new_module_install($admin_http, $set, $module_code);
+            if ($list_set === null) {
+                continue;
+            }
+
+            $this->remove_installed_module($admin_http, $list_set, $module_code);
+
+            return $module_code;
         }
 
         return null;
+    }
+
+    protected function new_module_detail_page_has_install_form(
+        HttpClientInterface $admin_http,
+        string $set,
+        string $module_code,
+    ): bool {
+        $detail_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
+            'set' => $set,
+            'list' => 'new',
+            'module' => $module_code,
+        ]);
+
+        return self::parse_new_module_code_from_modules_html($detail_html) === $module_code;
+    }
+
+    protected function probe_new_module_install(
+        HttpClientInterface $admin_http,
+        string $set,
+        string $module_code,
+    ): ?string {
+        $detail_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
+            'set' => $set,
+            'list' => 'new',
+            'module' => $module_code,
+        ]);
+        $install_formid = self::parse_hidden_input($detail_html, 'formid');
+        if ($install_formid === '') {
+            return null;
+        }
+
+        $install_response = $this->post_admin_form_response($admin_http, '/admin/modules.php', [
+            'set' => $set,
+            'action' => 'install',
+            'module' => $module_code,
+        ], ['formid' => $install_formid]);
+
+        $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? $set;
+        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
+        $list_html = $this->admin_list_html_for_needle_assertion($installed_html);
+        if ($this->admin_module_list_needle($list_html, $module_code) === '') {
+            return null;
+        }
+
+        return $list_set;
     }
 
     protected static function parse_new_module_code_from_modules_html(string $html): ?string
