@@ -471,8 +471,46 @@ trait installer_admin_writes
             'list' => 'new',
         ]);
 
-        if (preg_match_all('/[?&]module=([a-z0-9_]+)/', $html, $matches) !== false && $matches[1] !== []) {
-            return $matches[1][0];
+        return self::parse_new_module_code_from_modules_html($html);
+    }
+
+    protected static function parse_new_module_code_from_modules_html(string $html): ?string
+    {
+        $html = str_replace('&amp;', '&', $html);
+
+        if (preg_match(
+            '/<form\b[^>]*\bname=(["\'])install_module\1[^>]*\baction=(["\'])([^"\']+)\2/is',
+            $html,
+            $form_match,
+        ) === 1) {
+            $module_code = self::parse_module_query_parameter($form_match[3]);
+            if ($module_code !== null) {
+                return $module_code;
+            }
+        }
+
+        if (preg_match(
+            '/<form\b[^>]*\baction=(["\'])([^"\']+)\1[^>]*\bname=(["\'])install_module\3/is',
+            $html,
+            $form_match,
+        ) === 1) {
+            $module_code = self::parse_module_query_parameter($form_match[2]);
+            if ($module_code !== null) {
+                return $module_code;
+            }
+        }
+
+        if (preg_match('/[?&]module=([a-z0-9_]+)/', $html, $legacy_match) === 1) {
+            return $legacy_match[1];
+        }
+
+        return null;
+    }
+
+    protected static function parse_module_query_parameter(string $url): ?string
+    {
+        if (preg_match('/[?&]module=([a-z0-9_]+)/', $url, $matches) === 1) {
+            return $matches[1];
         }
 
         return null;
