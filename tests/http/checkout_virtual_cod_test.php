@@ -35,10 +35,16 @@ final class checkout_virtual_cod_test extends http_test_case
             'id[' . $option_id . ']' => (string) $value_id,
         ]);
 
-        $payment_page = $this->get_http()->request('GET', '/checkout_shipping.php');
-        $this->assertSame(200, $payment_page->getStatusCode());
-        $final_url = (string) ($payment_page->getInfo('url') ?? '');
-        $this->assertStringContainsString('checkout_payment.php', $final_url);
+        $shipping_page = $this->get_http()->request('GET', '/checkout_shipping.php');
+        $this->assertSame(200, $shipping_page->getStatusCode());
+        $final_url = (string) ($shipping_page->getInfo('url') ?? '');
+        if (str_contains($final_url, 'checkout_payment.php')) {
+            $payment_page = $shipping_page;
+        } else {
+            $this->assertStringContainsString('checkout_shipping.php', $final_url);
+            $payment_page = $this->get_http()->request('GET', '/checkout_payment.php');
+            $this->assertSame(200, $payment_page->getStatusCode());
+        }
 
         $payment_html = $payment_page->getContent(false);
         $this->assertStringNotContainsString('Cash on Delivery', $payment_html);

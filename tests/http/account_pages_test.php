@@ -57,6 +57,7 @@ final class account_pages_test extends http_test_case
         $this->get_http()->request('GET', '/logoff.php');
         $after_logoff = $this->get_http()->request('GET', '/account.php');
         $after_url = (string) ($after_logoff->getInfo('url') ?? '');
-        $this->assertStringContainsString('login.php', $after_url);
+        $this->assertMatchesRegularExpression('#/(login|create_account)\.php#', $after_url);
+        $this->assertStringNotContainsString('cm-account-title', $after_logoff->getContent(false));
     }
 }

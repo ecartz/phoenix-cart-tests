@@ -70,6 +70,21 @@ final class http_customer_fixture_sql
         $mysqli->close();
     }
 
+    public static function clear_fixture_customer_basket(): void
+    {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $customer_id = self::FIXTURE_CUSTOMER_ID;
+        self::exec(
+            $mysqli,
+            'DELETE FROM customers_basket_attributes WHERE customers_id = ' . $customer_id
+        );
+        self::exec($mysqli, 'DELETE FROM customers_basket WHERE customers_id = ' . $customer_id);
+
+        $mysqli->close();
+    }
+
     public static function restore_fixture_firstname(): void
     {
         mysql_bootstrap::define_connection_constants();

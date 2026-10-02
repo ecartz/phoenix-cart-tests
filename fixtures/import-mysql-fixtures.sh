@@ -16,6 +16,7 @@ MYSQL=(mysql -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -
 "${MYSQL[@]}" < fixtures/phoenix_data_sample.sql
 "${MYSQL[@]}" < fixtures/http/publish_info_pages.sql
 "${MYSQL[@]}" < fixtures/http/enable_session_security_checks.sql
+"${MYSQL[@]}" < fixtures/http/enable_newsletter_customer_data.sql
 "${MYSQL[@]}" < fixtures/http/seed_customer.sql
 
 if [[ "${PHOENIX_PAYMENT_SANDBOX_ENABLED:-0}" == "1" ]]; then

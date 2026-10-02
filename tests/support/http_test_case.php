@@ -80,7 +80,13 @@ abstract class http_test_case extends phoenix_test_case
                 'products_id' => (string) $products_id,
                 'action' => 'add_product',
             ],
-            'body' => array_merge(['formid' => $formid], $extra_body),
+            'body' => array_merge(
+                [
+                    'formid' => $formid,
+                    'products_id' => (string) $products_id,
+                ],
+                $extra_body
+            ),
         ]);
     }
 
@@ -100,6 +106,8 @@ abstract class http_test_case extends phoenix_test_case
 
     protected function login_fixture_customer(): void
     {
+        http_customer_fixture_sql::clear_fixture_customer_basket();
+
         $this->get_http()->request('GET', '/');
 
         $login_page = $this->get_http()->request('GET', '/login.php');
