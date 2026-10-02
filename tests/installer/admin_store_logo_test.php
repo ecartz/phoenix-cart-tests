@@ -30,22 +30,23 @@ final class admin_store_logo_test extends install_test_case
         $this->assertFileExists($fixture_path);
 
         $admin_http = $this->login_installed_admin();
-        $edit_html = $this->fetch_admin_page($admin_http, '/admin/store_logo.php', ['action' => 'edit']);
-        $original_logo = $this->parse_store_logo_filename($edit_html);
+        $original_logo = $this->fetch_store_logo_filename();
         $this->assertNotSame('', $original_logo);
 
         $catalog_root = installer_bootstrap::catalog_copy_root();
-        $original_logo_path = $catalog_root . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . $original_logo;
-        if (!is_file($original_logo_path)) {
-            $this->markTestSkipped('Default store logo file is missing at ' . $original_logo_path);
-        }
+        $original_logo_path = $this->store_logo_image_path($catalog_root, $original_logo);
         $this->assertFileExists($original_logo_path);
         $original_logo_bytes = file_get_contents($original_logo_path);
         $this->assertIsString($original_logo_bytes);
+        $original_logo_size = strlen($original_logo_bytes);
 
-        $backup_path = $catalog_root . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . '.installer-logo-backup.png';
+        $backup_path = $this->store_logo_backup_path($original_logo);
+        if (!is_dir(dirname($backup_path)) && !mkdir(dirname($backup_path), 0775, true) && !is_dir(dirname($backup_path))) {
+            $this->fail('Cannot create store logo backup directory: ' . dirname($backup_path));
+        }
         file_put_contents($backup_path, $original_logo_bytes);
 
+        $edit_html = $this->fetch_admin_page($admin_http, '/admin/store_logo.php', ['action' => 'edit']);
         $formid = self::parse_hidden_input($edit_html, 'formid');
         $this->assertNotSame('', $formid);
         $this->post_admin_multipart(
@@ -56,17 +57,16 @@ final class admin_store_logo_test extends install_test_case
             ['store_logo' => $fixture_path],
         );
 
-        $after_upload = $this->fetch_admin_page($admin_http, '/admin/store_logo.php');
-        $uploaded_logo = $this->parse_store_logo_filename($after_upload);
+        $uploaded_logo = $this->fetch_store_logo_filename();
         $this->assertStringContainsString('installer-store-logo-test', $uploaded_logo);
+        $uploaded_logo_path = $this->store_logo_image_path($catalog_root, $uploaded_logo);
+        $this->assertFileExists($uploaded_logo_path);
+        $this->assertNotSame($original_logo_size, filesize($uploaded_logo_path));
 
         $shop_http = installer_bootstrap::client();
         $home = $shop_http->request('GET', '/');
         $this->assertSame(200, $home->getStatusCode());
         $this->assertStringContainsString('images/' . $uploaded_logo, $home->getContent(false));
-
-        $restore_temp = $catalog_root . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . $original_logo;
-        file_put_contents($restore_temp, $original_logo_bytes);
 
         $restore_edit = $this->fetch_admin_page($admin_http, '/admin/store_logo.php', ['action' => 'edit']);
         $restore_formid = self::parse_hidden_input($restore_edit, 'formid');
@@ -76,22 +76,69 @@ final class admin_store_logo_test extends install_test_case
             '/admin/store_logo.php',
             ['action' => 'save'],
             ['formid' => $restore_formid],
-            ['store_logo' => $restore_temp],
+            ['store_logo' => $backup_path],
         );
 
-        $after_restore = $this->fetch_admin_page($admin_http, '/admin/store_logo.php');
-        $restored_logo = $this->parse_store_logo_filename($after_restore);
-        $this->assertSame($original_logo, $restored_logo);
+        $this->assertSame($original_logo, $this->fetch_store_logo_filename());
+        $restored_logo_path = $this->store_logo_image_path($catalog_root, $original_logo);
+        $this->assertFileExists($restored_logo_path);
+        $this->assertSame($original_logo_size, filesize($restored_logo_path));
+        $restored_logo_bytes = file_get_contents($restored_logo_path);
+        $this->assertIsString($restored_logo_bytes);
+        $this->assertSame($original_logo_bytes, $restored_logo_bytes);
 
         @unlink($backup_path);
     }
 
-    private function parse_store_logo_filename(string $html): string
+    private function fetch_store_logo_filename(): string
     {
-        if (preg_match('/images\/([^"\'?\s>]+\.(?:png|gif|jpe?g|svg|webp))/i', $html, $matches) === 1) {
-            return html_entity_decode($matches[1], ENT_QUOTES);
+        $mysqli = new \mysqli(
+            installer_bootstrap::db_host(),
+            installer_bootstrap::db_user(),
+            installer_bootstrap::db_password(),
+            installer_bootstrap::installer_db_name(),
+            (int) installer_bootstrap::db_port(),
+        );
+
+        if ($mysqli->connect_errno) {
+            $this->fail('MySQL connect failed: ' . $mysqli->connect_error);
         }
 
-        return '';
+        $mysqli->set_charset('utf8mb4');
+
+        $statement = $mysqli->prepare(
+            'SELECT configuration_value FROM configuration WHERE configuration_key = ? LIMIT 1',
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            $this->fail('Prepare failed: ' . $mysqli->error);
+        }
+
+        $configuration_key = 'STORE_LOGO';
+        $statement->bind_param('s', $configuration_key);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return '';
+        }
+
+        return (string) $row['configuration_value'];
+    }
+
+    private function store_logo_image_path(string $catalog_root, string $filename): string
+    {
+        return $catalog_root . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . $filename;
+    }
+
+    private function store_logo_backup_path(string $original_filename): string
+    {
+        $repo_root = dirname(__DIR__, 2);
+
+        return $repo_root . DIRECTORY_SEPARATOR . 'working' . DIRECTORY_SEPARATOR . 'installer-store-logo-backup'
+            . DIRECTORY_SEPARATOR . $original_filename;
     }
 }
