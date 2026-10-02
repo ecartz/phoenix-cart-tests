@@ -23,7 +23,6 @@ final class admin_modules_config_test extends install_test_case
         'action_recorder',
         'boxes',
         'content',
-        'currencies',
         'customer_data',
         'dashboard',
         'header_tags',

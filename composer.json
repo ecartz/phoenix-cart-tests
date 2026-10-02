@@ -8,7 +8,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^10.5|^11.0",
-        "symfony/http-client": "^7.2"
+        "symfony/http-client": "^7.2",
+        "symfony/mime": "^7.2"
     },
     "autoload-dev": {
         "psr-4": {

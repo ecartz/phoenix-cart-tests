@@ -434,7 +434,7 @@ trait installer_admin_writes
             'list' => 'new',
             'module' => $module_code,
         ]);
-        $this->assertStringContainsString($module_code, $new_modules);
+        $this->assert_admin_module_list_contains($new_modules, $module_code);
         $install_formid = self::parse_hidden_input($new_modules, 'formid');
         $this->assertNotSame('', $install_formid);
 
@@ -445,7 +445,7 @@ trait installer_admin_writes
         ], ['formid' => $install_formid]);
 
         $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
-        $this->assertStringContainsString($module_code, $installed_html);
+        $this->assert_admin_module_list_contains($installed_html, $module_code);
 
         $remove_page = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => $set,
@@ -461,7 +461,37 @@ trait installer_admin_writes
         ], ['formid' => $remove_formid]);
 
         $after_remove = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
-        $this->assertStringNotContainsString($module_code, $after_remove);
+        $this->assert_admin_module_list_not_contains($after_remove, $module_code);
+    }
+
+    protected function assert_admin_module_list_contains(string $html, string $module_code): void
+    {
+        $list_html = $this->admin_list_html_for_needle_assertion($html);
+        $needle = $this->admin_module_list_needle($list_html, $module_code);
+        $this->assertTrue(
+            $needle !== '',
+            'Module list did not contain: ' . $module_code,
+        );
+    }
+
+    protected function assert_admin_module_list_not_contains(string $html, string $module_code): void
+    {
+        $list_html = $this->admin_list_html_for_needle_assertion($html);
+        $needle = $this->admin_module_list_needle($list_html, $module_code);
+        $this->assertSame('', $needle, 'Module list still contained: ' . $module_code);
+    }
+
+    protected function admin_module_list_needle(string $list_html, string $module_code): string
+    {
+        if (preg_match('/[?&]module=' . preg_quote($module_code, '/') . '(?:&|"|\'|$)/', $list_html) === 1) {
+            return $module_code;
+        }
+
+        if (preg_match('/\b' . preg_quote($module_code, '/') . '\b/i', $list_html) === 1) {
+            return $module_code;
+        }
+
+        return '';
     }
 
     protected function first_new_module_code(HttpClientInterface $admin_http, string $set): ?string
