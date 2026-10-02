@@ -35,10 +35,33 @@ HTML;
 
     public function test_falls_back_to_module_query_links_when_present(): void {
         $html = <<<'HTML'
-<tr onclick="document.location.href='modules.php?set=payment&amp;module=cod'">
+<table class="table table-striped table-hover">
+<thead class="table-dark"><tr><th>Modules</th></tr></thead>
+<tbody>
+<tr onclick="document.location.href='modules.php?set=payment&amp;module=cod'"><td>COD</td></tr>
+</tbody>
+</table>
 HTML;
 
         $this->assertSame('cod', self::parse_new_module_code_from_modules_html($html));
+    }
+
+    public function test_parse_new_module_codes_merges_install_form_and_table_links(): void {
+        $html = <<<'HTML'
+<table class="table table-striped table-hover">
+<thead class="table-dark"><tr><th>Modules</th></tr></thead>
+<tbody>
+<tr onclick="document.location.href='modules.php?set=payment&amp;module=cod'"><td>COD</td></tr>
+<tr onclick="document.location.href='modules.php?set=payment&amp;module=stripe'"><td>Stripe</td></tr>
+</tbody>
+</table>
+<form name="install_module" action="modules.php?set=payment&amp;module=cod&amp;action=install" method="post">
+HTML;
+
+        $this->assertSame(
+            ['cod', 'stripe'],
+            self::parse_new_module_codes_from_modules_html($html),
+        );
     }
 
     public function test_module_list_needle_decodes_amp_in_installed_row_onclick(): void {

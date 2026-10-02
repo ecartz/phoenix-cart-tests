@@ -27,11 +27,40 @@ trait installer_admin_writes
         array $query,
         array $body,
     ): void {
+        $this->post_admin_form_response($admin_http, $path, $query, $body);
+    }
+
+    protected function post_admin_form_response(
+        HttpClientInterface $admin_http,
+        string $path,
+        array $query,
+        array $body,
+    ): \Symfony\Contracts\HttpClient\ResponseInterface {
         $response = $admin_http->request('POST', $path, [
             'query' => $query,
             'body' => $body,
         ]);
         $this->assertContains($response->getStatusCode(), [200, 302]);
+
+        return $response;
+    }
+
+    protected function parse_admin_modules_set_from_response(
+        \Symfony\Contracts\HttpClient\ResponseInterface $response,
+    ): ?string {
+        if ($response->getStatusCode() !== 302) {
+            return null;
+        }
+
+        $headers = $response->getHeaders(false);
+        $location = $headers['location'][0] ?? $headers['Location'][0] ?? '';
+        $location = str_replace('&amp;', '&', $location);
+
+        if (preg_match('/[?&]set=([a-z0-9_]+)/', $location, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     /**
@@ -439,29 +468,31 @@ trait installer_admin_writes
         $install_formid = self::parse_hidden_input($new_modules, 'formid');
         $this->assertNotSame('', $install_formid);
 
-        $this->post_admin_form($admin_http, '/admin/modules.php', [
+        $install_response = $this->post_admin_form_response($admin_http, '/admin/modules.php', [
             'set' => $set,
             'action' => 'install',
             'module' => $module_code,
         ], ['formid' => $install_formid]);
 
-        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
+        $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? $set;
+
+        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
         $this->assert_admin_module_list_contains($installed_html, $module_code);
 
         $remove_page = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
-            'set' => $set,
+            'set' => $list_set,
             'module' => $module_code,
         ]);
         $remove_formid = self::parse_hidden_input($remove_page, 'formid');
         $this->assertNotSame('', $remove_formid);
 
         $this->post_admin_form($admin_http, '/admin/modules.php', [
-            'set' => $set,
+            'set' => $list_set,
             'action' => 'remove',
             'module' => $module_code,
         ], ['formid' => $remove_formid]);
 
-        $after_remove = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
+        $after_remove = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
         $this->assert_admin_module_list_not_contains($after_remove, $module_code);
     }
 
@@ -504,7 +535,16 @@ trait installer_admin_writes
             'list' => 'new',
         ]);
 
-        return self::parse_new_module_code_from_modules_html($html);
+        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
+        $installed_scope = $this->admin_list_html_for_needle_assertion($installed_html);
+
+        foreach (self::parse_new_module_codes_from_modules_html($html) as $module_code) {
+            if ($this->admin_module_list_needle($installed_scope, $module_code) === '') {
+                return $module_code;
+            }
+        }
+
+        return null;
     }
 
     protected static function parse_new_module_code_from_modules_html(string $html): ?string
@@ -533,11 +573,63 @@ trait installer_admin_writes
             }
         }
 
-        if (preg_match('/[?&]module=([a-z0-9_]+)/', $html, $legacy_match) === 1) {
-            return $legacy_match[1];
+        $table_codes = self::parse_module_codes_from_modules_table_html($html);
+        if ($table_codes !== []) {
+            return $table_codes[0];
         }
 
         return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function parse_new_module_codes_from_modules_html(string $html): array
+    {
+        $html = str_replace('&amp;', '&', $html);
+        $codes = [];
+
+        foreach ([
+            '/<form\b[^>]*\bname=(["\'])install_module\1[^>]*\baction=(["\'])([^"\']+)\2/is',
+            '/<form\b[^>]*\baction=(["\'])([^"\']+)\1[^>]*\bname=(["\'])install_module\3/is',
+        ] as $index => $pattern) {
+            if (preg_match($pattern, $html, $form_match) !== 1) {
+                continue;
+            }
+
+            $action = $index === 0 ? $form_match[3] : $form_match[2];
+            $module_code = self::parse_module_query_parameter($action);
+            if ($module_code !== null) {
+                $codes[] = $module_code;
+            }
+        }
+
+        foreach (self::parse_module_codes_from_modules_table_html($html) as $module_code) {
+            $codes[] = $module_code;
+        }
+
+        return array_values(array_unique($codes));
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function parse_module_codes_from_modules_table_html(string $html): array
+    {
+        $html = str_replace('&amp;', '&', $html);
+        if (preg_match(
+            '/<table class="table table-striped table-hover">\s*<thead class="table-dark">.*?<tbody>(.*?)<\/tbody>/s',
+            $html,
+            $matches,
+        ) !== 1) {
+            return [];
+        }
+
+        if (preg_match_all('/[?&]module=([a-z0-9_]+)/', $matches[1], $module_matches) === 0) {
+            return [];
+        }
+
+        return array_values(array_unique($module_matches[1]));
     }
 
     protected static function parse_module_query_parameter(string $url): ?string
