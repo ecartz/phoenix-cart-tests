@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\installer;
 
+use PhoenixCart\Tests\support\cookie_jar_http_client;
 use PhoenixCart\Tests\support\install_test_case;
 use PhoenixCart\Tests\support\installer_admin_writes;
 use PhoenixCart\Tests\support\installer_bootstrap;
 use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[Group('installer')]
 final class admin_pm2checkout_dependency_test extends install_test_case
@@ -74,7 +76,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
 
         $this->install_missing_pm2checkout_customer_data_modules($admin_http);
 
-        $list_set = $this->install_admin_module($admin_http, self::PAYMENT_SET, self::PM2CHECKOUT_CODE);
+        $list_set = $this->assert_pm2checkout_install_succeeds($admin_http);
         $this->assertSame(self::PAYMENT_SET, $list_set);
 
         $this->remove_installed_module($admin_http, $list_set, self::PM2CHECKOUT_CODE);
@@ -93,6 +95,47 @@ final class admin_pm2checkout_dependency_test extends install_test_case
 
     private function assert_pm2checkout_install_rejected(HttpClientInterface $admin_http): void
     {
+        $install_formid = $this->pm2checkout_install_formid($admin_http);
+        $install_response = $this->post_pm2checkout_install_without_following_redirects(
+            $admin_http,
+            $install_formid,
+        );
+
+        $location = $this->redirect_location($install_response);
+        $this->assertFalse(
+            $this->location_includes_module($location, self::PM2CHECKOUT_CODE),
+            'Rejected install redirect should not target installed module detail: ' . $location,
+        );
+
+        $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? self::PAYMENT_SET;
+        $after_install_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
+
+        $this->assert_admin_module_list_not_contains($after_install_html, self::PM2CHECKOUT_CODE);
+    }
+
+    private function assert_pm2checkout_install_succeeds(HttpClientInterface $admin_http): string
+    {
+        $install_formid = $this->pm2checkout_install_formid($admin_http);
+        $install_response = $this->post_pm2checkout_install_without_following_redirects(
+            $admin_http,
+            $install_formid,
+        );
+
+        $location = $this->redirect_location($install_response);
+        $this->assertTrue(
+            $this->location_includes_module($location, self::PM2CHECKOUT_CODE),
+            'Successful install redirect should include module detail: ' . $location,
+        );
+
+        $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? self::PAYMENT_SET;
+        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
+        $this->assert_admin_module_list_contains($installed_html, self::PM2CHECKOUT_CODE);
+
+        return $list_set;
+    }
+
+    private function pm2checkout_install_formid(HttpClientInterface $admin_http): string
+    {
         $new_module_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => self::PAYMENT_SET,
             'list' => 'new',
@@ -101,18 +144,44 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         $install_formid = self::parse_hidden_input($new_module_html, 'formid');
         $this->assertNotSame('', $install_formid);
 
-        $install_response = $this->post_admin_form_response($admin_http, '/admin/modules.php', [
-            'set' => self::PAYMENT_SET,
-            'action' => 'install',
-            'module' => self::PM2CHECKOUT_CODE,
-        ], ['formid' => $install_formid]);
+        return $install_formid;
+    }
 
-        $this->assertSame(302, $install_response->getStatusCode());
+    private function post_pm2checkout_install_without_following_redirects(
+        HttpClientInterface $admin_http,
+        string $install_formid,
+    ): ResponseInterface {
+        $no_redirect = $admin_http instanceof cookie_jar_http_client
+            ? $admin_http->with_max_redirects(0)
+            : $admin_http;
 
-        $list_set = $this->parse_admin_modules_set_from_response($install_response) ?? self::PAYMENT_SET;
-        $after_install_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
+        $response = $no_redirect->request('POST', '/admin/modules.php', [
+            'query' => [
+                'set' => self::PAYMENT_SET,
+                'action' => 'install',
+                'module' => self::PM2CHECKOUT_CODE,
+            ],
+            'body' => ['formid' => $install_formid],
+        ]);
+        $this->assertSame(302, $response->getStatusCode());
 
-        $this->assert_admin_module_list_not_contains($after_install_html, self::PM2CHECKOUT_CODE);
+        return $response;
+    }
+
+    private function redirect_location(ResponseInterface $response): string
+    {
+        $headers = $response->getHeaders(false);
+        $location = $headers['location'][0] ?? $headers['Location'][0] ?? '';
+
+        return str_replace('&amp;', '&', $location);
+    }
+
+    private function location_includes_module(string $location, string $module_code): bool
+    {
+        return preg_match(
+            '/[?&]module=' . preg_quote($module_code, '/') . '(?:&|#|$)/',
+            $location,
+        ) === 1;
     }
 
     private function install_missing_pm2checkout_customer_data_modules(HttpClientInterface $admin_http): void
