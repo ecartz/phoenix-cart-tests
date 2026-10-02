@@ -453,11 +453,11 @@ trait installer_admin_writes
         );
     }
 
-    protected function install_and_remove_module(
+    protected function install_admin_module(
         HttpClientInterface $admin_http,
         string $set,
         string $module_code,
-    ): void {
+    ): string {
         $new_modules = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => $set,
             'list' => 'new',
@@ -478,6 +478,16 @@ trait installer_admin_writes
 
         $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $list_set]);
         $this->assert_admin_module_list_contains($installed_html, $module_code);
+
+        return $list_set;
+    }
+
+    protected function install_and_remove_module(
+        HttpClientInterface $admin_http,
+        string $set,
+        string $module_code,
+    ): void {
+        $list_set = $this->install_admin_module($admin_http, $set, $module_code);
 
         $this->remove_installed_module($admin_http, $list_set, $module_code);
 
