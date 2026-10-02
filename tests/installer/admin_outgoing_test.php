@@ -53,8 +53,8 @@ final class admin_outgoing_test extends install_test_case
         $this->assert_admin_get_page(
             $admin_http,
             '/admin/modules.php',
-            ['set' => 'currencies'],
-            'ECB',
+            ['set' => 'currencies', 'list' => 'new'],
+            'c_ecb',
         );
     }
 }

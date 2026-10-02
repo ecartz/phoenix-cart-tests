@@ -66,7 +66,7 @@ trait installer_admin_writes
         string $needle,
     ): string {
         $html = $this->fetch_admin_page($admin_http, $path, $query);
-        $this->assertStringContainsString($needle, $html);
+        $this->assertStringContainsString($needle, $this->admin_list_html_for_needle_assertion($html));
 
         return $html;
     }
@@ -78,33 +78,196 @@ trait installer_admin_writes
         string $needle,
     ): void {
         $html = $this->fetch_admin_page($admin_http, $path, $query);
-        $this->assertStringNotContainsString($needle, $html);
+        $this->assertStringNotContainsString($needle, $this->admin_list_html_for_needle_assertion($html));
+    }
+
+    protected function admin_list_html_for_needle_assertion(string $html): string
+    {
+        $html = (string) preg_replace('/<input\b(?:(?!>).)*\bname="search"(?:(?!>).)*>/i', '', $html);
+
+        return $this->admin_list_table_body($html);
     }
 
     protected function parse_entity_id_near_needle(string $html, string $needle, string $param): string
     {
-        $offset = strpos($html, $needle);
-        if ($offset === false) {
+        $html = str_replace('&amp;', '&', $html);
+        $list_html = $this->admin_list_table_body($html);
+        if (!str_contains($list_html, $needle)) {
             $this->fail('List HTML did not contain: ' . $needle);
         }
 
-        $window = substr($html, max(0, $offset - 400), 800);
-        $pattern = '/[?&]' . preg_quote($param, '/') . '=(\d+)/';
-        if (preg_match($pattern, $window, $matches) === 1) {
-            return $matches[1];
-        }
-
-        if (preg_match($pattern, $html, $matches) === 1) {
-            return $matches[1];
+        $entity_id = $this->parse_entity_id_from_table_row_containing($list_html, $needle, $param);
+        if ($entity_id !== '') {
+            return $entity_id;
         }
 
         $this->fail('Could not parse ' . $param . ' for: ' . $needle);
+    }
+
+    protected function admin_list_table_body(string $html): string
+    {
+        if (preg_match(
+            '/<table class="table table-striped table-hover">\s*<thead class="table-dark">.*?<tbody>(.*?)<\/tbody>/s',
+            $html,
+            $matches,
+        ) === 1) {
+            return $matches[1];
+        }
+
+        return $html;
+    }
+
+    protected function parse_entity_id_from_table_row_containing(
+        string $html,
+        string $needle,
+        string $param,
+    ): string {
+        $html = str_replace('&amp;', '&', $html);
+
+        if (preg_match_all('/<tr\b[^>]*>.*?<\/tr>/s', $html, $rows) === false) {
+            return '';
+        }
+
+        $pattern = '/[?&]' . preg_quote($param, '/') . '=(\d+)/';
+        $onclick_pattern = '/onclick="document\.location\.href=\'[^\']*[?&]'
+            . preg_quote($param, '/')
+            . '=(\d+)/';
+        foreach ($rows[0] as $row) {
+            if (!str_contains($row, $needle)) {
+                continue;
+            }
+
+            if (preg_match($onclick_pattern, $row, $matches) === 1) {
+                return $matches[1];
+            }
+
+            if (preg_match($pattern, $row, $matches) === 1) {
+                return $matches[1];
+            }
+        }
+
+        return '';
+    }
+
+    protected function parse_entity_id_from_table_row_onclick(
+        string $html,
+        string $needle,
+        string $param,
+    ): string {
+        return $this->parse_entity_id_from_table_row_containing($html, $needle, $param);
+    }
+
+    /**
+     * @param array<string, string> $overrides
+     *
+     * @return array<string, string>
+     */
+    protected function parse_admin_edit_form_body(string $html, array $overrides = []): array
+    {
+        $body = [];
+
+        if (preg_match_all('/<input[^>]+name="([^"]+)"[^>]*>/', $html, $inputs, PREG_SET_ORDER) !== false) {
+            foreach ($inputs as $input) {
+                $name = $input[1];
+                if (!preg_match('/\btype="([^"]+)"/', $input[0], $type_match)) {
+                    $type = 'text';
+                } else {
+                    $type = strtolower($type_match[1]);
+                }
+                if ($type === 'submit' || $type === 'button' || $type === 'image') {
+                    continue;
+                }
+
+                if ($type === 'checkbox' || $type === 'radio') {
+                    if (!preg_match('/\bchecked(?:="checked")?/', $input[0])) {
+                        continue;
+                    }
+                }
+
+                if (preg_match('/\bvalue="([^"]*)"/', $input[0], $value_match) === 1) {
+                    $body[$name] = html_entity_decode($value_match[1], ENT_QUOTES);
+                } elseif ($type === 'checkbox' || $type === 'radio') {
+                    $body[$name] = 'on';
+                }
+            }
+        }
+
+        if (preg_match_all('/<textarea[^>]+name="([^"]+)"[^>]*>(.*?)<\/textarea>/s', $html, $textareas, PREG_SET_ORDER) !== false) {
+            foreach ($textareas as $textarea) {
+                $body[$textarea[1]] = html_entity_decode($textarea[2], ENT_QUOTES);
+            }
+        }
+
+        if (preg_match_all('/<select[^>]+name="([^"]+)"[^>]*>(.*?)<\/select>/s', $html, $selects, PREG_SET_ORDER) !== false) {
+            foreach ($selects as $select) {
+                if (preg_match('/<option[^>]+selected[^>]*value="([^"]*)"/', $select[2], $selected) === 1) {
+                    $body[$select[1]] = html_entity_decode($selected[1], ENT_QUOTES);
+                } elseif (preg_match('/<option[^>]+value="([^"]*)"[^>]*selected/', $select[2], $selected) === 1) {
+                    $body[$select[1]] = html_entity_decode($selected[1], ENT_QUOTES);
+                }
+            }
+        }
+
+        foreach ($overrides as $name => $value) {
+            $body[$name] = $value;
+        }
+
+        return $body;
+    }
+
+    protected static function parse_formid_for_admin_action(string $html, string $action): string
+    {
+        $html = html_entity_decode($html, ENT_QUOTES);
+        $quoted_action = preg_quote($action, '/');
+        if (preg_match(
+            '/<form[^>]*action="[^"]*action=' . $quoted_action . '[^"]*"[^>]*>.*?name="formid"[^>]*value="([^"]*)"/s',
+            $html,
+            $matches,
+        ) === 1) {
+            return $matches[1];
+        }
+
+        if (preg_match(
+            '/<form[^>]*action="[^"]*action=' . $quoted_action . '[^"]*"[^>]*>.*?value="([^"]*)"[^>]*name="formid"/s',
+            $html,
+            $matches,
+        ) === 1) {
+            return $matches[1];
+        }
+
+        return self::parse_formid_from_page($html);
     }
 
     protected function parse_id_from_redirect_url(string $url, string $param): string
     {
         if (preg_match('/[?&]' . preg_quote($param, '/') . '=(\d+)/', $url, $matches) === 1) {
             return $matches[1];
+        }
+
+        return '';
+    }
+
+    protected function resolve_admin_formid(HttpClientInterface $admin_http): string
+    {
+        foreach ([
+            '/admin/mail.php',
+            '/admin/languages.php',
+            '/admin/configuration.php',
+            '/admin/index.php',
+        ] as $path) {
+            $query = match ($path) {
+                '/admin/configuration.php' => ['gID' => '1'],
+                '/admin/languages.php' => ['action' => 'new'],
+                default => [],
+            };
+            $html = $this->fetch_admin_page($admin_http, $path, $query);
+            $formid = self::parse_hidden_input($html, 'formid');
+            if ($formid === '') {
+                $formid = self::parse_formid_from_page($html);
+            }
+            if ($formid !== '') {
+                return $formid;
+            }
         }
 
         return '';
@@ -120,12 +283,23 @@ trait installer_admin_writes
         array $extra_body = [],
         string $delete_view_action = 'delete',
     ): void {
+        $this->fetch_admin_page($admin_http, $path, array_merge([$id_param => $entity_id], $extra_query));
+
         $delete_query = array_merge([$id_param => $entity_id, 'action' => $delete_view_action], $extra_query);
         $delete_page = $this->fetch_admin_page($admin_http, $path, $delete_query);
         $formid = self::parse_formid_from_page($delete_page);
+        if ($formid === '') {
+            $formid = self::parse_formid_for_admin_action($delete_page, $delete_confirm_action);
+        }
+        if ($formid === '') {
+            $formid = $this->resolve_admin_formid($admin_http);
+        }
         $this->assertNotSame('', $formid);
 
-        $confirm_query = array_merge([$id_param => $entity_id, 'action' => $delete_confirm_action], $extra_query);
+        $confirm_query = array_merge(
+            [$id_param => $entity_id, 'action' => $delete_confirm_action],
+            $extra_query,
+        );
         $this->post_admin_form($admin_http, $path, $confirm_query, array_merge(['formid' => $formid], $extra_body));
     }
 

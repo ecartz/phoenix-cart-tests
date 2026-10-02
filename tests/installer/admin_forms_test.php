@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhoenixCart\Tests\installer;
 
 use PhoenixCart\Tests\support\install_test_case;
+use PhoenixCart\Tests\support\installer_admin_writes;
 use PhoenixCart\Tests\support\installer_bootstrap;
 use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
@@ -13,6 +14,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[Group('installer')]
 final class admin_forms_test extends install_test_case
 {
+    use installer_admin_writes;
+
     private const PRODUCT_NAME = 'Phoenix Installer Product';
 
     private const PRODUCT_DESCRIPTION = 'Installer acceptance test catalog product.';
@@ -247,29 +250,20 @@ final class admin_forms_test extends install_test_case
         ]);
         $this->assertSame(200, $edit_page->getStatusCode());
         $edit_html = $edit_page->getContent(false);
-        $formid = self::parse_hidden_input($edit_html, 'formid');
-        $default_address_id = self::parse_hidden_input($edit_html, 'default_address_id');
-        $this->assertNotSame('', $formid);
-        $this->assertNotSame('', $default_address_id);
+        $body = $this->parse_admin_edit_form_body($edit_html, [
+            'lastname' => $last_name,
+            'password' => '',
+            'password_confirmation' => '',
+        ]);
+        $this->assertArrayHasKey('formid', $body);
+        $this->assertNotSame('', $body['formid']);
 
         $update = $admin_http->request('POST', '/admin/customers.php', [
             'query' => [
                 'cID' => $customer_id,
                 'action' => 'update',
             ],
-            'body' => [
-                'formid' => $formid,
-                'default_address_id' => $default_address_id,
-                'firstname' => self::CUSTOMER_FIRSTNAME,
-                'lastname' => $last_name,
-                'email_address' => self::CUSTOMER_EMAIL,
-                'street_address' => '1 Test Street',
-                'city' => 'Testville',
-                'postcode' => '90210',
-                'country_id' => '223',
-                'state' => 'Florida',
-                'telephone' => '555-0100',
-            ],
+            'body' => $body,
         ]);
         $this->assertContains($update->getStatusCode(), [200, 302]);
     }

@@ -140,7 +140,7 @@ abstract class install_test_case extends phoenix_test_case
     protected function assert_captured_mail_contains(string $needle): void
     {
         $body = installer_mail_capture::read_combined();
-        if ($body === '' || !str_contains($body, $needle)) {
+        if ($body === '') {
             $body = installer_outgoing_lookup::combined_body();
         }
 

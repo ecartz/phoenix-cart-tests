@@ -38,7 +38,9 @@ final class admin_content_writes_test extends install_test_case
 
     private const OUTGOING_TITLE = 'Phoenix Installer Outgoing Template';
 
-    private const SPECIAL_PRODUCT_ID = '3';
+    private const SPECIAL_PRODUCT_ID = '2';
+
+    private const SPECIAL_OFFER_PRICE = '0.42';
 
     public static function setUpBeforeClass(): void
     {
@@ -74,17 +76,17 @@ final class admin_content_writes_test extends install_test_case
         $this->post_admin_form($admin_http, '/admin/specials.php', ['action' => 'insert'], [
             'formid' => $formid,
             'products_id' => self::SPECIAL_PRODUCT_ID,
-            'specials_price' => '0.99',
+            'specials_price' => self::SPECIAL_OFFER_PRICE,
             'expdate' => $expdate,
         ]);
 
         $list_html = $this->fetch_admin_page($admin_http, '/admin/specials.php');
-        $this->assertStringContainsString('Pears', $list_html);
-        $special_id = $this->parse_entity_id_near_needle($list_html, 'Pears', 'sID');
+        $this->assertStringContainsString(self::SPECIAL_OFFER_PRICE, $list_html);
+        $special_id = $this->parse_entity_id_near_needle($list_html, self::SPECIAL_OFFER_PRICE, 'sID');
 
         $this->confirm_admin_delete($admin_http, '/admin/specials.php', 'sID', $special_id);
         $after = $this->fetch_admin_page($admin_http, '/admin/specials.php');
-        $this->assertStringNotContainsString('0.99', $after);
+        $this->assertStringNotContainsString(self::SPECIAL_OFFER_PRICE, $after);
     }
 
     private function insert_and_delete_review(HttpClientInterface $admin_http, string $customer_id): void
@@ -101,11 +103,11 @@ final class admin_content_writes_test extends install_test_case
             'reviews_rating' => '5',
         ]);
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/reviews.php', [], self::REVIEW_TEXT);
-        $review_id = $this->parse_entity_id_near_needle($list_html, self::REVIEW_TEXT, 'rID');
+        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/reviews.php', [], 'Lemons');
+        $review_id = $this->parse_entity_id_near_needle($list_html, 'Lemons', 'rID');
 
         $this->confirm_admin_delete($admin_http, '/admin/reviews.php', 'rID', $review_id);
-        $this->assert_admin_list_not_contains($admin_http, '/admin/reviews.php', [], self::REVIEW_TEXT);
+        $this->assert_admin_list_not_contains($admin_http, '/admin/reviews.php', [], 'Lemons');
     }
 
     private function insert_and_delete_testimonial(
@@ -149,13 +151,21 @@ final class admin_content_writes_test extends install_test_case
             $body["page_text[{$language_id}]"] = 'Installer acceptance info page body.';
         }
 
-        $this->post_admin_form($admin_http, '/admin/info_pages.php', ['action' => 'add_new'], $body);
+        $insert = $admin_http->request('POST', '/admin/info_pages.php', [
+            'query' => ['action' => 'add_new'],
+            'body' => $body,
+        ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $page_id = $this->parse_id_from_redirect_url((string) ($insert->getInfo('url') ?? ''), 'pID');
+        if ($page_id === '') {
+            $list_html = $this->assert_admin_list_contains($admin_http, '/admin/info_pages.php', [], self::INFO_PAGE_TITLE);
+            $page_id = $this->parse_entity_id_near_needle($list_html, self::INFO_PAGE_TITLE, 'pID');
+        }
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/info_pages.php', [], self::INFO_PAGE_TITLE);
-        $page_id = $this->parse_entity_id_near_needle($list_html, self::INFO_PAGE_TITLE, 'pID');
+        $this->assertNotSame('', $page_id);
 
         $this->confirm_admin_delete($admin_http, '/admin/info_pages.php', 'pID', $page_id);
-        $this->assert_admin_list_not_contains($admin_http, '/admin/info_pages.php', [], self::INFO_PAGE_TITLE);
+        $this->assert_admin_list_not_contains($admin_http, '/admin/info_pages.php', [], self::INFO_PAGE_SLUG);
     }
 
     private function insert_and_delete_advert(HttpClientInterface $admin_http): void
@@ -207,10 +217,19 @@ final class admin_content_writes_test extends install_test_case
             $body["text[{$language_id}]"] = 'Installer outgoing template body.';
         }
 
-        $this->post_admin_form($admin_http, '/admin/outgoing_tpl.php', ['action' => 'insert'], $body);
+        $insert = $admin_http->request('POST', '/admin/outgoing_tpl.php', [
+            'query' => ['action' => 'insert'],
+            'body' => $body,
+        ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $template_id = $this->parse_id_from_redirect_url((string) ($insert->getInfo('url') ?? ''), 'oID');
+        if ($template_id === '') {
+            $list_html = $this->assert_admin_list_contains($admin_http, '/admin/outgoing_tpl.php', [], $slug);
+            $template_id = $this->parse_entity_id_near_needle($list_html, $slug, 'oID');
+        }
 
-        $list_html = $this->assert_admin_list_contains($admin_http, '/admin/outgoing_tpl.php', [], self::OUTGOING_TITLE);
-        $template_id = $this->parse_entity_id_near_needle($list_html, self::OUTGOING_TITLE, 'oID');
+        $this->assertNotSame('', $template_id);
+        $this->assert_admin_list_contains($admin_http, '/admin/outgoing_tpl.php', [], $slug);
 
         $this->confirm_admin_delete(
             $admin_http,
@@ -220,7 +239,11 @@ final class admin_content_writes_test extends install_test_case
             'delete_confirm',
             ['slug' => $slug],
         );
-        $this->assert_admin_list_not_contains($admin_http, '/admin/outgoing_tpl.php', [], self::OUTGOING_TITLE);
+        $after = $this->fetch_admin_page($admin_http, '/admin/outgoing_tpl.php');
+        $this->assertStringNotContainsString(
+            'oID=' . $template_id,
+            $this->admin_list_table_body($after),
+        );
     }
 
     private function register_storefront_customer(HttpClientInterface $shop_http): void

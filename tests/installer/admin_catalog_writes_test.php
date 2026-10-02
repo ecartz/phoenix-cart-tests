@@ -59,9 +59,9 @@ final class admin_catalog_writes_test extends install_test_case
             $category_id,
             self::PRODUCT_NAME_UPDATED,
         );
-        $this->delete_product($admin_http, $child_path, $copy_id, $category_id);
+        $this->delete_product($admin_http, $child_path, $copy_id, (int) $category_id);
 
-        $this->move_product($admin_http, self::PRODUCT_CATEGORY_PATH, $product_id, $category_id);
+        $this->move_product($admin_http, self::PRODUCT_CATEGORY_PATH, $product_id, (int) $category_id);
         $this->move_product($admin_http, $child_path, $product_id, (int) self::ROOT_CATEGORY_PATH);
 
         $this->delete_product(
@@ -140,15 +140,21 @@ final class admin_catalog_writes_test extends install_test_case
         $products_date_added = self::parse_hidden_input($new_html, 'products_date_added');
         $this->assertNotSame('', $products_date_added);
 
-        $this->post_admin_form($admin_http, '/admin/catalog.php', [
-            'cPath' => $category_path,
-            'action' => 'insert_product',
-        ], $this->product_post_body(
-            $formid,
-            $language_id,
-            $products_date_added,
-            $product_name,
-        ));
+        $insert = $admin_http->request('POST', '/admin/catalog.php', [
+            'query' => [
+                'cPath' => $category_path,
+                'action' => 'insert_product',
+            ],
+            'body' => $this->product_post_body(
+                $formid,
+                $language_id,
+                $products_date_added,
+                $product_name,
+            ),
+        ]);
+        $this->assertContains($insert->getStatusCode(), [200, 302]);
+        $insert_url = (string) ($insert->getInfo('url') ?? '');
+        $product_id = $this->parse_id_from_redirect_url($insert_url, 'pID');
 
         $list_html = $this->assert_admin_list_contains(
             $admin_http,
@@ -157,7 +163,13 @@ final class admin_catalog_writes_test extends install_test_case
             $product_name,
         );
 
-        return $this->parse_entity_id_near_needle($list_html, $product_name, 'pID');
+        if ($product_id === '') {
+            $product_id = $this->parse_entity_id_near_needle($list_html, $product_name, 'pID');
+        }
+
+        $this->assertNotSame('', $product_id);
+
+        return $product_id;
     }
 
     private function update_product_name(
@@ -274,17 +286,26 @@ final class admin_catalog_writes_test extends install_test_case
         string $product_id,
         int $category_id_for_confirm,
     ): void {
+        $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
+            'cPath' => $category_path,
+            'pID' => $product_id,
+        ]);
+
         $delete_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
             'pID' => $product_id,
             'action' => 'delete_product',
         ]);
-        $formid = self::parse_hidden_input($delete_html, 'formid');
+        $formid = self::parse_formid_from_page($delete_html);
+        if ($formid === '') {
+            $formid = $this->resolve_admin_formid($admin_http);
+        }
         $this->assertNotSame('', $formid);
 
         $this->post_admin_form($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
             'action' => 'delete_product_confirm',
+            'formid' => $formid,
         ], [
             'formid' => $formid,
             'products_id' => $product_id,
@@ -297,17 +318,26 @@ final class admin_catalog_writes_test extends install_test_case
         string $category_path,
         string $category_id,
     ): void {
+        $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
+            'cPath' => $category_path,
+            'cID' => $category_id,
+        ]);
+
         $delete_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
             'cID' => $category_id,
             'action' => 'delete_category',
         ]);
-        $formid = self::parse_hidden_input($delete_html, 'formid');
+        $formid = self::parse_formid_from_page($delete_html);
+        if ($formid === '') {
+            $formid = $this->resolve_admin_formid($admin_http);
+        }
         $this->assertNotSame('', $formid);
 
         $this->post_admin_form($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
             'action' => 'delete_category_confirm',
+            'formid' => $formid,
         ], [
             'formid' => $formid,
             'categories_id' => $category_id,

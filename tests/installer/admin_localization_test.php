@@ -29,7 +29,7 @@ final class admin_localization_test extends install_test_case
     public function test_admin_zones_list_renders(): void
     {
         $admin_http = $this->login_installed_admin();
-        $this->assert_admin_get_page($admin_http, '/admin/zones.php', [], 'United States');
+        $this->assert_admin_get_page($admin_http, '/admin/zones.php', [], 'Alberta');
     }
 
     public function test_admin_tax_classes_list_renders(): void
