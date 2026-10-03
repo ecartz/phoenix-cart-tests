@@ -4,6 +4,7 @@
 /working/
 .cursor/cloud.env
 .cursor/https/
+AGENTS.md
 /node_modules/
 /test-results/
 /playwright-report/
