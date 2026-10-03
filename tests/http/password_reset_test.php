@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\http;
 
+use PhoenixCart\Tests\support\http_action_recorder_fixture_sql;
 use PhoenixCart\Tests\support\http_customer_fixture_sql;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
@@ -13,8 +14,14 @@ final class password_reset_test extends http_test_case {
 
     private const RESET_PASSWORD = 'phoenix-reset-test';
 
+    protected function setUp(): void {
+        parent::setUp();
+        http_action_recorder_fixture_sql::clear_module('ar_reset_password');
+    }
+
     protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
+        http_action_recorder_fixture_sql::clear_module('ar_reset_password');
         parent::tearDown();
     }
 
