@@ -50,11 +50,33 @@ final class admin_modules_config_test extends install_test_case
         '16',
     ];
 
+    /**
+     * Sample data pre-installs all modules in these sets (no list=new candidates).
+     *
+     * @var list<string>
+     */
+    private const MODULE_SETS_SAMPLE_PREINSTALLS_ALL = [
+        'action_recorder',
+        'header_tags',
+        'order_total',
+    ];
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
+        self::prepare_module_sets_for_install_tests();
+    }
+
+    private static function prepare_module_sets_for_install_tests(): void
+    {
+        $runner = new self('prepare_module_sets_for_install_tests');
+        $runner->setUp();
+        $admin_http = $runner->login_installed_admin();
+        foreach (self::MODULE_SETS_SAMPLE_PREINSTALLS_ALL as $set) {
+            $runner->ensure_module_set_has_new_candidate($admin_http, $set);
+        }
     }
 
     #[DataProvider('module_set_provider')]

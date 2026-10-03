@@ -546,6 +546,25 @@ trait installer_admin_writes
         return '';
     }
 
+    /**
+     * Sample import often pre-installs every module in a set, leaving list=new empty.
+     * Remove one installed module so install/remove coverage can pick from list=new.
+     */
+    protected function ensure_module_set_has_new_candidate(HttpClientInterface $admin_http, string $set): void
+    {
+        if ($this->first_new_module_code($admin_http, $set) !== null) {
+            return;
+        }
+
+        $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', ['set' => $set]);
+        $installed_codes = self::parse_module_codes_from_modules_table_html($installed_html);
+        if ($installed_codes === []) {
+            return;
+        }
+
+        $this->remove_installed_module($admin_http, $set, $installed_codes[0]);
+    }
+
     protected function first_new_module_code(HttpClientInterface $admin_http, string $set): ?string
     {
         $html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
