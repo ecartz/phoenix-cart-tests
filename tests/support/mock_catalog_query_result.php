@@ -21,8 +21,7 @@ final class mock_catalog_query_result {
     /**
      * @param list<array<string, mixed>> $rows
      */
-    public function __construct(array $rows = [])
-    {
+    public function __construct(array $rows = []) {
         $this->rows = array_values($rows);
         $this->num_rows = count($this->rows);
     }

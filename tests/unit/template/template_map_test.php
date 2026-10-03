@@ -32,8 +32,7 @@ final class template_map_test extends phoenix_test_case {
 
     public function test_map_falls_back_when_template_returns_null(): void {
         $stub = new class {
-            public function get_template_mapping_for($file, $type)
-            {
+            public function get_template_mapping_for($file, $type) {
                 return null;
             }
         };

@@ -2,8 +2,11 @@
 /.phpunit.cache/
 /PhoenixCart/
 /working/
+# Local agent notes and optional EditorConfig (see TESTING.md)
 .cursor/cloud.env
 .cursor/https/
+.editorconfig
+.vscode/
 AGENTS.md
 /node_modules/
 /test-results/

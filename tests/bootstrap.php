@@ -17,11 +17,11 @@ $candidates[] = realpath(__DIR__ . '/..') ?: __DIR__ . '/..';
 $catalog_root = null;
 
 foreach ($candidates as $candidate) {
-  $autoloader = $candidate . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'autoloader.php';
-  if (is_file($autoloader)) {
-    $catalog_root = $candidate;
-    break;
-  }
+    $autoloader = $candidate . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'autoloader.php';
+    if (is_file($autoloader)) {
+        $catalog_root = $candidate;
+        break;
+    }
 }
 
 if ($catalog_root === null) {

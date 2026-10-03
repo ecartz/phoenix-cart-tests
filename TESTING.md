@@ -106,8 +106,11 @@ GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit
 
 - Optional local [`AGENTS.md`](AGENTS.md) (gitignored) mirrors agent-oriented notes; the bullets below are the tracked source of truth for contributors and CI.
 - Namespaces: `PhoenixCart\Tests\unit\<area>\...` or `PhoenixCart\Tests\integration\...` (path segments lowercase); support classes use catalog-style **snake_case** filenames and class names.
-- **PHP class layout:** put the opening `{` on the same line as the `class` / `trait` / `interface` / `enum` declaration; leave one blank line after `{` before members and one blank line before the closing `}`. Examples: [`configuration_test_helper.php`](tests/support/configuration_test_helper.php), [`tickable_test.php`](tests/unit/html/tickable_test.php).
-- **PHP methods with return types:** put `{` on the same line as the return type (e.g. `): void {`); do not reflow multi-line parameter lists—only move the brace.
+- **Indentation:** use **4 spaces** per level in `tests/`, `scripts/`, and root PHP. Do not mix 2-space blocks into test code.
+- **PHP class layout (named types):** put the opening `{` on the same line as the `class` / `trait` / `interface` / `enum` declaration; leave one blank line after `{` before members and one blank line before the closing `}`. Examples: [`configuration_test_helper.php`](tests/support/configuration_test_helper.php), [`tickable_test.php`](tests/unit/html/tickable_test.php).
+- **PHP function / method braces:** put `{` on the last line of the signature—after the return type when present (e.g. `): void {`) or after `)` when there is no return type (e.g. `function __construct() {`). Multi-line parameter lists keep their line breaks; only move the brace.
+- **Inline anonymous classes:** `new class { … }` stubs inside a test method are exempt from the named-class blank-line rules; keep them compact on purpose (see [`html_test_case.php`](tests/unit/html/html_test_case.php)).
+- **Catalog fixture PHP:** files under [`fixtures/http/`](fixtures/http/) are copied into the shop at runtime and follow **Phoenix 2-space** layout, not test layout.
 - Prefer **behavior** assertions and data providers.
 - Do not copy Phoenix implementation into this repo.
 - When skipping, update `SKIPPED.md` with **reason** and which suite would cover it later.
