@@ -25,9 +25,14 @@ final class account_history_info_test extends http_test_case {
         ]);
         $this->assertSame(200, $detail->getStatusCode());
         $detail_body = $detail->getContent(false);
+        $this->assertStringContainsString('Order Information', $detail_body);
         $this->assertStringContainsString('Pears', $detail_body);
-        $this->assertStringContainsString('Cash on Delivery', $detail_body);
-        $this->assertMatchesRegularExpression('/\$\d/', $detail_body);
+        $this->assertStringContainsString('Flat Rate', $detail_body);
+        $this->assertStringContainsString('$4.99', $detail_body);
+        $this->assertSame(
+            'Cash on Delivery',
+            http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
+        );
 
         $bad_id = $this->get_http_without_redirects()->request('GET', '/account_history_info.php', [
             'query' => [
