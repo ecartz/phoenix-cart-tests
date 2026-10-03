@@ -70,7 +70,7 @@ Examples in this suite:
 - COD payment zone excludes the fixture Florida address (`checkout_geo_zone_cod_test`; temporary geo zone + `MODULE_PAYMENT_COD_ZONE`)
 - Logged-out checkout creates an account mid-flow then completes COD (`checkout_new_account_test`)
 - Off-site confirmation form pipeline without PayPal/Stripe (`checkout_local_redirect_test`; copies [`fixtures/http/http_local_redirect.php`](../fixtures/http/http_local_redirect.php) and [`fixtures/http/http_local_redirect_return.php`](../fixtures/http/http_local_redirect_return.php) into the catalog `ext/` tree for the test, exercises good/bad tokens on `ext/modules/payment/http_local_redirect/return.php` and `checkout_process.php`, asserts `payment_method` **HTTP Local Redirect Fixture**)
-- Info and slug pages (`info_page_test`); extra SQL in [`fixtures/http/`](../fixtures/http/)
+- Info and slug pages (`info_page_test`): `info.php?pages_id=` plus `privacy.php`, `conditions.php`, and `shipping.php`; extra SQL in [`fixtures/http/`](../fixtures/http/)
 - Redirect hardening for `Href::redirect` entrypoints (`href_redirect_test`)
 - Request user-agent / IP mismatch → login redirect (`request_security_test`; uses `enable_session_security_checks.sql`)
 - Timed homepage smoke (`homepage_timing_test`; budget via **`PHOENIX_HTTP_BUDGET_SECONDS`**, default 10)

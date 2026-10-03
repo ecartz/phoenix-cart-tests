@@ -56,6 +56,39 @@ final class admin_writes_test extends install_test_case {
         $this->assertStringContainsString('fa-check-circle text-success', $after_enable);
     }
 
+    public function test_disabled_review_hides_from_storefront_product_page(): void {
+        $admin_http = $this->login_installed_admin();
+        $reviews_html = $this->fetch_reviews_list($admin_http);
+        $disable_href = $this->extract_set_flag_href($reviews_html, '0');
+        $this->assertNotSame('', $disable_href);
+
+        $toggle = $admin_http->request('GET', $this->admin_path_from_href($disable_href), [
+            'query' => $this->admin_query_from_href($disable_href),
+        ]);
+        $this->assertContains($toggle->getStatusCode(), [200, 302]);
+
+        $shop_http = installer_bootstrap::client();
+        $hidden = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '4'],
+        ]);
+        $this->assertSame(200, $hidden->getStatusCode());
+        $this->assertStringNotContainsString('Lovely box of crunchy apples', $hidden->getContent(false));
+
+        $after_disable = $this->fetch_reviews_list($admin_http);
+        $enable_href = $this->extract_set_flag_href($after_disable, '1');
+        $this->assertNotSame('', $enable_href);
+
+        $restore = $admin_http->request('GET', $this->admin_path_from_href($enable_href), [
+            'query' => $this->admin_query_from_href($enable_href),
+        ]);
+        $this->assertContains($restore->getStatusCode(), [200, 302]);
+
+        $visible = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '4'],
+        ]);
+        $this->assertStringContainsString('Lovely box of crunchy apples', $visible->getContent(false));
+    }
+
     public function test_admin_newsletter_draft_insert_and_delete(): void {
         $admin_http = $this->login_installed_admin();
 

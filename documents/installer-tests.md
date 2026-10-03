@@ -105,7 +105,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
 
-- **`reviews.php?action=set_flag`** — disables the sample review and restores active status
+- **`reviews.php?action=set_flag`** — disables the sample review and restores active status; disabled review text is absent from storefront **`product_info.php`** (product 4) until re-enabled
 - **`newsletters.php?action=insert`** — draft **`newsletter`** module row, then **`delete_confirm`** (no send)
 - **`modules.php?set=boxes`** — install **`bm_categories`** from **`list=new`**, then remove
 - **`configuration.php?gID=3`** — **`MAX_ADDRESS_BOOK_ENTRIES`** `5` → `6` → `5`

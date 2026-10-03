@@ -38,6 +38,29 @@ final class info_page_test extends http_test_case {
         ];
     }
 
+    #[DataProvider('install_info_slug_provider')]
+    public function test_slug_php_shows_install_seed_page(
+        string $slug_path,
+        string $title,
+        string $text_snippet
+    ): void {
+        $response = $this->get_http()->request('GET', '/' . $slug_path);
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $body = $response->getContent(false);
+        $this->assertStringContainsString($title, $body);
+        $this->assertStringContainsString($text_snippet, $body);
+    }
+
+    public static function install_info_slug_provider(): array {
+        return [
+            'privacy' => ['privacy.php', 'Privacy & Cookie Policy', 'Privacy/Cookie Policies Text'],
+            'conditions' => ['conditions.php', 'Terms & Conditions', 'Terms & Conditions Text'],
+            'shipping' => ['shipping.php', 'Shipping & Returns', 'Shipping & Returns Text'],
+        ];
+    }
+
     public function test_cookie_usage_php_shows_slug_page_from_seed(): void {
         $response = $this->get_http()->request('GET', '/cookie_usage.php');
 
