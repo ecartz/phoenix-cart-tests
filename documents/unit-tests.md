@@ -10,7 +10,7 @@ Unit tests exercise **real** Phoenix Cart classes through the catalog autoloader
 | PHPUnit testsuite | `unit` |
 | Default run | **`composer test`** |
 
-Nested folders group tests by area (`html/`, `support/`, `content/`, `template/`, `configuration/`, `invariants/`). Class namespaces use lowercase segments that match those paths (see [`AGENTS.md`](../AGENTS.md)).
+Nested folders group tests by area (`html/`, `support/`, `content/`, `template/`, `configuration/`, `invariants/`). Class namespaces use lowercase segments that match those paths. PHP brace layout for classes and methods is documented in [`TESTING.md`](../TESTING.md#agent-and-human-conventions) (optional local [`AGENTS.md`](../AGENTS.md) for agents).
 
 ## What belongs here
 

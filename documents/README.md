@@ -18,7 +18,7 @@ For quick local commands, see the root [`README.md`](../README.md). For how CE P
 | **`composer test:payment-sandbox`** | Stripe config smoke (`#[Group('payment_sandbox')]`) |
 | **`composer test:installer`** | Web installer wizard (`tests/installer/`) |
 | **`composer release-certify`** | Pinned catalog checkout + stack (+ optional browser) |
-| **`composer cloud-test`** | Same phases as CI full stack on Cursor Cloud (see [`AGENTS.md`](../AGENTS.md)) |
+| **`composer cloud-test`** | Same phases as CI full stack on Cursor Cloud (see [`TESTING.md`](../TESTING.md) and optional local [`AGENTS.md`](../AGENTS.md)) |
 
 ## Pages
 
