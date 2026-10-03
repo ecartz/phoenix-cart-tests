@@ -20,7 +20,9 @@ final class session_locale_test extends http_test_case {
             ],
         ]);
         $this->assertSame(200, $eur_page->getStatusCode());
-        $this->assertStringContainsString('€', $eur_page->getContent(false));
+        $eur_body = $eur_page->getContent(false);
+        $this->assertStringContainsString('Selected Currency: EUR', $eur_body);
+        $this->assertStringContainsString('data-product-price="4.25"', $eur_body);
 
         $usd_page = $this->get_http()->request('GET', '/product_info.php', [
             'query' => [
@@ -29,7 +31,9 @@ final class session_locale_test extends http_test_case {
             ],
         ]);
         $this->assertSame(200, $usd_page->getStatusCode());
-        $this->assertStringContainsString('$', $usd_page->getContent(false));
+        $usd_body = $usd_page->getContent(false);
+        $this->assertStringContainsString('Selected Currency: USD', $usd_body);
+        $this->assertStringContainsString('$4.99', $usd_body);
     }
 
     public function test_language_query_keeps_english_and_falls_back_for_unknown_code(): void {
