@@ -25,4 +25,20 @@ final class account_gdpr_test extends http_test_case {
         $this->assertStringContainsString('cm-gdpr-intro', $gdpr_body);
     }
 
+    public function test_logged_in_customer_can_download_gdpr_json_export(): void {
+        $this->login_fixture_customer();
+
+        $export = $this->get_http()->request('GET', '/gdpr.php', [
+            'query' => [
+                'action' => 'gdpr_data',
+            ],
+        ]);
+        $this->assertSame(200, $export->getStatusCode());
+
+        $body = $export->getContent(false);
+        $data = json_decode($body, true);
+        $this->assertIsArray($data);
+        $this->assertSame('Phoenix', $data['US']['NAME'] ?? null);
+    }
+
 }

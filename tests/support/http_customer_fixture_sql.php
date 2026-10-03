@@ -82,6 +82,31 @@ final class http_customer_fixture_sql {
         $mysqli->close();
     }
 
+    public static function restore_fixture_newsletter(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        self::exec(
+            $mysqli,
+            "UPDATE customers SET customers_newsletter = '0' WHERE customers_id = " . self::FIXTURE_CUSTOMER_ID
+        );
+
+        $mysqli->close();
+    }
+
+    public static function restore_fixture_global_product_notifications(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        self::exec(
+            $mysqli,
+            'UPDATE customers_info SET global_product_notifications = 0'
+            . ' WHERE customers_info_id = ' . self::FIXTURE_CUSTOMER_ID
+        );
+
+        $mysqli->close();
+    }
+
     public static function restore_fixture_firstname(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
