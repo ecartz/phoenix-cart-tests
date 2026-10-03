@@ -44,6 +44,22 @@ final class admin_reports_test extends install_test_case {
         $this->assert_admin_get_page($admin_http, '/admin/whos_online.php', [], "Who's Online");
     }
 
+    public function test_storefront_visit_lists_session_in_whos_online(): void {
+        $shop_http = installer_bootstrap::client();
+        $home = $shop_http->request('GET', '/');
+        $this->assertSame(200, $home->getStatusCode());
+
+        $admin_http = $this->login_installed_admin();
+        $online = $admin_http->request('GET', '/admin/whos_online.php');
+        $this->assertSame(200, $online->getStatusCode());
+        $body = $online->getContent(false);
+        $this->assertStringContainsString("Who's Online", $body);
+        $this->assertTrue(
+            str_contains($body, '127.0.0.1') || str_contains($body, 'Guest'),
+            'whos_online should list the storefront session or guest row'
+        );
+    }
+
     public function test_admin_action_recorder_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/action_recorder.php', [], 'Action Recorder');

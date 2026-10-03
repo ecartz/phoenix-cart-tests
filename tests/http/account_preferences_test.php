@@ -17,6 +17,7 @@ final class account_preferences_test extends http_test_case {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
         http_customer_fixture_sql::restore_fixture_newsletter();
         http_customer_fixture_sql::restore_fixture_global_product_notifications();
+        http_customer_fixture_sql::restore_fixture_product_notifications();
         parent::tearDown();
     }
 
@@ -80,6 +81,28 @@ final class account_preferences_test extends http_test_case {
         $this->assertStringContainsString(
             'Your product notifications have been successfully updated.',
             $notifications_response->getContent(false)
+        );
+    }
+
+    public function test_fixture_customer_can_enable_per_product_notification(): void {
+        $this->login_fixture_customer();
+
+        $notifications_page = $this->get_http()->request('GET', '/account_notifications.php');
+        $notifications_html = $notifications_page->getContent(false);
+        $notifications_formid = self::parse_hidden_input($notifications_html, 'formid');
+        $this->assertNotSame('', $notifications_formid);
+
+        $response = $this->get_http()->request('POST', '/account_notifications.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $notifications_formid,
+                'products[3]' => '3',
+            ],
+        ]);
+        $this->assertStringContainsString('account.php', (string) ($response->getInfo('url') ?? ''));
+        $this->assertStringContainsString(
+            'Your product notifications have been successfully updated.',
+            $response->getContent(false)
         );
     }
 

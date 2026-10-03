@@ -68,11 +68,13 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/manufacturers.php`**, **`/admin/reviews.php`**, **`/admin/specials.php`**
 - **`/admin/modules.php?set=shipping`** — flat-rate shipping module
 - **`specials.php?action=set_flag`** — toggles the sample special inactive and back (GET, as in the admin UI)
+- Storefront **`product_info.php?products_id=1`** shows sample oranges special **`$2.99`**
 
 [`admin_merchandising_test.php`](../tests/installer/admin_merchandising_test.php) covers merchandising, content, and order-total modules, plus a reversible advert status toggle:
 
 - **`/admin/advert_manager.php`**, **`/admin/products_attributes.php`**, **`/admin/products_expected.php`**
 - **`/admin/testimonials.php`**, **`/admin/info_pages.php`**, **`/admin/customer_data_groups.php`**
+- Storefront **`create_account.php`** shows customer-data **telephone** in **Your Personal Information**
 - **`/admin/modules.php?set=order_total`** — sub-total order-total module
 - **`advert_manager.php?action=set_flag`** — toggles the sample carousel advert inactive and back (GET, includes `formid` as in the admin UI)
 
@@ -86,6 +88,7 @@ vendor/bin/phpunit --testsuite installer
 [`admin_reports_test.php`](../tests/installer/admin_reports_test.php) covers reports, managers, and remaining module sets, plus a reversible testimonials status toggle:
 
 - **`/admin/stats_products_purchased.php`**, **`/admin/stats_customers.php`**, **`/admin/whos_online.php`**
+- Storefront homepage hit then **`whos_online.php`** lists the session (guest or `127.0.0.1`)
 - **`/admin/action_recorder.php`**, **`/admin/store_logo.php`**, **`/admin/newsletters.php`**
 - **`/admin/modules.php?set=content`**, **`/admin/modules.php?set=header_tags`**, **`/admin/modules.php?set=dashboard`**, **`/admin/modules.php?set=customer_data`**
 - **`testimonials.php?action=set_flag`** — toggles the sample testimonial inactive and back (GET, as in the admin UI)
@@ -102,7 +105,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
 
-- **`reviews.php?action=set_flag`** — disables the sample review and restores active status
+- **`reviews.php?action=set_flag`** — disables the sample review and restores active status; disabled review text is absent from storefront **`product_info.php`** (product 4) until re-enabled
 - **`newsletters.php?action=insert`** — draft **`newsletter`** module row, then **`delete_confirm`** (no send)
 - **`modules.php?set=boxes`** — install **`bm_categories`** from **`list=new`**, then remove
 - **`configuration.php?gID=3`** — **`MAX_ADDRESS_BOOK_ENTRIES`** `5` → `6` → `5`
@@ -117,7 +120,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
 
-- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid)
+- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid; storefront contact mail path is covered by [`admin_mail_test.php`](../tests/installer/admin_mail_test.php) compose capture)
 - **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates
 - **`/admin/modules.php?set=layout`** — layout (`&pi;`) modules
 - **`/admin/modules.php?set=currencies`** — **`c_ecb`** update-currency module
@@ -138,7 +141,7 @@ vendor/bin/phpunit --testsuite installer
 
 - **`languages.php`**, **`countries.php`**, **`zones.php`**, **`tax_classes.php`**, **`tax_rates.php`**, **`geo_zones.php`** (`new_zone` / **`insert_zone`** / **`delete_confirm_zone`**), **`currencies.php`**, **`manufacturers.php`**, **`orders_status.php`**
 
-[`admin_content_writes_test.php`](../tests/installer/admin_content_writes_test.php) registers a storefront customer, then inserts and deletes content rows (no outbound mail):
+[`admin_content_writes_test.php`](../tests/installer/admin_content_writes_test.php) registers a storefront customer, then inserts and deletes content rows (no outbound mail), including an admin review visible on storefront **`product_info.php`** before delete:
 
 - **`specials.php?action=insert`** on sample product **Pears** with a short expiry
 - **`reviews.php?action=add_new`**, **`testimonials.php?action=add_new`**, **`info_pages.php?action=add_new`**, **`advert_manager.php?action=add_new`** (HTML text advert), **`outgoing_tpl.php?action=insert`**

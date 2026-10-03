@@ -22,7 +22,10 @@ final class star_rating_test extends html_test_case {
         $this->assertStringContainsString('class="text-warning"', $markup);
         $this->assertSame(3, substr_count($markup, 'fas fa-star'));
         $this->assertSame(2, substr_count($markup, 'far fa-star'));
-        $this->assertStringContainsString('title="Rating: 3.4 out of 5"', $markup);
+        $this->assertStringContainsString(
+            'title="' . sprintf(STAR_RATING, '3.4') . '"',
+            $markup
+        );
     }
 
     public function test_rating_is_capped_at_five_stars(): void {

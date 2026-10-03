@@ -33,6 +33,8 @@ Specs skip when **`PHOENIX_HTTP_BASE_URL`** is unset.
 | `navbar_offcanvas.spec.ts` | Bootstrap offcanvas opens from the hamburger control |
 | `checkout_from_scratch.spec.ts` | `buy_now` → cart → checkout redirect to `create_account.php`; first customer field |
 | `homepage_visual.spec.ts` | Carousel **`toHaveScreenshot`** baseline |
+| `currency_dropdown.spec.ts` | Navbar **EUR** currency dropdown updates URL and product price |
+| `search_form.spec.ts` | Navbar **quick_find** submits keywords to **`advanced_search_result.php`** |
 
 Binding names in specs use **snake_case** (enforced by [`browser_spec_snake_case_test.php`](../tests/unit/invariants/browser_spec_snake_case_test.php)).
 
