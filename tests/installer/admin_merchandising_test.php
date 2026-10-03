@@ -44,6 +44,16 @@ final class admin_merchandising_test extends install_test_case {
         $this->assert_admin_get_page($admin_http, '/admin/info_pages.php', [], 'Privacy & Cookie Policy');
     }
 
+    public function test_create_account_page_renders_customer_data_fields(): void {
+        $shop_http = installer_bootstrap::client();
+        $create_account = $shop_http->request('GET', '/create_account.php');
+        $this->assertSame(200, $create_account->getStatusCode());
+        $html = $create_account->getContent(false);
+        $this->assertStringContainsString('name="firstname"', $html);
+        $this->assertStringContainsString('name="email_address"', $html);
+        $this->assertStringContainsString('name="password"', $html);
+    }
+
     public function test_admin_customer_data_groups_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(

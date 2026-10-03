@@ -101,6 +101,39 @@ final class admin_localization_test extends install_test_case {
         $this->assertStringContainsString('fa-check-circle text-success', $after_enable);
     }
 
+    public function test_disabled_special_hides_storefront_special_price(): void {
+        $admin_http = $this->login_installed_admin();
+        $shop_http = installer_bootstrap::client();
+
+        $before = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '1'],
+        ]);
+        $this->assertStringContainsString('$2.99', $before->getContent(false));
+
+        $specials_html = $this->fetch_specials_html_with_active_special($admin_http);
+        $disable_href = $this->extract_set_flag_href($specials_html, '0');
+        $this->assertNotSame('', $disable_href);
+
+        $toggle = $admin_http->request('GET', $this->admin_path_from_href($disable_href), [
+            'query' => $this->admin_query_from_href($disable_href),
+        ]);
+        $this->assertContains($toggle->getStatusCode(), [200, 302]);
+
+        $after_disable = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '1'],
+        ]);
+        $after_body = $after_disable->getContent(false);
+        $this->assertStringNotContainsString('$2.99', $after_body);
+        $this->assertStringContainsString('$9.99', $after_body);
+
+        $specials_list = $this->fetch_specials_list($admin_http);
+        $enable_href = $this->extract_set_flag_href($specials_list, '1');
+        $restore = $admin_http->request('GET', $this->admin_path_from_href($enable_href), [
+            'query' => $this->admin_query_from_href($enable_href),
+        ]);
+        $this->assertContains($restore->getStatusCode(), [200, 302]);
+    }
+
     private function fetch_specials_list(HttpClientInterface $admin_http): string {
         $response = $admin_http->request('GET', '/admin/specials.php');
         $this->assertSame(200, $response->getStatusCode());

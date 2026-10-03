@@ -67,9 +67,9 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/currencies.php`**, **`/admin/zones.php`**, **`/admin/tax_classes.php`**, **`/admin/tax_rates.php`**, **`/admin/geo_zones.php`**, **`/admin/orders_status.php`**
 - **`/admin/manufacturers.php`**, **`/admin/reviews.php`**, **`/admin/specials.php`**
 - **`/admin/modules.php?set=shipping`** — flat-rate shipping module
-- **`specials.php?action=set_flag`** — toggles the sample special inactive and back (GET, as in the admin UI)
+- **`specials.php?action=set_flag`** — toggles the sample special inactive and back (GET, as in the admin UI); disabled special hides **$2.99** on storefront Oranges until restored
 
-[`admin_merchandising_test.php`](../tests/installer/admin_merchandising_test.php) covers merchandising, content, and order-total modules, plus a reversible advert status toggle:
+[`admin_merchandising_test.php`](../tests/installer/admin_merchandising_test.php) covers merchandising, content, and order-total modules, plus a reversible advert status toggle and storefront **`create_account.php`** customer-data fields (`firstname`, `email_address`, `password`):
 
 - **`/admin/advert_manager.php`**, **`/admin/products_attributes.php`**, **`/admin/products_expected.php`**
 - **`/admin/testimonials.php`**, **`/admin/info_pages.php`**, **`/admin/customer_data_groups.php`**
@@ -83,7 +83,7 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/modules.php?set=navbar_modules`** — shopping-cart navbar module
 - **`info_pages.php?action=set_flag`** — enables a sample info page, then restores inactive status (GET, includes `formid` as in the admin UI)
 
-[`admin_reports_test.php`](../tests/installer/admin_reports_test.php) covers reports, managers, and remaining module sets, plus a reversible testimonials status toggle:
+[`admin_reports_test.php`](../tests/installer/admin_reports_test.php) covers reports, managers, and remaining module sets, plus a reversible testimonials status toggle and **Who's Online** listing a visitor after a storefront homepage hit:
 
 - **`/admin/stats_products_purchased.php`**, **`/admin/stats_customers.php`**, **`/admin/whos_online.php`**
 - **`/admin/action_recorder.php`**, **`/admin/store_logo.php`**, **`/admin/newsletters.php`**
@@ -102,7 +102,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
 
-- **`reviews.php?action=set_flag`** — disables the sample review and restores active status
+- **`reviews.php?action=set_flag`** — disables the sample review and restores active status; disabled review text is hidden on storefront `product_info.php` for product **4** until restored
 - **`newsletters.php?action=insert`** — draft **`newsletter`** module row, then **`delete_confirm`** (no send)
 - **`modules.php?set=boxes`** — install **`bm_categories`** from **`list=new`**, then remove
 - **`configuration.php?gID=3`** — **`MAX_ADDRESS_BOOK_ENTRIES`** `5` → `6` → `5`
@@ -117,7 +117,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
 
-- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid)
+- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid). Storefront **Contact Us** uses `mail()` / captured sendmail in [`admin_mail_test.php`](admin_mail_test.php), not the outgoing queue.
 - **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates
 - **`/admin/modules.php?set=layout`** — layout (`&pi;`) modules
 - **`/admin/modules.php?set=currencies`** — **`c_ecb`** update-currency module

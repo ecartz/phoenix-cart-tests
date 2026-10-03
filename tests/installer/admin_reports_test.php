@@ -44,6 +44,18 @@ final class admin_reports_test extends install_test_case {
         $this->assert_admin_get_page($admin_http, '/admin/whos_online.php', [], "Who's Online");
     }
 
+    public function test_admin_whos_online_lists_storefront_visitor_after_homepage_hit(): void {
+        $shop_http = installer_bootstrap::client();
+        $shop_http->request('GET', '/');
+
+        $admin_http = $this->login_installed_admin();
+        $online = $admin_http->request('GET', '/admin/whos_online.php');
+        $this->assertSame(200, $online->getStatusCode());
+        $body = $online->getContent(false);
+        $this->assertStringContainsString("Who's Online", $body);
+        $this->assertMatchesRegularExpression('/127\.0\.0\.1|Guest|index\.php/', $body);
+    }
+
     public function test_admin_action_recorder_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/action_recorder.php', [], 'Action Recorder');
