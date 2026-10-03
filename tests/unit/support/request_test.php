@@ -9,8 +9,8 @@ use ReflectionClass;
 use Request;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class request_test extends phoenix_test_case
-{
+final class request_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -98,4 +98,5 @@ final class request_test extends phoenix_test_case
         $property->setAccessible(true);
         $property->setValue(null, null);
     }
+
 }

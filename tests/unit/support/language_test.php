@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class language_test extends phoenix_test_case
-{
+final class language_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_load_all_indexes_languages_by_code(): void {
@@ -69,4 +69,5 @@ final class language_test extends phoenix_test_case
         $this->assertSame($rows[0], $language->language);
         $this->assertSame(['en' => $rows[0]], $language->catalog_languages);
     }
+
 }

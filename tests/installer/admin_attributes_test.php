@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_attributes_test extends install_test_case
-{
+final class admin_attributes_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const PEARS_PRODUCT_ID = '3';
@@ -259,4 +259,5 @@ final class admin_attributes_test extends install_test_case
 
         $this->fail('products_attributes.php did not expose attribute_id for the Pears link');
     }
+
 }

@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_cod_test extends http_test_case
-{
+final class checkout_cod_test extends http_test_case {
+
     public function test_logged_in_customer_completes_checkout_with_cod(): void {
         $this->login_fixture_customer();
 
@@ -81,4 +81,5 @@ final class checkout_cod_test extends http_test_case
         $this->assertGreaterThan(0.0, $tax_row['value']);
         $this->assertStringContainsString('FL TAX', $tax_row['title']);
     }
+
 }

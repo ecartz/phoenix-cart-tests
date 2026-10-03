@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('installer')]
-final class admin_remaining_test extends install_test_case
-{
+final class admin_remaining_test extends install_test_case {
+
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
@@ -52,4 +52,5 @@ final class admin_remaining_test extends install_test_case
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/importers.php', [], 'Importers');
     }
+
 }

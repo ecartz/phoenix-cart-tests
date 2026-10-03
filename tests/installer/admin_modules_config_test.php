@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('installer')]
-final class admin_modules_config_test extends install_test_case
-{
+final class admin_modules_config_test extends install_test_case {
+
     use installer_admin_writes;
 
     /**
@@ -111,4 +111,5 @@ final class admin_modules_config_test extends install_test_case
             yield 'group_' . $group_id => [$group_id];
         }
     }
+
 }

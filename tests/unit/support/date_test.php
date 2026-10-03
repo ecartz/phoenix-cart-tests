@@ -8,8 +8,8 @@ use Date;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class date_test extends phoenix_test_case
-{
+final class date_test extends phoenix_test_case {
+
     #[DataProvider('constructor_provider')]
     public function test_constructor(mixed $input, bool $valid): void {
         $date = new Date($input);
@@ -89,4 +89,5 @@ final class date_test extends phoenix_test_case
 
         $this->assertSame('SHORT:2024-06', Date::abridge('2024-06-15 10:30:00'));
     }
+
 }

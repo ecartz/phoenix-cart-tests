@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\template;
 use default_template;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
-final class default_template_grid_test extends phoenix_test_case
-{
+final class default_template_grid_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -35,4 +35,5 @@ final class default_template_grid_test extends phoenix_test_case
 
         $this->assertSame(2, $template->getGridColumnWidth());
     }
+
 }

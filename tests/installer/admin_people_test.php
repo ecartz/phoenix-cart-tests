@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_people_test extends install_test_case
-{
+final class admin_people_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const ADMIN_USERNAME = 'phoenix_installer_admin';
@@ -210,4 +210,5 @@ final class admin_people_test extends install_test_case
         $final_url = (string) ($success->getInfo('url') ?? '');
         $this->assertStringContainsString('checkout_success.php', $final_url);
     }
+
 }

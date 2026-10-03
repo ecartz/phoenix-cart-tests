@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_pinf_message;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_pinf_message_test extends content_module_test_case
-{
+final class cm_pinf_message_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -27,4 +27,5 @@ final class cm_pinf_message_test extends content_module_test_case
         $this->assertStringContainsString('alert-danger', $content);
         $this->assertStringContainsString('cm-pinf-message', $content);
     }
+
 }

@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_comments_test extends http_test_case
-{
+final class checkout_comments_test extends http_test_case {
+
     public function test_checkout_process_stores_customer_comment_in_order_history(): void {
         $comment = 'HTTP fixture checkout comment ' . uniqid('', true);
 
@@ -59,4 +59,5 @@ final class checkout_comments_test extends http_test_case
         $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
         $this->assertSame($comment, http_orders_lookup::orders_status_history_comment_for_order($orders_id));
     }
+
 }

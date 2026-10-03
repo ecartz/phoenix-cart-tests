@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Temporary catalog rows for HTTP checkout edge tests (virtual download, COD geo zone).
  */
-final class http_checkout_fixture_sql
-{
+final class http_checkout_fixture_sql {
+
     private const VIRTUAL_OPTION_ID = 90100;
 
     private const VIRTUAL_VALUE_ID = 90100;
@@ -494,4 +494,5 @@ final class http_checkout_fixture_sql
             . ' VALUES (222, 0, ' . self::EXCLUDING_GEO_ZONE_ID . ', NOW())'
         );
     }
+
 }

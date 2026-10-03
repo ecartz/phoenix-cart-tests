@@ -8,8 +8,8 @@ use cm_cas_continue_button;
 use navigationHistory;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_cas_continue_button_test extends content_module_test_case
-{
+final class cm_cas_continue_button_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -55,4 +55,5 @@ final class cm_cas_continue_button_test extends content_module_test_case
         $this->assertStringContainsString('index.php', $content);
         $this->assertStringContainsString('Continue', $content);
     }
+
 }

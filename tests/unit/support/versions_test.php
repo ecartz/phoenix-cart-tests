@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use ReflectionClass;
 use Versions;
 
-final class versions_test extends phoenix_test_case
-{
+final class versions_test extends phoenix_test_case {
+
     protected function tearDown(): void {
         $this->reset_versions_state();
 
@@ -59,4 +59,5 @@ final class versions_test extends phoenix_test_case
             $property->setValue(null, $property->getDefaultValue());
         }
     }
+
 }

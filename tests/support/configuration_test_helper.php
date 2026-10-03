@@ -10,8 +10,8 @@ namespace PhoenixCart\Tests\support;
  * Callers that redefine overlapping configuration keys must use a separate process
  * ({@see \PHPUnit\Framework\Attributes\RunInSeparateProcess}).
  */
-final class configuration_test_helper
-{
+final class configuration_test_helper {
+
     /**
      * @param list<array{configuration_key: string, configuration_value: string}> $rows
      */
@@ -27,4 +27,5 @@ final class configuration_test_helper
 
         return $database;
     }
+
 }

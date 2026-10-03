@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Read storefront order rows for HTTP acceptance assertions (mysqli, same env as http fixtures).
  */
-final class http_orders_lookup
-{
+final class http_orders_lookup {
+
     public static function latest_payment_method_for_email(string $customers_email_address): ?string {
         mysql_bootstrap::define_connection_constants();
 
@@ -208,4 +208,5 @@ final class http_orders_lookup
 
         return $mysqli;
     }
+
 }

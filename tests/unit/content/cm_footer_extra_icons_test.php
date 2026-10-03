@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\content_module_test_case;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
-final class cm_footer_extra_icons_test extends content_module_test_case
-{
+final class cm_footer_extra_icons_test extends content_module_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_execute_uses_raw_text_when_icons_text_defined(): void {
@@ -47,4 +47,5 @@ final class cm_footer_extra_icons_test extends content_module_test_case
         $this->assertStringContainsString('<i class="fab fa-cc-visa fa-lg"></i>', $content);
         $this->assertStringContainsString('cm-footer-extra-icons', $content);
     }
+
 }

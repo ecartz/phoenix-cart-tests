@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class shopping_cart_test extends http_test_case
-{
+final class shopping_cart_test extends http_test_case {
+
     public function test_buy_now_adds_sample_oranges_and_shows_cart(): void {
         // Establish PHP session cookie (required by parse_actions.php).
         $this->get_http()->request('GET', '/');
@@ -117,4 +117,5 @@ final class shopping_cart_test extends http_test_case
             http_checkout_fixture_sql::remove_cart_attribute_for_pears();
         }
     }
+
 }

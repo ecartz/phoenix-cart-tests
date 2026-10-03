@@ -26,4 +26,5 @@ final class textarea_test extends html_test_case {
 
         $this->assertStringContainsString('Posted text', "$textarea");
     }
+
 }

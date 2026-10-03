@@ -8,8 +8,8 @@ use default_template;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class default_template_mapping_test extends phoenix_test_case
-{
+final class default_template_mapping_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -92,4 +92,5 @@ final class default_template_mapping_test extends phoenix_test_case
 
         $this->assertNull($template->get_template_mapping_for('does_not_exist.php', 'page'));
     }
+
 }

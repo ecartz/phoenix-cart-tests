@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use url_query;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class url_query_test extends phoenix_test_case
-{
+final class url_query_test extends phoenix_test_case {
+
     /**
      * @param array<string, mixed> $expected
      */
@@ -27,4 +27,5 @@ final class url_query_test extends phoenix_test_case
             'url encoded values' => ['q=hello%20world', ['q' => 'hello world']],
         ];
     }
+
 }

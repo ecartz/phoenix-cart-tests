@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use Template;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class template_content_test extends phoenix_test_case
-{
+final class template_content_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -63,4 +63,5 @@ final class template_content_test extends phoenix_test_case
 
         $this->assertFalse($template->has_content('unknown'));
     }
+
 }

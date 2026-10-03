@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Load configuration constants like {@see read_configuration.php} without redefinition warnings.
  */
-final class read_configuration_loader
-{
+final class read_configuration_loader {
+
     public static function load_from_global_database(): void {
         /** @var object $db */
         $db = $GLOBALS['db'];
@@ -25,4 +25,5 @@ final class read_configuration_loader
 
         define($key, $value);
     }
+
 }

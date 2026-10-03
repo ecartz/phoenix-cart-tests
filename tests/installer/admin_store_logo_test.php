@@ -11,8 +11,8 @@ use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('installer')]
-final class admin_store_logo_test extends install_test_case
-{
+final class admin_store_logo_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const FIXTURE_LOGO = 'fixtures/installer-store-logo-test.png';
@@ -134,4 +134,5 @@ final class admin_store_logo_test extends install_test_case
         return $repo_root . DIRECTORY_SEPARATOR . 'working' . DIRECTORY_SEPARATOR . 'installer-store-logo-backup'
             . DIRECTORY_SEPARATOR . $original_filename;
     }
+
 }

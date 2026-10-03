@@ -15,8 +15,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  * SESSION_CHECK_SSL_SESSION_ID is not covered here: built-in server runs plain HTTP.
  */
 #[Group('http')]
-final class request_security_test extends http_test_case
-{
+final class request_security_test extends http_test_case {
+
     public function test_changed_user_agent_redirects_to_login(): void {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');
@@ -49,4 +49,5 @@ final class request_security_test extends http_test_case
         $location = $response->getHeaders(false)['location'][0] ?? '';
         $this->assertStringContainsString('login.php', $location);
     }
+
 }

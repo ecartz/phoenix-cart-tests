@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class read_configuration_test extends phoenix_test_case
-{
+final class read_configuration_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_read_configuration_defines_keys_from_mock_database(): void {
@@ -50,4 +50,5 @@ final class read_configuration_test extends phoenix_test_case
 
         $this->assertSame('Acme Shop', STORE_NAME);
     }
+
 }

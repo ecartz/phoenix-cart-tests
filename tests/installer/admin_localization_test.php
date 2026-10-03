@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_localization_test extends install_test_case
-{
+final class admin_localization_test extends install_test_case {
+
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
@@ -154,4 +154,5 @@ final class admin_localization_test extends install_test_case
 
         return '/admin/' . ltrim($href, '/');
     }
+
 }

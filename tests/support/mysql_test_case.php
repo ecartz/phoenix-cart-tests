@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\support;
 
-abstract class mysql_test_case extends phoenix_test_case
-{
+abstract class mysql_test_case extends phoenix_test_case {
+
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
@@ -33,4 +33,5 @@ abstract class mysql_test_case extends phoenix_test_case
     protected function db(): \Database {
         return mysql_database_helper::connection();
     }
+
 }

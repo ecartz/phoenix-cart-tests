@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Fixture customer row tweaks for HTTP storefront tests (password reset, addresses).
  */
-final class http_customer_fixture_sql
-{
+final class http_customer_fixture_sql {
+
     private const FIXTURE_CUSTOMER_ID = 1;
 
     private const SEED_PASSWORD_HASH = '$2y$12$yLp3Jl/6JtaqZru2oUgwnO5fL.t9i8ZwPKt3URtZqRJ52gST.G44.';
@@ -176,4 +176,5 @@ final class http_customer_fixture_sql
             throw new \RuntimeException('Query failed: ' . $mysqli->error . ' [' . $sql . ']');
         }
     }
+
 }

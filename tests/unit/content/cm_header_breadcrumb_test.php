@@ -14,8 +14,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class cm_header_breadcrumb_test extends content_module_test_case
-{
+final class cm_header_breadcrumb_test extends content_module_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_execute_schema_emits_json_ld_without_product(): void {
@@ -174,4 +174,5 @@ final class cm_header_breadcrumb_test extends content_module_test_case
             ],
         ]);
     }
+
 }

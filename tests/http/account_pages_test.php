@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class account_pages_test extends http_test_case
-{
+final class account_pages_test extends http_test_case {
+
     protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_firstname();
         parent::tearDown();
@@ -58,4 +58,5 @@ final class account_pages_test extends http_test_case
         $this->assertMatchesRegularExpression('#/(login|create_account)\.php#', $after_url);
         $this->assertStringNotContainsString('cm-account-title', $after_logoff->getContent(false));
     }
+
 }

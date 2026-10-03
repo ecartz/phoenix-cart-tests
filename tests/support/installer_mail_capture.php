@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Reads messages captured by {@see scripts/capture-installer-mail.php} on the installer PHP server.
  */
-final class installer_mail_capture
-{
+final class installer_mail_capture {
+
     public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_INSTALLER_MAIL_CAPTURE');
 
@@ -53,4 +53,5 @@ final class installer_mail_capture
 
         return $combined;
     }
+
 }

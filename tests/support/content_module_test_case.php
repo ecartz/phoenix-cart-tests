@@ -13,8 +13,8 @@ use Template;
 /**
  * Shared harness for content-module execute() tests that buffer tpl_ files.
  */
-abstract class content_module_test_case extends phoenix_test_case
-{
+abstract class content_module_test_case extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -88,4 +88,5 @@ abstract class content_module_test_case extends phoenix_test_case
     protected function reset_template(): void {
         $GLOBALS['Template'] = new Template(new default_template());
     }
+
 }

@@ -6,8 +6,8 @@ namespace PhoenixCart\Tests\support;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-abstract class install_test_case extends phoenix_test_case
-{
+abstract class install_test_case extends phoenix_test_case {
+
     private HttpClientInterface $http;
 
     public static function setUpBeforeClass(): void {
@@ -141,4 +141,5 @@ abstract class install_test_case extends phoenix_test_case
             'Expected captured installer mail or outgoing queue to contain: ' . $needle,
         );
     }
+
 }

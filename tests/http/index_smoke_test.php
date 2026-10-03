@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class index_smoke_test extends http_test_case
-{
+final class index_smoke_test extends http_test_case {
+
     public function test_homepage_returns_ok_and_lists_sample_catalog(): void {
         $response = $this->get_http()->request('GET', '/');
 
@@ -19,4 +19,5 @@ final class index_smoke_test extends http_test_case
         $this->assertStringContainsString('Our Farm', $body);
         $this->assertStringContainsString('Strawberries Coming Soon', $body);
     }
+
 }

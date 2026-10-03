@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Tax;
 
 #[Group('mysql')]
-final class tax_fetch_test extends mysql_test_case
-{
+final class tax_fetch_test extends mysql_test_case {
+
     public function test_fetch_returns_florida_rate_for_store_zone(): void {
         $this->assertSame('223', (string) STORE_COUNTRY);
         $this->assertSame('18', (string) STORE_ZONE);
@@ -42,4 +42,5 @@ final class tax_fetch_test extends mysql_test_case
         $this->assertSame(0.0, (float) $tax['rate']);
         $this->assertSame(TEXT_UNKNOWN_TAX_RATE, $tax['description']);
     }
+
 }

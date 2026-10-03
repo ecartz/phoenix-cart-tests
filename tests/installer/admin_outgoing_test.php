@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('installer')]
-final class admin_outgoing_test extends install_test_case
-{
+final class admin_outgoing_test extends install_test_case {
+
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
@@ -52,4 +52,5 @@ final class admin_outgoing_test extends install_test_case
             'c_ecb',
         );
     }
+
 }

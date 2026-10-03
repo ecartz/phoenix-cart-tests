@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit;
 use Guarantor;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
-final class guarantor_test extends phoenix_test_case
-{
+final class guarantor_test extends phoenix_test_case {
+
     public function test_guarantee_subarray_creates_missing_array(): void {
         $data = [];
 
@@ -62,4 +62,5 @@ final class guarantor_test extends phoenix_test_case
         $this->assertSame([], $subarray);
         $this->assertArrayHasKey('legacy', $data);
     }
+
 }

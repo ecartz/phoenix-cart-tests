@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\content_module_test_case;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
-final class cm_i_title_test extends content_module_test_case
-{
+final class cm_i_title_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -31,4 +31,5 @@ final class cm_i_title_test extends content_module_test_case
         $this->assertStringContainsString('Welcome on Acme Shop', $content);
         $this->assertStringContainsString('cm-i-title', $content);
     }
+
 }

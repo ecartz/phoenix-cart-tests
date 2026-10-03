@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class info_pages_test extends phoenix_test_case
-{
+final class info_pages_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_requirements_detects_missing_slugs(): void {
@@ -59,4 +59,5 @@ final class info_pages_test extends phoenix_test_case
             info_pages::getElement(['p.slug' => 'privacy', 'pd.languages_id' => '1'], 'pages_text')
         );
     }
+
 }

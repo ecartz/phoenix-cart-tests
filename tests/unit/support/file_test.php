@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\support;
 use File;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
-final class file_test extends phoenix_test_case
-{
+final class file_test extends phoenix_test_case {
+
     private string $temp_dir;
 
     protected function setUp(): void {
@@ -53,4 +53,5 @@ final class file_test extends phoenix_test_case
 
         $this->assertFalse(File::remove($file));
     }
+
 }

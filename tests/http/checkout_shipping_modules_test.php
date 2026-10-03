@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_shipping_modules_test extends http_test_case
-{
+final class checkout_shipping_modules_test extends http_test_case {
+
     protected function tearDown(): void {
         http_checkout_fixture_sql::restore_flat_shipping_geo_zone();
         http_checkout_fixture_sql::restore_shipping_modules();
@@ -123,4 +123,5 @@ final class checkout_shipping_modules_test extends http_test_case
             'confirmation should show zero shipping when free shipping qualifies'
         );
     }
+
 }

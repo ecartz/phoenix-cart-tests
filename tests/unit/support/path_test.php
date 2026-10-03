@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\support;
 use Path;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
-final class path_test extends phoenix_test_case
-{
+final class path_test extends phoenix_test_case {
+
     private string $temp_dir;
 
     protected function setUp(): void {
@@ -92,4 +92,5 @@ final class path_test extends phoenix_test_case
 
         rmdir($path);
     }
+
 }

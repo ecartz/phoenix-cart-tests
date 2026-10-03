@@ -15,4 +15,5 @@ final class named_html_element_test extends html_test_case {
         $this->assertStringContainsString('name="custom_field"', $element->stringify_parameters());
         $this->assertStringContainsString('id="field1"', $element->stringify_parameters());
     }
+
 }

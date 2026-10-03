@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\content_module_test_case;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
-final class cm_footer_contact_us_test extends content_module_test_case
-{
+final class cm_footer_contact_us_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -43,4 +43,5 @@ final class cm_footer_contact_us_test extends content_module_test_case
         $this->assertStringContainsString('cm-footer-contact-us', $content);
         $this->assertStringNotContainsString('Tax ID:', $content);
     }
+
 }

@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_reference_writes_test extends install_test_case
-{
+final class admin_reference_writes_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const COUNTRY_NAME = 'Phoenix Installer Country';
@@ -297,4 +297,5 @@ final class admin_reference_writes_test extends install_test_case
         $this->confirm_admin_delete($admin_http, '/admin/orders_status.php', 'oID', $status_id);
         $this->assert_admin_list_not_contains($admin_http, '/admin/orders_status.php', [], self::ORDER_STATUS_NAME);
     }
+
 }

@@ -8,8 +8,8 @@ use messageStack;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class message_stack_test extends phoenix_test_case
-{
+final class message_stack_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -99,4 +99,5 @@ final class message_stack_test extends phoenix_test_case
         $this->assertSame(1, $stack->size('general'));
         $this->assertStringContainsString('Welcome back', $stack->output('general'));
     }
+
 }

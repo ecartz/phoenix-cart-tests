@@ -9,8 +9,8 @@ use PasswordHash;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class password_test extends phoenix_test_case
-{
+final class password_test extends phoenix_test_case {
+
     #[DataProvider('type_provider')]
     public function test_type(string $hashed, string $expected): void {
         $this->assertSame($expected, Password::type($hashed));
@@ -111,4 +111,5 @@ final class password_test extends phoenix_test_case
 
         $this->assertSame(PASSWORD_DEFAULT, Password::get_algorithm());
     }
+
 }

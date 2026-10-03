@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_content_writes_test extends install_test_case
-{
+final class admin_content_writes_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const CUSTOMER_FIRSTNAME = 'Content';
@@ -302,4 +302,5 @@ final class admin_content_writes_test extends install_test_case
 
         return '';
     }
+
 }

@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_order_documents_test extends install_test_case
-{
+final class admin_order_documents_test extends install_test_case {
+
     private const CUSTOMER_FIRSTNAME = 'Document';
 
     private const CUSTOMER_LASTNAME = 'Customer';
@@ -157,4 +157,5 @@ final class admin_order_documents_test extends install_test_case
         $this->assertStringContainsString('Pears', $body);
         $this->assertStringContainsString($customer_name, $body);
     }
+
 }

@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class category_listing_test extends http_test_case
-{
+final class category_listing_test extends http_test_case {
+
     public function test_fruit_category_lists_sample_oranges(): void {
         $response = $this->get_http()->request('GET', '/index.php', [
             'query' => [
@@ -40,4 +40,5 @@ final class category_listing_test extends http_test_case
         $this->assertStringContainsString('Oranges', $body);
         $this->assertStringContainsString('Lemons', $body);
     }
+
 }

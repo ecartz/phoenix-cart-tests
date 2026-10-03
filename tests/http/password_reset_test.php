@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class password_reset_test extends http_test_case
-{
+final class password_reset_test extends http_test_case {
+
     private const RESET_PASSWORD = 'phoenix-reset-test';
 
     protected function tearDown(): void {
@@ -82,4 +82,5 @@ final class password_reset_test extends http_test_case
         $account = $this->get_http()->request('GET', '/account.php');
         $this->assertStringContainsString('cm-account-title', $account->getContent(false));
     }
+
 }

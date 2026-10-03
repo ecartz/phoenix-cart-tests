@@ -12,8 +12,8 @@ use Template;
 /**
  * Integration tests for content modules that call {@see execute()} with real {@see Database}.
  */
-abstract class mysql_content_module_test_case extends mysql_test_case
-{
+abstract class mysql_content_module_test_case extends mysql_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -66,4 +66,5 @@ abstract class mysql_content_module_test_case extends mysql_test_case
             chdir($previous_directory);
         }
     }
+
 }

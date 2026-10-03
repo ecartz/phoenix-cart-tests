@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_geo_zone_cod_test extends http_test_case
-{
+final class checkout_geo_zone_cod_test extends http_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::restrict_cod_to_non_fixture_geo_zone();
@@ -50,4 +50,5 @@ final class checkout_geo_zone_cod_test extends http_test_case
         $this->assertStringNotContainsString('Cash on Delivery', $payment_html);
         $this->assertStringContainsString('Check/Money Order', $payment_html);
     }
+
 }

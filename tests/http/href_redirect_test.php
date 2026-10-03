@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class href_redirect_test extends http_test_case
-{
+final class href_redirect_test extends http_test_case {
+
     #[DataProvider('info_page_redirect_provider')]
     public function test_unpublished_or_missing_info_page_redirects_to_index(string $pages_id): void {
         $http = $this->get_http_without_redirects();
@@ -61,4 +61,5 @@ final class href_redirect_test extends http_test_case
         $location = $response->getHeaders(false)['location'][0] ?? '';
         $this->assertStringContainsString('shopping_cart.php', $location);
     }
+
 }

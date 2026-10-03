@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Copy harness payment module into the catalog and enable it for one HTTP test class.
  */
-final class http_local_redirect_bootstrap
-{
+final class http_local_redirect_bootstrap {
+
     public const MODULE_FILENAME = 'http_local_redirect.php';
 
     public const MODULE_CODE = 'http_local_redirect';
@@ -209,4 +209,5 @@ EOSQL
         $statement->execute();
         $statement->close();
     }
+
 }

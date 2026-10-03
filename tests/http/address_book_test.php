@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class address_book_test extends http_test_case
-{
+final class address_book_test extends http_test_case {
+
     private ?int $extra_address_id = null;
 
     protected function tearDown(): void {
@@ -75,4 +75,5 @@ final class address_book_test extends http_test_case
         $this->assertStringNotContainsString($city, $after_delete->getContent(false));
         $this->extra_address_id = null;
     }
+
 }

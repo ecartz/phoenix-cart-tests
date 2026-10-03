@@ -6,8 +6,8 @@ namespace PhoenixCart\Tests\support;
 
 use PHPUnit\Framework\TestCase;
 
-abstract class phoenix_test_case extends TestCase
-{
+abstract class phoenix_test_case extends TestCase {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -15,4 +15,5 @@ abstract class phoenix_test_case extends TestCase
             define('PHOENIX_TEST_RUNNING', true);
         }
     }
+
 }

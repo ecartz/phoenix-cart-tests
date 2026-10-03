@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 require_once __DIR__ . '/../support/integration_throwaway_module.php';
 
 #[Group('mysql')]
-final class abstract_module_install_remove_test extends mysql_test_case
-{
+final class abstract_module_install_remove_test extends mysql_test_case {
+
     private const STATUS_KEY = 'MODULE_PHOENIX_INTEGRATION_PROBE_STATUS';
 
     protected function setUp(): void {
@@ -82,4 +82,5 @@ final class abstract_module_install_remove_test extends mysql_test_case
 
         $this->assertSame([], $count);
     }
+
 }

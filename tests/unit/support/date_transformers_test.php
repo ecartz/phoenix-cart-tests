@@ -24,8 +24,8 @@ use TimezoneTransformer;
 use YearTransformer;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class date_transformers_test extends phoenix_test_case
-{
+final class date_transformers_test extends phoenix_test_case {
+
     private DateTime $date_time;
 
     protected function setUp(): void {
@@ -199,4 +199,5 @@ final class date_transformers_test extends phoenix_test_case
 
         $this->assertSame('2024-06-15', $transformer->format($date_time));
     }
+
 }

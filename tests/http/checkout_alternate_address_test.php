@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_alternate_address_test extends http_test_case
-{
+final class checkout_alternate_address_test extends http_test_case {
+
     private ?int $extra_address_id = null;
 
     protected function tearDown(): void {
@@ -120,4 +120,5 @@ final class checkout_alternate_address_test extends http_test_case
             ],
         ]);
     }
+
 }

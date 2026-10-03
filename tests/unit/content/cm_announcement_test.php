@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_announcement;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_announcement_test extends content_module_test_case
-{
+final class cm_announcement_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -26,4 +26,5 @@ final class cm_announcement_test extends content_module_test_case
         $this->assertStringContainsString('text-bg-dark', $content);
         $this->assertStringContainsString('Free delivery over $99', $content);
     }
+
 }

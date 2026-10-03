@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
 #[Group('payment_sandbox')]
-final class payment_sandbox_stripe_config_test extends http_test_case
-{
+final class payment_sandbox_stripe_config_test extends http_test_case {
+
     public static function setUpBeforeClass(): void {
         if (!payment_sandbox_bootstrap::is_enabled()) {
             self::markTestSkipped(
@@ -50,4 +50,5 @@ final class payment_sandbox_stripe_config_test extends http_test_case
         $this->assertNotSame('', $secret);
         $this->assertStringNotContainsString($secret, $body);
     }
+
 }

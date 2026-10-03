@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\mysql_content_module_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('mysql')]
-final class cm_header_breadcrumb_test extends mysql_content_module_test_case
-{
+final class cm_header_breadcrumb_test extends mysql_content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -56,4 +56,5 @@ final class cm_header_breadcrumb_test extends mysql_content_module_test_case
         $this->assertStringContainsString('"@type":"BreadcrumbList"', $block);
         $this->assertStringContainsString('"name":"ORA-1"', $block);
     }
+
 }

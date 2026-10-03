@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_cas_message;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_cas_message_test extends content_module_test_case
-{
+final class cm_cas_message_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -29,4 +29,5 @@ final class cm_cas_message_test extends content_module_test_case
         $this->assertStringContainsString('account.php', $content);
         $this->assertStringContainsString('cm-cas-message', $content);
     }
+
 }

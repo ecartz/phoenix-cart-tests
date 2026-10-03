@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_pages_test extends install_test_case
-{
+final class admin_pages_test extends install_test_case {
+
     private const RENAMED_STORE_NAME = 'Phoenix Installer Renamed Shop';
 
     public static function setUpBeforeClass(): void {
@@ -187,4 +187,5 @@ final class admin_pages_test extends install_test_case
 
         return '/admin/' . ltrim($href, '/');
     }
+
 }

@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Define catalog DB connection constants from environment (wave 3).
  */
-final class mysql_bootstrap
-{
+final class mysql_bootstrap {
+
     public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_MYSQL_ENABLED');
 
@@ -42,4 +42,5 @@ final class mysql_bootstrap
             define($name, $value);
         }
     }
+
 }

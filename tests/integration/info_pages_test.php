@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\mysql_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('mysql')]
-final class info_pages_test extends mysql_test_case
-{
+final class info_pages_test extends mysql_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         $_SESSION['languages_id'] = 1;
@@ -41,4 +41,5 @@ final class info_pages_test extends mysql_test_case
         $this->assertSame('privacy', $rows[0]['slug'] ?? null);
         $this->assertSame('Privacy & Cookie Policy', $rows[0]['pages_title'] ?? null);
     }
+
 }

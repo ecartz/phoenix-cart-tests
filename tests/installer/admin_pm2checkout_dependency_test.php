@@ -14,8 +14,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[Group('installer')]
-final class admin_pm2checkout_dependency_test extends install_test_case
-{
+final class admin_pm2checkout_dependency_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const CUSTOMER_DATA_SET = 'customer_data';
@@ -214,4 +214,5 @@ final class admin_pm2checkout_dependency_test extends install_test_case
 
         return $missing;
     }
+
 }

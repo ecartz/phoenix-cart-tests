@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Read installer outgoing queue rows for mail assertions when sendmail capture is empty.
  */
-final class installer_outgoing_lookup
-{
+final class installer_outgoing_lookup {
+
     public static function combined_body(): string {
         mysql_bootstrap::define_connection_constants();
 
@@ -69,4 +69,5 @@ final class installer_outgoing_lookup
 
         return implode("\n", $parts);
     }
+
 }

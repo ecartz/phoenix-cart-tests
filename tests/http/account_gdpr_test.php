@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class account_gdpr_test extends http_test_case
-{
+final class account_gdpr_test extends http_test_case {
+
     public function test_logged_in_customer_sees_account_and_gdpr_pages(): void {
         $this->login_fixture_customer();
 
@@ -24,4 +24,5 @@ final class account_gdpr_test extends http_test_case
         $gdpr_body = $gdpr->getContent(false);
         $this->assertStringContainsString('cm-gdpr-intro', $gdpr_body);
     }
+
 }

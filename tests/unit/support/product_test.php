@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Product;
 
 #[Group('mockdb')]
-final class product_test extends phoenix_test_case
-{
+final class product_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_fetch_name_returns_products_name(): void {
@@ -39,4 +39,5 @@ final class product_test extends phoenix_test_case
 
         $this->assertSame('N/A', Product::fetch_name(99, 1));
     }
+
 }

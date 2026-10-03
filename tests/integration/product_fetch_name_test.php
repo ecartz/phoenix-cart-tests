@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Product;
 
 #[Group('mysql')]
-final class product_fetch_name_test extends mysql_test_case
-{
+final class product_fetch_name_test extends mysql_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         $_SESSION['languages_id'] = 1;
@@ -23,4 +23,5 @@ final class product_fetch_name_test extends mysql_test_case
     public function test_fetch_name_returns_na_when_product_missing(): void {
         $this->assertSame('N/A', Product::fetch_name(999, 1));
     }
+
 }

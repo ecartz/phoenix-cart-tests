@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use Template;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class template_blocks_test extends phoenix_test_case
-{
+final class template_blocks_test extends phoenix_test_case {
+
     private function create_template(): Template {
         if (!defined('BOOTSTRAP_CONTENT')) {
             define('BOOTSTRAP_CONTENT', 8);
@@ -66,4 +66,5 @@ final class template_blocks_test extends phoenix_test_case
 
         $this->assertSame($default_template, $template->get_template());
     }
+
 }

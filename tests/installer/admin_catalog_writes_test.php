@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_catalog_writes_test extends install_test_case
-{
+final class admin_catalog_writes_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const ROOT_CATEGORY_PATH = '1';
@@ -387,4 +387,5 @@ final class admin_catalog_writes_test extends install_test_case
 
         return '1';
     }
+
 }

@@ -15,8 +15,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Template;
 
 #[Group('mockdb')]
-final class template_content_modules_mockdb_test extends phoenix_test_case
-{
+final class template_content_modules_mockdb_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_get_content_modules_filters_groups_from_mock_configuration(): void {
@@ -43,4 +43,5 @@ final class template_content_modules_mockdb_test extends phoenix_test_case
         $this->assertSame(['cm_footer_text'], $template->get_content_modules('footer'));
         $this->assertSame([], $template->get_content_modules('body'));
     }
+
 }

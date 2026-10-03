@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use Search;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class search_test extends phoenix_test_case
-{
+final class search_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -71,4 +71,5 @@ final class search_test extends phoenix_test_case
             'unclosed parenthesis' => [['(', 'term'], false],
         ];
     }
+
 }

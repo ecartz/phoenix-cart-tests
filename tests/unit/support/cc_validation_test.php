@@ -8,8 +8,8 @@ use cc_validation;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class cc_validation_test extends phoenix_test_case
-{
+final class cc_validation_test extends phoenix_test_case {
+
     #[DataProvider('valid_card_provider')]
     public function test_validate_accepts_valid_cards(
         string $number,
@@ -85,4 +85,5 @@ final class cc_validation_test extends phoenix_test_case
             'invalid checksum' => ['4111111111111112', false],
         ];
     }
+
 }

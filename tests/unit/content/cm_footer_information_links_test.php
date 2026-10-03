@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_footer_information_links;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_footer_information_links_test extends content_module_test_case
-{
+final class cm_footer_information_links_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -33,4 +33,5 @@ final class cm_footer_information_links_test extends content_module_test_case
         $this->assertStringContainsString('privacy.php', $content);
         $this->assertStringContainsString('cm-footer-information-links', $content);
     }
+
 }

@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class product_info_test extends http_test_case
-{
+final class product_info_test extends http_test_case {
+
     public function test_product_info_page_shows_sample_oranges(): void {
         $response = $this->get_http()->request('GET', '/product_info.php', [
             'query' => [
@@ -37,4 +37,5 @@ final class product_info_test extends http_test_case
         $this->assertStringNotContainsString('ORA-1', $body);
         $this->assertStringContainsString('cm-pinf-message', $body);
     }
+
 }

@@ -12,8 +12,8 @@ use SplFileInfo;
 /**
  * Wave 5 browser specs use repo snake_case for const/let bindings (not Playwright fixture names).
  */
-final class browser_spec_snake_case_test extends phoenix_test_case
-{
+final class browser_spec_snake_case_test extends phoenix_test_case {
+
     private const SNAKE_CASE = '/^[a-z][a-z0-9]*(_[a-z0-9]+)*$/';
 
     public function test_browser_spec_const_and_let_bindings_use_snake_case(): void {
@@ -83,4 +83,5 @@ final class browser_spec_snake_case_test extends phoenix_test_case
 
         return str_replace('\\', '/', substr($absolute, strlen($repo_root) + 1));
     }
+
 }

@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_footer_text;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_footer_text_test extends content_module_test_case
-{
+final class cm_footer_text_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -30,4 +30,5 @@ final class cm_footer_text_test extends content_module_test_case
         $this->assertStringContainsString('We ship worldwide.', $content);
         $this->assertStringContainsString('cm-footer-text', $content);
     }
+
 }

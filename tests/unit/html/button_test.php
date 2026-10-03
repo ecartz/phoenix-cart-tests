@@ -85,4 +85,5 @@ final class button_test extends html_test_case {
         $this->assertNotEmpty($first_match[1] ?? null);
         $this->assertSame((int) $first_match[1] + 1, (int) $second_match[1]);
     }
+
 }

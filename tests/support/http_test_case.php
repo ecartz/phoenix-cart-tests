@@ -6,8 +6,8 @@ namespace PhoenixCart\Tests\support;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-abstract class http_test_case extends phoenix_test_case
-{
+abstract class http_test_case extends phoenix_test_case {
+
     protected const FIXTURE_CUSTOMER_EMAIL = 'phoenix-http-fixture@example.com';
 
     protected const FIXTURE_CUSTOMER_PASSWORD = 'phoenix-test';
@@ -144,4 +144,5 @@ abstract class http_test_case extends phoenix_test_case
 
         return '';
     }
+
 }

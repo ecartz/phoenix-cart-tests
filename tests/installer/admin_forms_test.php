@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_forms_test extends install_test_case
-{
+final class admin_forms_test extends install_test_case {
+
     use installer_admin_writes;
 
     private const PRODUCT_NAME = 'Phoenix Installer Product';
@@ -375,4 +375,5 @@ final class admin_forms_test extends install_test_case
 
         $this->fail('orders.php did not contain an order link with oID');
     }
+
 }

@@ -13,8 +13,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class abstract_module_enabled_test extends phoenix_test_case
-{
+final class abstract_module_enabled_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_is_enabled_true_when_status_constant_true(): void {
@@ -71,4 +71,5 @@ final class abstract_module_enabled_test extends phoenix_test_case
 
         $this->assertFalse($module->isEnabled());
     }
+
 }

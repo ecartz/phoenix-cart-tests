@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Real {@see Database} connection and T1 shop bootstrap for Integration tests.
  */
-final class mysql_database_helper
-{
+final class mysql_database_helper {
+
     private static bool $bootstrapped = false;
 
     private static ?\Database $connection = null;
@@ -51,4 +51,5 @@ final class mysql_database_helper
         self::$connection = null;
         unset($GLOBALS['db']);
     }
+
 }

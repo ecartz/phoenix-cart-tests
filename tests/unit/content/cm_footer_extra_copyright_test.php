@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\content_module_test_case;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
-final class cm_footer_extra_copyright_test extends content_module_test_case
-{
+final class cm_footer_extra_copyright_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -34,4 +34,5 @@ final class cm_footer_extra_copyright_test extends content_module_test_case
         $this->assertStringContainsString('index.php', $content);
         $this->assertStringContainsString('cm-footer-extra-copyright', $content);
     }
+
 }

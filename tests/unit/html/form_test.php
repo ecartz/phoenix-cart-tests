@@ -83,4 +83,5 @@ final class form_test extends html_test_case {
 
         unset($GLOBALS['error']);
     }
+
 }

@@ -87,4 +87,5 @@ final class select_test extends html_test_case {
 
         $this->assertSame([['id' => 'green', 'text' => 'Green']], $select->get_options());
     }
+
 }

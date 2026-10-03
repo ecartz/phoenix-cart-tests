@@ -16,8 +16,8 @@ use Request;
 use Template;
 
 #[Group('mockdb')]
-final class template_build_blocks_test extends phoenix_test_case
-{
+final class template_build_blocks_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_build_blocks_loads_constants_via_mock_database(): void {
@@ -159,4 +159,5 @@ final class template_build_blocks_test extends phoenix_test_case
         $property->setAccessible(true);
         $property->setValue(null, null);
     }
+
 }

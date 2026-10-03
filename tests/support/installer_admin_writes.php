@@ -8,8 +8,8 @@ use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-trait installer_admin_writes
-{
+trait installer_admin_writes {
+
     protected function fetch_admin_page(
         HttpClientInterface $admin_http,
         string $path,
@@ -749,4 +749,5 @@ trait installer_admin_writes
 
         return $original . 'X';
     }
+
 }

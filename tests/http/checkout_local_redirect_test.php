@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[Group('http')]
-final class checkout_local_redirect_test extends http_test_case
-{
+final class checkout_local_redirect_test extends http_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         http_local_redirect_bootstrap::install_fixture_module();
@@ -168,4 +168,5 @@ final class checkout_local_redirect_test extends http_test_case
 
         return isset($headers['location'][0]) ? (string) $headers['location'][0] : '';
     }
+
 }

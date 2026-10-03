@@ -8,8 +8,8 @@ use default_template;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use Template;
 
-final class template_map_test extends phoenix_test_case
-{
+final class template_map_test extends phoenix_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -56,4 +56,5 @@ final class template_map_test extends phoenix_test_case
         );
         $this->assertFileExists($mapped);
     }
+
 }

@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use Text;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class text_test extends phoenix_test_case
-{
+final class text_test extends phoenix_test_case {
+
     #[DataProvider('break_provider')]
     public function test_break(string $input, int $maximum, string $marker, string $expected): void {
         $this->assertSame($expected, Text::break($input, $maximum, $marker));
@@ -79,4 +79,5 @@ final class text_test extends phoenix_test_case
         $this->assertSame('_tag_', Text::sanitize('<tag>'));
         $this->assertSame('a b', Text::sanitize('a   b'));
     }
+
 }

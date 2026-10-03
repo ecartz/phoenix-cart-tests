@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Zone;
 
 #[Group('mockdb')]
-final class zone_test extends phoenix_test_case
-{
+final class zone_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_fetch_by_country_returns_seeded_zones(): void {
@@ -58,4 +58,5 @@ final class zone_test extends phoenix_test_case
 
         $this->assertSame('Fallback', Zone::fetch_name(99, null, 'Fallback'));
     }
+
 }

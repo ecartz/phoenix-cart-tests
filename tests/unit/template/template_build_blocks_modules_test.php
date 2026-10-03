@@ -18,8 +18,8 @@ use Request;
 use Template;
 
 #[Group('mockdb')]
-final class template_build_blocks_modules_test extends phoenix_test_case
-{
+final class template_build_blocks_modules_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_build_blocks_executes_table_click_jquery(): void {
@@ -242,4 +242,5 @@ final class template_build_blocks_modules_test extends phoenix_test_case
             define($name, $value);
         }
     }
+
 }

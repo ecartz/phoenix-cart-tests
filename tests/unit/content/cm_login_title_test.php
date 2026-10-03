@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_login_title;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_login_title_test extends content_module_test_case
-{
+final class cm_login_title_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -26,4 +26,5 @@ final class cm_login_title_test extends content_module_test_case
         $this->assertStringContainsString('Welcome, Please Sign In', $content);
         $this->assertStringContainsString('cm-login-title', $content);
     }
+
 }

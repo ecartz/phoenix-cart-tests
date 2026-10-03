@@ -11,8 +11,8 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 use ReflectionClass;
 use Request;
 
-final class navigation_history_test extends phoenix_test_case
-{
+final class navigation_history_test extends phoenix_test_case {
+
     private navigationHistory $history;
 
     protected function setUp(): void {
@@ -135,4 +135,5 @@ final class navigation_history_test extends phoenix_test_case
         $property->setAccessible(true);
         $property->setValue(null, null);
     }
+
 }

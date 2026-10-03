@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_info_title;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_info_title_test extends content_module_test_case
-{
+final class cm_info_title_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -36,4 +36,5 @@ final class cm_info_title_test extends content_module_test_case
         $this->assertStringContainsString('Shipping Information', $content);
         $this->assertStringContainsString('cm-info-title', $content);
     }
+
 }

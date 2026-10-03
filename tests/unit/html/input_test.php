@@ -58,4 +58,5 @@ final class input_test extends html_test_case {
 
         $this->assertStringContainsString('type="checkbox"', "$input");
     }
+
 }

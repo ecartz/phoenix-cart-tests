@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class info_page_test extends http_test_case
-{
+final class info_page_test extends http_test_case {
+
     #[DataProvider('install_info_page_provider')]
     public function test_info_php_shows_install_seed_page(
         string $pages_id,
@@ -57,4 +57,5 @@ final class info_page_test extends http_test_case
         $this->assertStringContainsString('Security Check', $body);
         $this->assertStringContainsString('Privacy and Security', $body);
     }
+
 }

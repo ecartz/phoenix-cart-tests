@@ -5,8 +5,8 @@ declare(strict_types=1);
 /**
  * Minimal {@see abstract_module} used only for Integration install/remove tests.
  */
-class integration_throwaway_module extends abstract_module
-{
+class integration_throwaway_module extends abstract_module {
+
     public const CONFIG_KEY_BASE = 'MODULE_PHOENIX_INTEGRATION_PROBE_';
 
     protected function get_parameters(): array {
@@ -26,4 +26,5 @@ class integration_throwaway_module extends abstract_module
             ],
         ];
     }
+
 }

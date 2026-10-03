@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Wave 7 — Apache HTTPS shop (SSL_SESSION_ID in PHP env).
  */
-final class https_bootstrap
-{
+final class https_bootstrap {
+
     public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_HTTPS_ENABLED');
 
@@ -59,4 +59,5 @@ final class https_bootstrap
 
         return ($value !== false && $value !== '') ? $value : $default;
     }
+
 }

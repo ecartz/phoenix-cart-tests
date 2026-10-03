@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit\content;
 use cm_forgot_password;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_forgot_password_test extends content_module_test_case
-{
+final class cm_forgot_password_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -28,4 +28,5 @@ final class cm_forgot_password_test extends content_module_test_case
         $this->assertStringContainsString('password_forgotten.php', $content);
         $this->assertStringContainsString('cm-forgot-password', $content);
     }
+
 }

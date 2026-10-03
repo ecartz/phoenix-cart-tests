@@ -10,8 +10,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * HTTP acceptance shop configure + client factory (wave 4).
  */
-final class http_bootstrap
-{
+final class http_bootstrap {
+
     public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_HTTP_ENABLED');
 
@@ -100,4 +100,5 @@ PHP;
     private static function escape(string $value): string {
         return addcslashes($value, "'\\");
     }
+
 }

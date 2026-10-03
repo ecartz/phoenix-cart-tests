@@ -10,8 +10,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * Shared web-installer HTTP flow for installer acceptance tests.
  */
-final class installer_wizard
-{
+final class installer_wizard {
+
     public const ADMIN_USERNAME = 'phoenix-install-admin';
 
     public const ADMIN_PASSWORD = 'phoenix-install-test';
@@ -114,4 +114,5 @@ final class installer_wizard
             }
         }
     }
+
 }

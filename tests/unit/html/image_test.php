@@ -76,6 +76,7 @@ final class image_test extends html_test_case {
 
         $this->assertStringContainsString('src="placeholder.png"', "$image");
     }
+
 }
 
 final class image_required_false_test extends phoenix_test_case {
@@ -101,4 +102,5 @@ final class image_required_false_test extends phoenix_test_case {
 
         $this->assertTrue($image->size());
     }
+
 }

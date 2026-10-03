@@ -11,8 +11,8 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 /**
  * Persists Set-Cookie across requests (Symfony HttpClient does not do this by default).
  */
-final class cookie_jar_http_client implements HttpClientInterface
-{
+final class cookie_jar_http_client implements HttpClientInterface {
+
     /** @var array<string, string> */
     private array $cookies = [];
 
@@ -97,4 +97,5 @@ final class cookie_jar_http_client implements HttpClientInterface
 
         return implode('; ', $parts);
     }
+
 }

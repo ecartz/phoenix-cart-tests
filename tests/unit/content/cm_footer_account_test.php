@@ -8,8 +8,8 @@ use cm_footer_account;
 use PhoenixCart\Tests\support\content_module_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class cm_footer_account_test extends content_module_test_case
-{
+final class cm_footer_account_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -76,4 +76,5 @@ final class cm_footer_account_test extends content_module_test_case
             ],
         ];
     }
+
 }

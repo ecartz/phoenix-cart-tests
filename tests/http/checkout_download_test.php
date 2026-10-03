@@ -11,8 +11,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_download_test extends http_test_case
-{
+final class checkout_download_test extends http_test_case {
+
     private const DOWNLOAD_FILENAME = 'http-test-download.zip';
 
     private const DOWNLOAD_PAYLOAD = 'phoenix-http-download-fixture-payload';
@@ -96,4 +96,5 @@ final class checkout_download_test extends http_test_case
 
         $this->download_path = null;
     }
+
 }

@@ -8,6 +8,7 @@ use PhoenixCart\Tests\support\installer_admin_writes;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
 final class installer_module_discovery_test extends phoenix_test_case {
+
     use installer_admin_writes;
 
     public function test_parses_module_code_from_install_module_form_action(): void {
@@ -86,4 +87,5 @@ HTML;
             $module_code,
         );
     }
+
 }

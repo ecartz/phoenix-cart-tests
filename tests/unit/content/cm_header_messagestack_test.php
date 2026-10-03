@@ -8,8 +8,8 @@ use cm_header_messagestack;
 use messageStack;
 use PhoenixCart\Tests\support\content_module_test_case;
 
-final class cm_header_messagestack_test extends content_module_test_case
-{
+final class cm_header_messagestack_test extends content_module_test_case {
+
     protected function setUp(): void {
         parent::setUp();
 
@@ -41,4 +41,5 @@ final class cm_header_messagestack_test extends content_module_test_case
         $this->assertFalse($GLOBALS['Template']->has_content('header'));
         $this->assertSame('', $this->buffered_content('header'));
     }
+
 }

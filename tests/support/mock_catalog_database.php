@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Minimal double for {@see database_core} methods used by application segments (no mysqli).
  */
-final class mock_catalog_database
-{
+final class mock_catalog_database {
+
     /**
      * @param list<array<string, string>> $configuration_rows
      * @param array<string, list<array<string, string>>> $table_rows keyed by table name
@@ -70,4 +70,5 @@ final class mock_catalog_database
 
         return [];
     }
+
 }

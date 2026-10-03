@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\mysql_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('mysql')]
-final class database_perform_test extends mysql_test_case
-{
+final class database_perform_test extends mysql_test_case {
+
     private const TEST_KEY = 'PHOENIX_INTEGRATION_TEST_KEY';
 
     protected function tearDown(): void {
@@ -40,4 +40,5 @@ final class database_perform_test extends mysql_test_case
 
         $this->assertSame('True', $row['configuration_value'] ?? null);
     }
+
 }

@@ -9,8 +9,8 @@ namespace PhoenixCart\Tests\support;
  *
  * Supports {@see fetch_assoc()} only. Does not satisfy mysqli_num_rows() (wave 3).
  */
-final class mock_catalog_query_result
-{
+final class mock_catalog_query_result {
+
     /** @var list<array<string, mixed>> */
     private array $rows;
 
@@ -51,4 +51,5 @@ final class mock_catalog_query_result
     public function remaining_rows(): array {
         return array_slice($this->rows, $this->position);
     }
+
 }

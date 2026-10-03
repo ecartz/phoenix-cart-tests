@@ -10,8 +10,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * Disposable catalog copy + dedicated DB for web installer acceptance tests.
  */
-final class installer_bootstrap
-{
+final class installer_bootstrap {
+
     public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_INSTALLER_ENABLED');
 
@@ -266,4 +266,5 @@ final class installer_bootstrap
 
         return ($value !== false && $value !== '') ? $value : $default;
     }
+
 }

@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_mixed_cart_test extends http_test_case
-{
+final class checkout_mixed_cart_test extends http_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::insert_virtual_download_for_pears();
@@ -58,4 +58,5 @@ final class checkout_mixed_cart_test extends http_test_case
         $payment_html = $payment_page->getContent(false);
         $this->assertStringContainsString('Cash on Delivery', $payment_html);
     }
+
 }

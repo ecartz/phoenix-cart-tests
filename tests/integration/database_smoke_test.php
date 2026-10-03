@@ -8,8 +8,8 @@ use PhoenixCart\Tests\support\mysql_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('mysql')]
-final class database_smoke_test extends mysql_test_case
-{
+final class database_smoke_test extends mysql_test_case {
+
     public function test_connection_selects_one(): void {
         $row = $this->db()->query('SELECT 1 AS ok')->fetch_assoc();
 
@@ -28,4 +28,5 @@ final class database_smoke_test extends mysql_test_case
 
         $this->assertGreaterThanOrEqual(9, count($count));
     }
+
 }

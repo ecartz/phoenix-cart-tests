@@ -9,8 +9,8 @@ use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
-final class checkout_stock_test extends http_test_case
-{
+final class checkout_stock_test extends http_test_case {
+
     protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::block_checkout_when_pears_out_of_stock();
@@ -64,4 +64,5 @@ final class checkout_stock_test extends http_test_case
         $location = (string) ($blocked->getHeaders(false)['location'][0] ?? '');
         $this->assertStringContainsString('shopping_cart.php', $location);
     }
+
 }

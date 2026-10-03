@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_writes_test extends install_test_case
-{
+final class admin_writes_test extends install_test_case {
+
     private const NEWSLETTER_TITLE = 'Phoenix Installer Draft Newsletter';
 
     private const NEWSLETTER_CONTENT = 'Installer acceptance test newsletter body.';
@@ -340,4 +340,5 @@ final class admin_writes_test extends install_test_case
 
         return '/admin/' . ltrim($href, '/');
     }
+
 }

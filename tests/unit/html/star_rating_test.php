@@ -33,4 +33,5 @@ final class star_rating_test extends html_test_case {
         $this->assertSame(5, substr_count($markup, 'fas fa-star'));
         $this->assertSame(0, substr_count($markup, 'far fa-star'));
     }
+
 }

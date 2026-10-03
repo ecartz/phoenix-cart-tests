@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\support;
 /**
  * Wave 6 part 3 — inject Stripe SCA test keys from env (CI secrets), never committed.
  */
-final class payment_sandbox_bootstrap
-{
+final class payment_sandbox_bootstrap {
+
     private const PUBLISHABLE_ENV = 'PHOENIX_STRIPE_SCA_TEST_PUBLISHABLE_KEY';
 
     private const SECRET_ENV = 'PHOENIX_STRIPE_SCA_TEST_SECRET_KEY';
@@ -170,4 +170,5 @@ EOSQL
         $statement->execute();
         $statement->close();
     }
+
 }

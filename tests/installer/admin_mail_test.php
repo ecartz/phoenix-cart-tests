@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Group('installer')]
-final class admin_mail_test extends install_test_case
-{
+final class admin_mail_test extends install_test_case {
+
     private const CUSTOMER_FIRSTNAME = 'Mail';
 
     private const CUSTOMER_LASTNAME = 'Recipient';
@@ -317,4 +317,5 @@ final class admin_mail_test extends install_test_case
 
         $this->fail('orders.php did not contain an order link with oID');
     }
+
 }

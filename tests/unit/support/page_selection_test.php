@@ -8,8 +8,8 @@ use page_selection;
 use PhoenixCart\Tests\support\phoenix_test_case;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class page_selection_test extends phoenix_test_case
-{
+final class page_selection_test extends phoenix_test_case {
+
     /**
      * @param list<string> $expected
      */
@@ -34,4 +34,5 @@ final class page_selection_test extends phoenix_test_case
             $output
         );
     }
+
 }

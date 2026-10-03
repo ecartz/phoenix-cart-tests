@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Tax;
 
 #[Group('mockdb')]
-final class tax_test extends phoenix_test_case
-{
+final class tax_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_fetch_classes_returns_seeded_tax_classes(): void {
@@ -48,4 +48,5 @@ final class tax_test extends phoenix_test_case
 
         $this->assertSame('None', Tax::get_class_title('0'));
     }
+
 }

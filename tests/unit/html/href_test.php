@@ -129,6 +129,7 @@ final class href_test extends html_test_case {
 
         $this->assertSame('static.php?mode=view', $chain['link']);
     }
+
 }
 
 final class href_session_force_cookie_test extends phoenix_test_case {
@@ -144,4 +145,5 @@ final class href_session_force_cookie_test extends phoenix_test_case {
 
         $this->assertFalse($href->get_include_session());
     }
+
 }

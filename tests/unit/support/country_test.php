@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class country_test extends phoenix_test_case
-{
+final class country_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_fetch_all_returns_seeded_countries(): void {
@@ -91,4 +91,5 @@ final class country_test extends phoenix_test_case
         $this->assertTrue(Country::match_classification('international', '38'));
         $this->assertTrue(Country::match_classification('both', '1'));
     }
+
 }

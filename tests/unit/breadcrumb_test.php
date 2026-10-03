@@ -7,8 +7,8 @@ namespace PhoenixCart\Tests\unit;
 use breadcrumb;
 use PhoenixCart\Tests\support\phoenix_test_case;
 
-final class breadcrumb_test extends phoenix_test_case
-{
+final class breadcrumb_test extends phoenix_test_case {
+
     public function test_reset_clears_trail(): void {
         $trail = new breadcrumb();
         $trail->add('Home', '/');
@@ -44,4 +44,5 @@ final class breadcrumb_test extends phoenix_test_case
             $trail->trail()
         );
     }
+
 }

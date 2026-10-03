@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 #[Group('mockdb')]
-final class currencies_test extends phoenix_test_case
-{
+final class currencies_test extends phoenix_test_case {
+
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function test_constructor_loads_currencies_and_formats(): void {
@@ -55,4 +55,5 @@ final class currencies_test extends phoenix_test_case
         $this->assertSame('$10.00', $currencies->format(10, false, 'USD'));
         $this->assertSame('8,50 EUR', $currencies->format(10, true, 'EUR'));
     }
+
 }

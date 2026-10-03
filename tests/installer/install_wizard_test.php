@@ -10,8 +10,8 @@ use PhoenixCart\Tests\support\installer_wizard;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('installer')]
-final class install_wizard_test extends install_test_case
-{
+final class install_wizard_test extends install_test_case {
+
     public function test_web_installer_configures_shop_and_admin_login(): void {
         $welcome = $this->get_http()->request('GET', '/install/index.php');
         $this->assertSame(200, $welcome->getStatusCode());
@@ -29,4 +29,5 @@ final class install_wizard_test extends install_test_case
         $this->assertStringNotContainsString('login.php', $admin_home_url);
         $this->assertStringContainsString('display-4', $admin_home->getContent(false));
     }
+
 }
