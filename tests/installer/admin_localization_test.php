@@ -74,6 +74,17 @@ final class admin_localization_test extends install_test_case {
         );
     }
 
+    public function test_storefront_product_info_shows_sample_special_price(): void {
+        $shop_http = installer_bootstrap::client();
+        $product_page = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '1'],
+        ]);
+        $this->assertSame(200, $product_page->getStatusCode());
+        $body = $product_page->getContent(false);
+        $this->assertStringContainsString('Oranges', $body);
+        $this->assertStringContainsString('$2.99', $body);
+    }
+
     public function test_admin_specials_toggles_status(): void {
         $admin_http = $this->login_installed_admin();
         $specials_html = $this->fetch_specials_html_with_active_special($admin_http);

@@ -56,7 +56,7 @@ final class admin_content_writes_test extends install_test_case {
         $admin_http = $this->login_installed_admin();
 
         $this->insert_and_delete_special($admin_http);
-        $this->insert_and_delete_review($admin_http, $customer_id);
+        $this->insert_and_delete_review($admin_http, $shop_http, $customer_id);
         $this->insert_and_delete_testimonial($admin_http, $customer_id);
         $this->insert_and_delete_info_page($admin_http);
         $this->insert_and_delete_advert($admin_http);
@@ -86,7 +86,11 @@ final class admin_content_writes_test extends install_test_case {
         $this->assertStringNotContainsString(self::SPECIAL_OFFER_PRICE, $after);
     }
 
-    private function insert_and_delete_review(HttpClientInterface $admin_http, string $customer_id): void {
+    private function insert_and_delete_review(
+        HttpClientInterface $admin_http,
+        HttpClientInterface $shop_http,
+        string $customer_id,
+    ): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/reviews.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -101,6 +105,12 @@ final class admin_content_writes_test extends install_test_case {
 
         $list_html = $this->assert_admin_list_contains($admin_http, '/admin/reviews.php', [], 'Lemons');
         $review_id = $this->parse_entity_id_near_needle($list_html, 'Lemons', 'rID');
+
+        $product_page = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => self::SPECIAL_PRODUCT_ID],
+        ]);
+        $this->assertSame(200, $product_page->getStatusCode());
+        $this->assertStringContainsString(self::REVIEW_TEXT, $product_page->getContent(false));
 
         $this->confirm_admin_delete($admin_http, '/admin/reviews.php', 'rID', $review_id);
         $this->assert_admin_list_not_contains($admin_http, '/admin/reviews.php', [], 'Lemons');
