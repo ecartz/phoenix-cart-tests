@@ -562,7 +562,27 @@ trait installer_admin_writes
             return;
         }
 
-        $this->remove_installed_module($admin_http, $set, $installed_codes[0]);
+        $this->remove_installed_module(
+            $admin_http,
+            $set,
+            self::installed_module_to_remove_for_new_candidate($set, $installed_codes),
+        );
+    }
+
+    /**
+     * @param list<string> $installed_codes
+     */
+    protected static function installed_module_to_remove_for_new_candidate(string $set, array $installed_codes): string
+    {
+        if ($set === 'action_recorder') {
+            foreach ($installed_codes as $module_code) {
+                if ($module_code !== 'ar_admin_login') {
+                    return $module_code;
+                }
+            }
+        }
+
+        return $installed_codes[0];
     }
 
     protected function first_new_module_code(HttpClientInterface $admin_http, string $set): ?string
