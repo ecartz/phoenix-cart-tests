@@ -56,6 +56,18 @@ final class product_review_test extends http_test_case {
             'Thank you for your review',
             $response->getContent(false)
         );
+
+        $product_info = $this->get_http()->request('GET', '/product_info.php', [
+            'query' => [
+                'products_id' => (string) self::PEARS_PRODUCT_ID,
+            ],
+        ]);
+        $this->assertSame(200, $product_info->getStatusCode());
+        $info_body = $product_info->getContent(false);
+        $this->assertTrue(
+            str_contains($info_body, 'cm-pi-review-stars') || str_contains($info_body, 'write.php'),
+            'product_info should expose review stars or write-review link after submission'
+        );
     }
 
 }

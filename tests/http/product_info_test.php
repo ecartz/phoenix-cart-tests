@@ -22,6 +22,8 @@ final class product_info_test extends http_test_case {
         $body = $response->getContent(false);
         $this->assertStringContainsString('Oranges', $body);
         $this->assertStringContainsString('ORA-1', $body);
+        $this->assertStringContainsString('$2.99', $body);
+        $this->assertStringContainsString('$9.99', $body);
     }
 
     public function test_unknown_product_shows_not_found_page_not_oranges(): void {

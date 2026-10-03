@@ -11,6 +11,12 @@ use PHPUnit\Framework\Attributes\Group;
 final class catalog_browse_test extends http_test_case {
 
     public function test_search_specials_new_testimonials_and_manufacturer_listing(): void {
+        $advanced = $this->get_http()->request('GET', '/advanced_search.php');
+        $this->assertSame(200, $advanced->getStatusCode());
+        $advanced_body = $advanced->getContent(false);
+        $this->assertStringContainsString('keywords', $advanced_body);
+        $this->assertStringContainsString('advanced_search_result.php', $advanced_body);
+
         $search = $this->get_http()->request('GET', '/advanced_search_result.php', [
             'query' => [
                 'keywords' => 'Oranges',

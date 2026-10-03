@@ -94,6 +94,18 @@ final class http_customer_fixture_sql {
         $mysqli->close();
     }
 
+    public static function restore_fixture_product_notifications(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        self::exec(
+            $mysqli,
+            'DELETE FROM products_notifications WHERE customers_id = ' . self::FIXTURE_CUSTOMER_ID
+        );
+
+        $mysqli->close();
+    }
+
     public static function restore_fixture_global_product_notifications(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
@@ -102,6 +114,55 @@ final class http_customer_fixture_sql {
             $mysqli,
             'UPDATE customers_info SET global_product_notifications = 0'
             . ' WHERE customers_info_id = ' . self::FIXTURE_CUSTOMER_ID
+        );
+
+        $mysqli->close();
+    }
+
+    public static function default_address_book_id_for_fixture(): int {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT customers_default_address_id FROM customers WHERE customers_id = ? LIMIT 1'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $customer_id = self::FIXTURE_CUSTOMER_ID;
+        $statement->bind_param('i', $customer_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return 1;
+        }
+
+        return (int) $row['customers_default_address_id'];
+    }
+
+    public static function restore_fixture_default_address(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $customer_id = self::FIXTURE_CUSTOMER_ID;
+        self::exec(
+            $mysqli,
+            'UPDATE customers SET customers_default_address_id = 1 WHERE customers_id = ' . $customer_id
+        );
+        self::exec(
+            $mysqli,
+            "DELETE FROM address_book WHERE customers_id = $customer_id AND address_book_id <> 1"
+        );
+        self::exec(
+            $mysqli,
+            "UPDATE address_book SET entry_city = 'Testville', entry_street_address = '1 Test Street'"
+            . " WHERE customers_id = $customer_id AND address_book_id = 1"
         );
 
         $mysqli->close();
@@ -154,6 +215,87 @@ final class http_customer_fixture_sql {
         }
 
         return (int) $row['address_book_id'];
+    }
+
+    public static function delete_throwaway_customer_by_email(string $email): void {
+        if ($email === '' || $email === 'phoenix-http-fixture@example.com') {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare('SELECT customers_id FROM customers WHERE customers_email_address = ? LIMIT 1');
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('s', $email);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+
+        if (!is_array($row)) {
+            $mysqli->close();
+
+            return;
+        }
+
+        $customer_id = (int) $row['customers_id'];
+        self::exec($mysqli, 'DELETE FROM outgoing WHERE customer_id = ' . $customer_id);
+        self::exec(
+            $mysqli,
+            'DELETE rd FROM reviews_description rd INNER JOIN reviews r ON r.reviews_id = rd.reviews_id'
+            . ' WHERE r.customers_id = ' . $customer_id
+        );
+        self::exec($mysqli, 'DELETE FROM reviews WHERE customers_id = ' . $customer_id);
+        self::exec(
+            $mysqli,
+            'DELETE td FROM testimonials_description td INNER JOIN testimonials t ON t.testimonials_id = td.testimonials_id'
+            . ' WHERE t.customers_id = ' . $customer_id
+        );
+        self::exec($mysqli, 'DELETE FROM testimonials WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM products_notifications WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM customers_basket_attributes WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM customers_basket WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM orders_total WHERE orders_id IN (SELECT orders_id FROM orders WHERE customers_id = '
+            . $customer_id . ')');
+        self::exec($mysqli, 'DELETE FROM orders_status_history WHERE orders_id IN (SELECT orders_id FROM orders WHERE customers_id = '
+            . $customer_id . ')');
+        self::exec($mysqli, 'DELETE FROM orders_products WHERE orders_id IN (SELECT orders_id FROM orders WHERE customers_id = '
+            . $customer_id . ')');
+        self::exec($mysqli, 'DELETE FROM orders WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM address_book WHERE customers_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM customers_info WHERE customers_info_id = ' . $customer_id);
+        self::exec($mysqli, 'DELETE FROM customers WHERE customers_id = ' . $customer_id);
+
+        $mysqli->close();
+    }
+
+    public static function customer_id_for_email(string $email): ?int {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare('SELECT customers_id FROM customers WHERE customers_email_address = ? LIMIT 1');
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('s', $email);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (int) $row['customers_id'];
     }
 
     public static function delete_address_book_entry(int $address_book_id): void {

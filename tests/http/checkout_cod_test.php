@@ -54,6 +54,10 @@ final class checkout_cod_test extends http_test_case {
         $confirmation_html = $confirmation_page->getContent(false);
         $this->assertStringContainsString('Pears', $confirmation_html);
         $this->assertStringContainsString('Cash on Delivery', $confirmation_html);
+        $this->assertStringContainsString('Flat Rate', $confirmation_html);
+        $this->assertStringContainsString('$4.99', $confirmation_html);
+        $this->assertStringContainsString('Sub-Total', $confirmation_html);
+        $this->assertStringContainsString('Total', $confirmation_html);
 
         $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
         $this->assertNotSame('', $confirm_formid);
