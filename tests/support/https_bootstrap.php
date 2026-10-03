@@ -9,20 +9,17 @@ namespace PhoenixCart\Tests\support;
  */
 final class https_bootstrap
 {
-    public static function is_enabled(): bool
-    {
+    public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_HTTPS_ENABLED');
 
         return $flag !== false && $flag !== '' && $flag !== '0';
     }
 
-    public static function base_url(): string
-    {
+    public static function base_url(): string {
         return rtrim(self::env('PHOENIX_HTTPS_BASE_URL', 'https://127.0.0.1:8443'), '/');
     }
 
-    public static function apply_ssl_session_check_sql(): void
-    {
+    public static function apply_ssl_session_check_sql(): void {
         mysql_bootstrap::define_connection_constants();
 
         $path = dirname(__DIR__, 2) . '/fixtures/http/enable_ssl_session_check.sql';
@@ -57,8 +54,7 @@ final class https_bootstrap
         $mysqli->close();
     }
 
-    private static function env(string $name, string $default): string
-    {
+    private static function env(string $name, string $default): string {
         $value = getenv($name);
 
         return ($value !== false && $value !== '') ? $value : $default;

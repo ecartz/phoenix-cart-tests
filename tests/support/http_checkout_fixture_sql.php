@@ -37,8 +37,7 @@ final class http_checkout_fixture_sql
 
     private static ?int $saved_pears_quantity = null;
 
-    public static function insert_virtual_download_for_pears(): void
-    {
+    public static function insert_virtual_download_for_pears(): void {
         self::remove_virtual_download_for_pears();
 
         mysql_bootstrap::define_connection_constants();
@@ -78,8 +77,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function remove_virtual_download_for_pears(): void
-    {
+    public static function remove_virtual_download_for_pears(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -123,18 +121,15 @@ final class http_checkout_fixture_sql
         self::$virtual_products_attributes_id = null;
     }
 
-    public static function virtual_option_id(): int
-    {
+    public static function virtual_option_id(): int {
         return self::VIRTUAL_OPTION_ID;
     }
 
-    public static function virtual_value_id(): int
-    {
+    public static function virtual_value_id(): int {
         return self::VIRTUAL_VALUE_ID;
     }
 
-    public static function insert_cart_attribute_for_pears(): void
-    {
+    public static function insert_cart_attribute_for_pears(): void {
         self::remove_cart_attribute_for_pears();
 
         mysql_bootstrap::define_connection_constants();
@@ -165,8 +160,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function remove_cart_attribute_for_pears(): void
-    {
+    public static function remove_cart_attribute_for_pears(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -198,18 +192,15 @@ final class http_checkout_fixture_sql
         self::$cart_products_attributes_id = null;
     }
 
-    public static function cart_option_id(): int
-    {
+    public static function cart_option_id(): int {
         return self::CART_OPTION_ID;
     }
 
-    public static function cart_value_id(): int
-    {
+    public static function cart_value_id(): int {
         return self::CART_VALUE_ID;
     }
 
-    public static function install_extra_shipping_modules(): void
-    {
+    public static function install_extra_shipping_modules(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -233,8 +224,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_shipping_modules(): void
-    {
+    public static function restore_shipping_modules(): void {
         if (self::$saved_shipping_installed === null) {
             return;
         }
@@ -251,8 +241,7 @@ final class http_checkout_fixture_sql
         self::$saved_shipping_installed = null;
     }
 
-    public static function restrict_flat_shipping_to_non_fixture_geo_zone(): void
-    {
+    public static function restrict_flat_shipping_to_non_fixture_geo_zone(): void {
         self::restore_flat_shipping_geo_zone();
 
         mysql_bootstrap::define_connection_constants();
@@ -265,8 +254,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_flat_shipping_geo_zone(): void
-    {
+    public static function restore_flat_shipping_geo_zone(): void {
         if (self::$saved_flat_zone === null) {
             return;
         }
@@ -280,8 +268,7 @@ final class http_checkout_fixture_sql
         self::$saved_flat_zone = null;
     }
 
-    public static function enable_free_shipping_over_one_dollar(): void
-    {
+    public static function enable_free_shipping_over_one_dollar(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -296,8 +283,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_free_shipping(): void
-    {
+    public static function restore_free_shipping(): void {
         if (self::$saved_free_shipping === null) {
             return;
         }
@@ -315,8 +301,7 @@ final class http_checkout_fixture_sql
         self::$saved_free_shipping_over = null;
     }
 
-    public static function block_checkout_when_pears_out_of_stock(): void
-    {
+    public static function block_checkout_when_pears_out_of_stock(): void {
         self::restore_pears_stock_and_checkout_flag();
 
         mysql_bootstrap::define_connection_constants();
@@ -339,8 +324,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_pears_stock_and_checkout_flag(): void
-    {
+    public static function restore_pears_stock_and_checkout_flag(): void {
         if (self::$saved_pears_quantity === null && self::$saved_stock_allow_checkout === null) {
             return;
         }
@@ -362,8 +346,7 @@ final class http_checkout_fixture_sql
         self::$saved_stock_allow_checkout = null;
     }
 
-    public static function restrict_cod_to_non_fixture_geo_zone(): void
-    {
+    public static function restrict_cod_to_non_fixture_geo_zone(): void {
         self::restore_cod_geo_zone();
 
         mysql_bootstrap::define_connection_constants();
@@ -377,8 +360,7 @@ final class http_checkout_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_cod_geo_zone(): void
-    {
+    public static function restore_cod_geo_zone(): void {
         if (self::$saved_cod_zone === null) {
             return;
         }
@@ -397,8 +379,7 @@ final class http_checkout_fixture_sql
         self::$saved_cod_zone = null;
     }
 
-    private static function connect(): \mysqli
-    {
+    private static function connect(): \mysqli {
         $mysqli = new \mysqli(
             (string) DB_SERVER,
             (string) DB_SERVER_USERNAME,
@@ -415,15 +396,13 @@ final class http_checkout_fixture_sql
         return $mysqli;
     }
 
-    private static function exec(\mysqli $mysqli, string $sql): void
-    {
+    private static function exec(\mysqli $mysqli, string $sql): void {
         if (!$mysqli->query($sql)) {
             throw new \RuntimeException('Query failed: ' . $mysqli->error . ' [' . $sql . ']');
         }
     }
 
-    private static function fetch_configuration_value(\mysqli $mysqli, string $configuration_key): ?string
-    {
+    private static function fetch_configuration_value(\mysqli $mysqli, string $configuration_key): ?string {
         $statement = $mysqli->prepare(
             'SELECT configuration_value FROM configuration WHERE configuration_key = ? LIMIT 1'
         );
@@ -491,8 +470,7 @@ final class http_checkout_fixture_sql
         $insert->close();
     }
 
-    private static function ensure_excluding_geo_zone(\mysqli $mysqli): void
-    {
+    private static function ensure_excluding_geo_zone(\mysqli $mysqli): void {
         $check = $mysqli->query(
             'SELECT geo_zone_id FROM geo_zones WHERE geo_zone_id = ' . self::EXCLUDING_GEO_ZONE_ID . ' LIMIT 1'
         );

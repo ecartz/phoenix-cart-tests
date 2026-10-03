@@ -15,15 +15,13 @@ final class admin_pages_test extends install_test_case
 {
     private const RENAMED_STORE_NAME = 'Phoenix Installer Renamed Shop';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_configuration_list_shows_store_name(): void
-    {
+    public function test_admin_configuration_list_shows_store_name(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -33,20 +31,17 @@ final class admin_pages_test extends install_test_case
         );
     }
 
-    public function test_admin_languages_list_renders(): void
-    {
+    public function test_admin_languages_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/languages.php', [], 'English');
     }
 
-    public function test_admin_countries_list_renders(): void
-    {
+    public function test_admin_countries_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/countries.php', ['search' => 'United States'], 'United States');
     }
 
-    public function test_admin_administrators_list_renders(): void
-    {
+    public function test_admin_administrators_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -56,8 +51,7 @@ final class admin_pages_test extends install_test_case
         );
     }
 
-    public function test_admin_payment_modules_list_renders(): void
-    {
+    public function test_admin_payment_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -67,8 +61,7 @@ final class admin_pages_test extends install_test_case
         );
     }
 
-    public function test_admin_store_name_configuration_round_trip(): void
-    {
+    public function test_admin_store_name_configuration_round_trip(): void {
         $admin_http = $this->login_installed_admin();
         $configuration_id = $this->resolve_store_name_configuration_id($admin_http);
         $this->assertNotSame('', $configuration_id);
@@ -98,8 +91,7 @@ final class admin_pages_test extends install_test_case
         );
     }
 
-    private function resolve_store_name_configuration_id(HttpClientInterface $admin_http): string
-    {
+    private function resolve_store_name_configuration_id(HttpClientInterface $admin_http): string {
         $list = $admin_http->request('GET', '/admin/configuration.php', [
             'query' => ['gID' => '1'],
         ]);
@@ -171,8 +163,7 @@ final class admin_pages_test extends install_test_case
     /**
      * @return array<string, string>
      */
-    private function admin_query_from_href(string $href): array
-    {
+    private function admin_query_from_href(string $href): array {
         $query_string = parse_url($href, PHP_URL_QUERY);
         if (!is_string($query_string) || $query_string === '') {
             return [];
@@ -184,8 +175,7 @@ final class admin_pages_test extends install_test_case
         return array_map(static fn ($item) => (string) $item, $query);
     }
 
-    private function admin_path_from_href(string $href): string
-    {
+    private function admin_path_from_href(string $href): string {
         $path = parse_url($href, PHP_URL_PATH);
         if (is_string($path) && str_starts_with($path, '/admin/')) {
             return $path;

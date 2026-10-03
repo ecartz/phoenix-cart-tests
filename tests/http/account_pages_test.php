@@ -11,14 +11,12 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class account_pages_test extends http_test_case
 {
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_firstname();
         parent::tearDown();
     }
 
-    public function test_fixture_customer_account_pages_and_edit_profile(): void
-    {
+    public function test_fixture_customer_account_pages_and_edit_profile(): void {
         $this->login_fixture_customer();
 
         foreach (

@@ -9,8 +9,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_cas_message_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->with_linker();
@@ -21,8 +20,7 @@ final class cm_cas_message_test extends content_module_test_case
         ]);
     }
 
-    public function test_execute_buffers_thank_you_message_into_create_account_success_group(): void
-    {
+    public function test_execute_buffers_thank_you_message_into_create_account_success_group(): void {
         $this->execute_module(cm_cas_message::class);
 
         $content = $this->buffered_content('create_account_success');

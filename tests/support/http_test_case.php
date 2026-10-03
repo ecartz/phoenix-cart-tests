@@ -14,8 +14,7 @@ abstract class http_test_case extends phoenix_test_case
 
     private HttpClientInterface $http;
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         if (!http_bootstrap::is_enabled()) {
@@ -43,19 +42,16 @@ abstract class http_test_case extends phoenix_test_case
         }
     }
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         $this->http = http_bootstrap::client();
     }
 
-    protected function get_http(): HttpClientInterface
-    {
+    protected function get_http(): HttpClientInterface {
         return $this->http;
     }
 
-    protected function get_http_without_redirects(): HttpClientInterface
-    {
+    protected function get_http_without_redirects(): HttpClientInterface {
         if ($this->http instanceof cookie_jar_http_client) {
             return $this->http->with_max_redirects(0);
         }
@@ -66,8 +62,7 @@ abstract class http_test_case extends phoenix_test_case
     /**
      * @param array<string, string> $extra_body
      */
-    protected function post_add_product_to_cart(int $products_id, array $extra_body = []): void
-    {
+    protected function post_add_product_to_cart(int $products_id, array $extra_body = []): void {
         $product_page = $this->get_http()->request('GET', '/product_info.php', [
             'query' => ['products_id' => (string) $products_id],
         ]);
@@ -90,8 +85,7 @@ abstract class http_test_case extends phoenix_test_case
         ]);
     }
 
-    protected static function parse_formid_from_page(string $html): string
-    {
+    protected static function parse_formid_from_page(string $html): string {
         $formid = self::parse_hidden_input($html, 'formid');
         if ($formid !== '') {
             return $formid;
@@ -104,8 +98,7 @@ abstract class http_test_case extends phoenix_test_case
         return '';
     }
 
-    protected function login_fixture_customer(): void
-    {
+    protected function login_fixture_customer(): void {
         http_customer_fixture_sql::clear_fixture_customer_basket();
 
         $this->get_http()->request('GET', '/');
@@ -138,8 +131,7 @@ abstract class http_test_case extends phoenix_test_case
         );
     }
 
-    protected static function parse_hidden_input(string $html, string $name): string
-    {
+    protected static function parse_hidden_input(string $html, string $name): string {
         $quoted = preg_quote($name, '/');
 
         if (preg_match('/name="' . $quoted . '"[^>]*\svalue="([^"]*)"/', $html, $matches) === 1) {

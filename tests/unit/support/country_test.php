@@ -16,8 +16,7 @@ final class country_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_all_returns_seeded_countries(): void
-    {
+    public function test_fetch_all_returns_seeded_countries(): void {
         $countries = [
             ['countries_id' => '1', 'countries_name' => 'Atlantis'],
             ['countries_id' => '2', 'countries_name' => 'Zealand'],
@@ -31,8 +30,7 @@ final class country_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_options_returns_id_text_pairs(): void
-    {
+    public function test_fetch_options_returns_id_text_pairs(): void {
         $options = [
             ['id' => '10', 'text' => 'Canada'],
             ['id' => '20', 'text' => 'Mexico'],
@@ -45,8 +43,7 @@ final class country_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_returns_single_country_row(): void
-    {
+    public function test_fetch_returns_single_country_row(): void {
         $row = [
             'countries_name' => 'Ruritania',
             'countries_iso_code_2' => 'RR',
@@ -60,8 +57,7 @@ final class country_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_name_reads_from_query_result(): void
-    {
+    public function test_fetch_name_reads_from_query_result(): void {
         (new mock_catalog_database([], [
             'countries' => [
                 ['countries_name' => 'Narnia'],
@@ -73,8 +69,7 @@ final class country_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_id_from_iso_returns_countries_id(): void
-    {
+    public function test_fetch_id_from_iso_returns_countries_id(): void {
         (new mock_catalog_database([], [
             'countries' => [
                 ['countries_id' => '223'],
@@ -86,8 +81,7 @@ final class country_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_match_classification_uses_store_country(): void
-    {
+    public function test_match_classification_uses_store_country(): void {
         if (!defined('STORE_COUNTRY')) {
             define('STORE_COUNTRY', '223');
         }

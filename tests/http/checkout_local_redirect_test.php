@@ -13,20 +13,17 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 #[Group('http')]
 final class checkout_local_redirect_test extends http_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         http_local_redirect_bootstrap::install_fixture_module();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_local_redirect_bootstrap::remove_fixture_module();
         parent::tearDown();
     }
 
-    public function test_logged_in_customer_completes_checkout_with_local_redirect_module(): void
-    {
+    public function test_logged_in_customer_completes_checkout_with_local_redirect_module(): void {
         $confirmation_html = $this->walk_to_local_redirect_confirmation();
 
         $this->assertStringContainsString(
@@ -71,8 +68,7 @@ final class checkout_local_redirect_test extends http_test_case
         );
     }
 
-    public function test_bad_token_on_checkout_process_redirects_without_local_redirect_order(): void
-    {
+    public function test_bad_token_on_checkout_process_redirects_without_local_redirect_order(): void {
         $confirmation_html = $this->walk_to_local_redirect_confirmation();
         $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
         $orders_before = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
@@ -95,8 +91,7 @@ final class checkout_local_redirect_test extends http_test_case
         );
     }
 
-    public function test_bad_token_on_ext_return_redirects_without_local_redirect_order(): void
-    {
+    public function test_bad_token_on_ext_return_redirects_without_local_redirect_order(): void {
         $this->walk_to_local_redirect_confirmation();
         $orders_before = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
 
@@ -121,8 +116,7 @@ final class checkout_local_redirect_test extends http_test_case
         );
     }
 
-    private function walk_to_local_redirect_confirmation(): string
-    {
+    private function walk_to_local_redirect_confirmation(): string {
         $this->login_fixture_customer();
 
         $this->get_http()->request('GET', '/index.php', [
@@ -169,8 +163,7 @@ final class checkout_local_redirect_test extends http_test_case
         return $confirmation_html;
     }
 
-    private static function response_location(ResponseInterface $response): string
-    {
+    private static function response_location(ResponseInterface $response): string {
         $headers = $response->getHeaders(false);
 
         return isset($headers['location'][0]) ? (string) $headers['location'][0] : '';

@@ -9,8 +9,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_info_text_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->define_constants([
@@ -24,15 +23,13 @@ final class cm_info_text_test extends content_module_test_case
         ];
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         unset($GLOBALS['page']);
 
         parent::tearDown();
     }
 
-    public function test_execute_buffers_page_text_into_info_group(): void
-    {
+    public function test_execute_buffers_page_text_into_info_group(): void {
         $this->execute_module(cm_info_text::class);
 
         $content = $this->buffered_content('info');

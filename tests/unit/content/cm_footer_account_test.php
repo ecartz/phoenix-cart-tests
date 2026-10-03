@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class cm_footer_account_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->with_linker();
@@ -28,8 +27,7 @@ final class cm_footer_account_test extends content_module_test_case
         ]);
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         unset($_SESSION['customer_id']);
 
         parent::tearDown();
@@ -64,8 +62,7 @@ final class cm_footer_account_test extends content_module_test_case
         }
     }
 
-    public static function account_state_provider(): array
-    {
+    public static function account_state_provider(): array {
         return [
             'guest' => [
                 null,

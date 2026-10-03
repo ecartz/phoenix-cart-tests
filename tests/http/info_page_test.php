@@ -30,8 +30,7 @@ final class info_page_test extends http_test_case
         $this->assertStringContainsString($text_snippet, $body);
     }
 
-    public static function install_info_page_provider(): array
-    {
+    public static function install_info_page_provider(): array {
         return [
             'privacy' => ['1', 'Privacy & Cookie Policy', 'Privacy/Cookie Policies Text'],
             'conditions' => ['2', 'Terms & Conditions', 'Terms & Conditions Text'],
@@ -39,8 +38,7 @@ final class info_page_test extends http_test_case
         ];
     }
 
-    public function test_cookie_usage_php_shows_slug_page_from_seed(): void
-    {
+    public function test_cookie_usage_php_shows_slug_page_from_seed(): void {
         $response = $this->get_http()->request('GET', '/cookie_usage.php');
 
         $this->assertSame(200, $response->getStatusCode());
@@ -50,8 +48,7 @@ final class info_page_test extends http_test_case
         $this->assertStringContainsString('Cookie Privacy and Security', $body);
     }
 
-    public function test_ssl_check_php_shows_slug_page_from_seed(): void
-    {
+    public function test_ssl_check_php_shows_slug_page_from_seed(): void {
         $response = $this->get_http()->request('GET', '/ssl_check.php');
 
         $this->assertSame(200, $response->getStatusCode());

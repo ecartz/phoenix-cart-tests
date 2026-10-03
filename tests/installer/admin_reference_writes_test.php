@@ -41,15 +41,13 @@ final class admin_reference_writes_test extends install_test_case
     /** Country with no pre-installed zones so new rows appear on the first list page. */
     private const ZONE_COUNTRY_ID = '240';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_reference_entities_insert_and_delete(): void
-    {
+    public function test_admin_reference_entities_insert_and_delete(): void {
         $admin_http = $this->login_installed_admin();
 
         $this->insert_and_delete_country($admin_http);
@@ -64,8 +62,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->insert_and_delete_order_status($admin_http);
     }
 
-    private function insert_and_delete_country(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_country(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/countries.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -103,8 +100,7 @@ final class admin_reference_writes_test extends install_test_case
         );
     }
 
-    private function insert_and_delete_language(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_language(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/languages.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -133,8 +129,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/languages.php', [], self::LANGUAGE_CODE);
     }
 
-    private function insert_and_delete_zone(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_zone(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/zones.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -153,8 +148,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/zones.php', [], self::ZONE_NAME);
     }
 
-    private function insert_and_delete_tax_class(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_tax_class(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/tax_classes.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -172,8 +166,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/tax_classes.php', [], self::TAX_CLASS_TITLE);
     }
 
-    private function insert_geo_zone(HttpClientInterface $admin_http): string
-    {
+    private function insert_geo_zone(HttpClientInterface $admin_http): string {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/geo_zones.php', ['action' => 'new_zone']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -198,8 +191,7 @@ final class admin_reference_writes_test extends install_test_case
         return $geo_zone_id;
     }
 
-    private function insert_and_delete_tax_rate(HttpClientInterface $admin_http, string $geo_zone_id): void
-    {
+    private function insert_and_delete_tax_rate(HttpClientInterface $admin_http, string $geo_zone_id): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/tax_rates.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -220,8 +212,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/tax_rates.php', [], self::GEO_ZONE_NAME);
     }
 
-    private function delete_geo_zone(HttpClientInterface $admin_http, string $geo_zone_id): void
-    {
+    private function delete_geo_zone(HttpClientInterface $admin_http, string $geo_zone_id): void {
         $this->confirm_admin_delete(
             $admin_http,
             '/admin/geo_zones.php',
@@ -235,8 +226,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/geo_zones.php', [], self::GEO_ZONE_NAME);
     }
 
-    private function insert_and_delete_currency(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_currency(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/currencies.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -260,8 +250,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/currencies.php', [], self::CURRENCY_TITLE);
     }
 
-    private function insert_and_delete_manufacturer(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_manufacturer(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/manufacturers.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -289,8 +278,7 @@ final class admin_reference_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/manufacturers.php', [], self::MANUFACTURER_NAME);
     }
 
-    private function insert_and_delete_order_status(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_order_status(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/orders_status.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);

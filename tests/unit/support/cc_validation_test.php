@@ -25,8 +25,7 @@ final class cc_validation_test extends phoenix_test_case
         $this->assertSame($expiry_month, (int) $validator->cc_expiry_month);
     }
 
-    public static function valid_card_provider(): array
-    {
+    public static function valid_card_provider(): array {
         return [
             'visa' => ['4111-1111-1111-1111', 'Visa', 12, 30],
             'mastercard' => ['5555-5555-5555-4444', 'Master Card', 6, 28],
@@ -47,8 +46,7 @@ final class cc_validation_test extends phoenix_test_case
         $this->assertSame($expected_code, $validator->validate($number, $expiry_month, $expiry_year_suffix));
     }
 
-    public static function invalid_card_provider(): array
-    {
+    public static function invalid_card_provider(): array {
         $current_year_suffix = (int) substr((string) date('Y'), 2, 2);
 
         return [
@@ -60,15 +58,13 @@ final class cc_validation_test extends phoenix_test_case
         ];
     }
 
-    public function test_validate_rejects_failed_luhn_check(): void
-    {
+    public function test_validate_rejects_failed_luhn_check(): void {
         $validator = new cc_validation();
 
         $this->assertFalse($validator->validate('4111111111111112', 12, 30));
     }
 
-    public function test_validate_strips_non_digits(): void
-    {
+    public function test_validate_strips_non_digits(): void {
         $validator = new cc_validation();
         $validator->validate('4111 1111-1111 1111', 12, 30);
 
@@ -76,16 +72,14 @@ final class cc_validation_test extends phoenix_test_case
     }
 
     #[DataProvider('luhn_provider')]
-    public function test_is_valid_luhn_check(string $number, bool $expected): void
-    {
+    public function test_is_valid_luhn_check(string $number, bool $expected): void {
         $validator = new cc_validation();
         $validator->cc_number = preg_replace('/[^0-9]/', '', $number);
 
         $this->assertSame($expected, $validator->is_valid());
     }
 
-    public static function luhn_provider(): array
-    {
+    public static function luhn_provider(): array {
         return [
             'valid visa' => ['4111111111111111', true],
             'invalid checksum' => ['4111111111111112', false],

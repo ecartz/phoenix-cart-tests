@@ -9,8 +9,7 @@ class integration_throwaway_module extends abstract_module
 {
     public const CONFIG_KEY_BASE = 'MODULE_PHOENIX_INTEGRATION_PROBE_';
 
-    protected function get_parameters(): array
-    {
+    protected function get_parameters(): array {
         $base = self::CONFIG_KEY_BASE;
 
         return [

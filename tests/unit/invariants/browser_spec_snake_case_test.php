@@ -16,8 +16,7 @@ final class browser_spec_snake_case_test extends phoenix_test_case
 {
     private const SNAKE_CASE = '/^[a-z][a-z0-9]*(_[a-z0-9]+)*$/';
 
-    public function test_browser_spec_const_and_let_bindings_use_snake_case(): void
-    {
+    public function test_browser_spec_const_and_let_bindings_use_snake_case(): void {
         $browser_dir = dirname(__DIR__, 2) . '/browser';
 
         $this->assertDirectoryExists($browser_dir);
@@ -44,8 +43,7 @@ final class browser_spec_snake_case_test extends phoenix_test_case
     /**
      * @return list<string>
      */
-    private function typescript_files_under(string $directory): array
-    {
+    private function typescript_files_under(string $directory): array {
         $paths = [];
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS)
@@ -68,8 +66,7 @@ final class browser_spec_snake_case_test extends phoenix_test_case
     /**
      * @return list<string>
      */
-    private function binding_names(string $source): array
-    {
+    private function binding_names(string $source): array {
         $names = [];
 
         if (preg_match_all('/\b(?:const|let)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:=|:)/', $source, $matches) !== false) {
@@ -81,8 +78,7 @@ final class browser_spec_snake_case_test extends phoenix_test_case
         return $names;
     }
 
-    private function relative_path(string $absolute): string
-    {
+    private function relative_path(string $absolute): string {
         $repo_root = dirname(__DIR__, 3);
 
         return str_replace('\\', '/', substr($absolute, strlen($repo_root) + 1));

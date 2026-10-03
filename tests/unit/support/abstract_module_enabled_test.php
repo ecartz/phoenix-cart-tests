@@ -17,8 +17,7 @@ final class abstract_module_enabled_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_is_enabled_true_when_status_constant_true(): void
-    {
+    public function test_is_enabled_true_when_status_constant_true(): void {
         $rows = [
             [
                 'configuration_key' => 'MODULE_HEADER_TAGS_ROBOT_NOINDEX_STATUS',
@@ -50,8 +49,7 @@ final class abstract_module_enabled_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_is_enabled_false_when_status_constant_false(): void
-    {
+    public function test_is_enabled_false_when_status_constant_false(): void {
         $rows = [
             [
                 'configuration_key' => 'MODULE_HEADER_TAGS_ROBOT_NOINDEX_STATUS',

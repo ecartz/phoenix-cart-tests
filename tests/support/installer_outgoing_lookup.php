@@ -9,8 +9,7 @@ namespace PhoenixCart\Tests\support;
  */
 final class installer_outgoing_lookup
 {
-    public static function combined_body(): string
-    {
+    public static function combined_body(): string {
         mysql_bootstrap::define_connection_constants();
 
         $database = getenv('PHOENIX_INSTALLER_DB_NAME');

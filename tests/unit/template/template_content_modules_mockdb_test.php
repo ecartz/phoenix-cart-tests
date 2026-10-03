@@ -19,8 +19,7 @@ final class template_content_modules_mockdb_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_get_content_modules_filters_groups_from_mock_configuration(): void
-    {
+    public function test_get_content_modules_filters_groups_from_mock_configuration(): void {
         if (!defined('BOOTSTRAP_CONTENT')) {
             define('BOOTSTRAP_CONTENT', 8);
         }

@@ -30,8 +30,7 @@ final class mock_catalog_query_result
     /**
      * @return array<string, mixed>|null
      */
-    public function fetch_assoc(): ?array
-    {
+    public function fetch_assoc(): ?array {
         if ($this->position >= count($this->rows)) {
             return null;
         }
@@ -42,16 +41,14 @@ final class mock_catalog_query_result
     /**
      * @return list<array<string, mixed>>
      */
-    public function all_rows(): array
-    {
+    public function all_rows(): array {
         return $this->rows;
     }
 
     /**
      * @return list<array<string, mixed>>
      */
-    public function remaining_rows(): array
-    {
+    public function remaining_rows(): array {
         return array_slice($this->rows, $this->position);
     }
 }

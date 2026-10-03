@@ -12,13 +12,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class password_test extends phoenix_test_case
 {
     #[DataProvider('type_provider')]
-    public function test_type(string $hashed, string $expected): void
-    {
+    public function test_type(string $hashed, string $expected): void {
         $this->assertSame($expected, Password::type($hashed));
     }
 
-    public static function type_provider(): array
-    {
+    public static function type_provider(): array {
         return [
             'salt format' => ['0123456789abcdef0123456789abcdef:ab', 'salt'],
             'phpass format' => ['$P$9abcdefghijklmnopqrstuv', 'phpass'],
@@ -26,16 +24,14 @@ final class password_test extends phoenix_test_case
         ];
     }
 
-    public function test_validate_rejects_empty_values(): void
-    {
+    public function test_validate_rejects_empty_values(): void {
         $hashed = Password::hash('secret');
 
         $this->assertFalse(Password::validate('', $hashed));
         $this->assertFalse(Password::validate('secret', ''));
     }
 
-    public function test_validate_native_hash(): void
-    {
+    public function test_validate_native_hash(): void {
         $plain = 'phoenix-test-password';
         $hashed = Password::hash($plain);
 
@@ -43,8 +39,7 @@ final class password_test extends phoenix_test_case
         $this->assertFalse(Password::validate('wrong-password', $hashed));
     }
 
-    public function test_validate_salt_hash(): void
-    {
+    public function test_validate_salt_hash(): void {
         $plain = 'legacy-password';
         $salt = 'ab';
         $hashed = md5($salt . $plain) . ':' . $salt;
@@ -54,8 +49,7 @@ final class password_test extends phoenix_test_case
         $this->assertFalse(Password::validate('wrong-password', $hashed));
     }
 
-    public function test_validate_phpass_hash(): void
-    {
+    public function test_validate_phpass_hash(): void {
         $plain = 'phpass-password';
         $hasher = new PasswordHash(10, true);
         $hashed = $hasher->HashPassword($plain);
@@ -65,8 +59,7 @@ final class password_test extends phoenix_test_case
         $this->assertFalse(Password::validate('wrong-password', $hashed));
     }
 
-    public function test_needs_rehash_for_legacy_formats(): void
-    {
+    public function test_needs_rehash_for_legacy_formats(): void {
         $salt_hash = md5('absalt') . ':ab';
         $hasher = new PasswordHash(10, true);
         $phpass_hash = $hasher->HashPassword('legacy');
@@ -75,16 +68,14 @@ final class password_test extends phoenix_test_case
         $this->assertTrue(Password::needs_rehash($phpass_hash));
     }
 
-    public function test_needs_rehash_for_fresh_native_hash(): void
-    {
+    public function test_needs_rehash_for_fresh_native_hash(): void {
         $hashed = Password::hash('current-password');
 
         $this->assertFalse(Password::needs_rehash($hashed));
     }
 
     #[DataProvider('create_random_provider')]
-    public function test_create_random(int $length, string $type): void
-    {
+    public function test_create_random(int $length, string $type): void {
         $value = Password::create_random($length, $type);
 
         $this->assertSame($length, strlen($value));
@@ -98,8 +89,7 @@ final class password_test extends phoenix_test_case
         }
     }
 
-    public static function create_random_provider(): array
-    {
+    public static function create_random_provider(): array {
         return [
             'mixed characters' => [16, 'mixed'],
             'letters only' => [12, 'letters'],
@@ -107,16 +97,14 @@ final class password_test extends phoenix_test_case
         ];
     }
 
-    public function test_create_random_falls_back_to_mixed_for_unknown_type(): void
-    {
+    public function test_create_random_falls_back_to_mixed_for_unknown_type(): void {
         $value = Password::create_random(10, 'unknown-type');
 
         $this->assertSame(10, strlen($value));
         $this->assertMatchesRegularExpression('/^[A-Za-z0-9]+$/', $value);
     }
 
-    public function test_get_algorithm_defaults_to_password_default(): void
-    {
+    public function test_get_algorithm_defaults_to_password_default(): void {
         if (defined('PHOENIX_ENCRYPTION')) {
             $this->markTestSkipped('PHOENIX_ENCRYPTION is already defined in this process.');
         }

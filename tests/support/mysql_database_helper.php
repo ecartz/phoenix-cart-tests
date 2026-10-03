@@ -13,8 +13,7 @@ final class mysql_database_helper
 
     private static ?\Database $connection = null;
 
-    public static function connection(): \Database
-    {
+    public static function connection(): \Database {
         if (self::$connection instanceof \Database) {
             return self::$connection;
         }
@@ -32,8 +31,7 @@ final class mysql_database_helper
         return $db;
     }
 
-    public static function bootstrap_t1(): \Database
-    {
+    public static function bootstrap_t1(): \Database {
         $db = self::connection();
 
         if (!self::$bootstrapped) {
@@ -48,8 +46,7 @@ final class mysql_database_helper
     /**
      * Reset static state between PHPUnit processes (testing helper only).
      */
-    public static function reset_for_tests(): void
-    {
+    public static function reset_for_tests(): void {
         self::$bootstrapped = false;
         self::$connection = null;
         unset($GLOBALS['db']);

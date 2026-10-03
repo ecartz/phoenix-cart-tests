@@ -52,15 +52,13 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         'email_address' => 'cd_email_address',
     ];
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_pm2checkout_install_fails_until_customer_data_dependencies_are_installed(): void
-    {
+    public function test_pm2checkout_install_fails_until_customer_data_dependencies_are_installed(): void {
         $admin_http = $this->login_installed_admin();
 
         if (!$this->pm2checkout_available_on_payment_new_list($admin_http)) {
@@ -82,8 +80,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         $this->remove_installed_module($admin_http, $list_set, self::PM2CHECKOUT_CODE);
     }
 
-    private function pm2checkout_available_on_payment_new_list(HttpClientInterface $admin_http): bool
-    {
+    private function pm2checkout_available_on_payment_new_list(HttpClientInterface $admin_http): bool {
         $new_module_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => self::PAYMENT_SET,
             'list' => 'new',
@@ -93,8 +90,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         return self::parse_new_module_code_from_modules_html($new_module_html) === self::PM2CHECKOUT_CODE;
     }
 
-    private function assert_pm2checkout_install_rejected(HttpClientInterface $admin_http): void
-    {
+    private function assert_pm2checkout_install_rejected(HttpClientInterface $admin_http): void {
         $install_formid = $this->pm2checkout_install_formid($admin_http);
         $install_response = $this->post_pm2checkout_install_without_following_redirects(
             $admin_http,
@@ -113,8 +109,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         $this->assert_admin_module_list_not_contains($after_install_html, self::PM2CHECKOUT_CODE);
     }
 
-    private function assert_pm2checkout_install_succeeds(HttpClientInterface $admin_http): string
-    {
+    private function assert_pm2checkout_install_succeeds(HttpClientInterface $admin_http): string {
         $install_formid = $this->pm2checkout_install_formid($admin_http);
         $install_response = $this->post_pm2checkout_install_without_following_redirects(
             $admin_http,
@@ -134,8 +129,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         return $list_set;
     }
 
-    private function pm2checkout_install_formid(HttpClientInterface $admin_http): string
-    {
+    private function pm2checkout_install_formid(HttpClientInterface $admin_http): string {
         $new_module_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => self::PAYMENT_SET,
             'list' => 'new',
@@ -168,24 +162,21 @@ final class admin_pm2checkout_dependency_test extends install_test_case
         return $response;
     }
 
-    private function redirect_location(ResponseInterface $response): string
-    {
+    private function redirect_location(ResponseInterface $response): string {
         $headers = $response->getHeaders(false);
         $location = $headers['location'][0] ?? $headers['Location'][0] ?? '';
 
         return str_replace('&amp;', '&', $location);
     }
 
-    private function location_includes_module(string $location, string $module_code): bool
-    {
+    private function location_includes_module(string $location, string $module_code): bool {
         return preg_match(
             '/[?&]module=' . preg_quote($module_code, '/') . '(?:&|#|$)/',
             $location,
         ) === 1;
     }
 
-    private function install_missing_pm2checkout_customer_data_modules(HttpClientInterface $admin_http): void
-    {
+    private function install_missing_pm2checkout_customer_data_modules(HttpClientInterface $admin_http): void {
         $missing_abilities = $this->missing_pm2checkout_abilities($admin_http);
         $this->assertNotEmpty(
             $missing_abilities,
@@ -207,8 +198,7 @@ final class admin_pm2checkout_dependency_test extends install_test_case
     /**
      * @return list<string>
      */
-    private function missing_pm2checkout_abilities(HttpClientInterface $admin_http): array
-    {
+    private function missing_pm2checkout_abilities(HttpClientInterface $admin_http): array {
         $installed_html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => self::CUSTOMER_DATA_SET,
         ]);

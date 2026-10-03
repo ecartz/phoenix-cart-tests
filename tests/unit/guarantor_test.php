@@ -9,8 +9,7 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 
 final class guarantor_test extends phoenix_test_case
 {
-    public function test_guarantee_subarray_creates_missing_array(): void
-    {
+    public function test_guarantee_subarray_creates_missing_array(): void {
         $data = [];
 
         $subarray = &Guarantor::guarantee_subarray($data, 'items');
@@ -21,8 +20,7 @@ final class guarantor_test extends phoenix_test_case
         $this->assertSame([], $data['items']);
     }
 
-    public function test_guarantee_subarray_replaces_non_array_value(): void
-    {
+    public function test_guarantee_subarray_replaces_non_array_value(): void {
         $data = ['items' => 'not-an-array'];
 
         $subarray = &Guarantor::guarantee_subarray($data, 'items');
@@ -31,8 +29,7 @@ final class guarantor_test extends phoenix_test_case
         $this->assertSame([], $subarray);
     }
 
-    public function test_guarantee_all_builds_nested_structure(): void
-    {
+    public function test_guarantee_all_builds_nested_structure(): void {
         $data = [];
 
         $leaf = &Guarantor::guarantee_all($data, 'catalog', 'products', 'featured');
@@ -42,8 +39,7 @@ final class guarantor_test extends phoenix_test_case
         $this->assertSame([42], $data['catalog']['products']['featured']);
     }
 
-    public function test_ensure_global_creates_singleton(): void
-    {
+    public function test_ensure_global_creates_singleton(): void {
         $first = &Guarantor::ensure_global(\stdClass::class);
         $second = &Guarantor::ensure_global(\stdClass::class);
 
@@ -51,8 +47,7 @@ final class guarantor_test extends phoenix_test_case
         $this->assertSame($first, $second);
     }
 
-    public function test_deprecated_wrappers_are_absent_or_delegate_to_guarantor(): void
-    {
+    public function test_deprecated_wrappers_are_absent_or_delegate_to_guarantor(): void {
         if (!function_exists('tep_guarantee_subarray')) {
             $this->assertFalse(function_exists('tep_guarantee_all'));
 

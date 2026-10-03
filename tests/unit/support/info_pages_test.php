@@ -16,8 +16,7 @@ final class info_pages_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_requirements_detects_missing_slugs(): void
-    {
+    public function test_requirements_detects_missing_slugs(): void {
         (new mock_catalog_database([], [
             'pages' => [
                 ['slug' => 'privacy'],
@@ -32,8 +31,7 @@ final class info_pages_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_get_container_matches_lowercase_from_pages(): void
-    {
+    public function test_get_container_matches_lowercase_from_pages(): void {
         $rows = [
             [
                 'pages_id' => '1',
@@ -49,8 +47,7 @@ final class info_pages_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_get_element_reads_column_from_query_result(): void
-    {
+    public function test_get_element_reads_column_from_query_result(): void {
         (new mock_catalog_database([], [
             'pages' => [
                 ['pages_text' => 'Privacy body'],

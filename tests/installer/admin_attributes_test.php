@@ -24,15 +24,13 @@ final class admin_attributes_test extends install_test_case
 
     private const ATTRIBUTE_PRICE = '1.25';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_product_attributes_link_and_cleanup(): void
-    {
+    public function test_admin_product_attributes_link_and_cleanup(): void {
         $admin_http = $this->login_installed_admin();
         $page_html = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
 
@@ -166,8 +164,7 @@ final class admin_attributes_test extends install_test_case
         ], $body);
     }
 
-    private function delete_product_attribute(HttpClientInterface $admin_http, string $attribute_id): void
-    {
+    private function delete_product_attribute(HttpClientInterface $admin_http, string $attribute_id): void {
         $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
         $formid = self::parse_formid_from_page($page);
         $this->assertNotSame('', $formid);
@@ -190,8 +187,7 @@ final class admin_attributes_test extends install_test_case
         ]);
     }
 
-    private function delete_option_value(HttpClientInterface $admin_http, string $value_id): void
-    {
+    private function delete_option_value(HttpClientInterface $admin_http, string $value_id): void {
         $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
         $formid = self::parse_formid_from_page($page);
         $this->assertNotSame('', $formid);
@@ -214,8 +210,7 @@ final class admin_attributes_test extends install_test_case
         ]);
     }
 
-    private function delete_product_option(HttpClientInterface $admin_http, string $option_id): void
-    {
+    private function delete_product_option(HttpClientInterface $admin_http, string $option_id): void {
         $page = $this->fetch_admin_page($admin_http, '/admin/products_attributes.php');
         $formid = self::parse_formid_from_page($page);
         $this->assertNotSame('', $formid);
@@ -238,8 +233,7 @@ final class admin_attributes_test extends install_test_case
         ]);
     }
 
-    private function parse_hidden_input_value(string $html, string $name): string
-    {
+    private function parse_hidden_input_value(string $html, string $name): string {
         $pattern = '/name="' . preg_quote($name, '/') . '"[^>]*value="(\d+)"/';
         if (preg_match($pattern, $html, $matches) === 1) {
             return $matches[1];
@@ -252,8 +246,7 @@ final class admin_attributes_test extends install_test_case
         return '';
     }
 
-    private function parse_attribute_id_near_pears(string $html): string
-    {
+    private function parse_attribute_id_near_pears(string $html): string {
         $offset = strpos($html, 'Pears');
         if ($offset === false) {
             $this->fail('products_attributes.php did not list Pears after linking an attribute');

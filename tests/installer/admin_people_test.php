@@ -34,15 +34,13 @@ final class admin_people_test extends install_test_case
 
     private const ORDER_CUSTOMER_EMAIL = 'phoenix-install-order-delete@example.com';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_administrator_insert_and_delete(): void
-    {
+    public function test_administrator_insert_and_delete(): void {
         $admin_http = $this->login_installed_admin();
 
         $new_html = $this->fetch_admin_page($admin_http, '/admin/administrators.php', ['action' => 'new']);
@@ -72,8 +70,7 @@ final class admin_people_test extends install_test_case
         );
     }
 
-    public function test_admin_customer_delete_after_storefront_register(): void
-    {
+    public function test_admin_customer_delete_after_storefront_register(): void {
         $shop_http = installer_bootstrap::client();
         $this->register_storefront_customer(
             $shop_http,
@@ -114,8 +111,7 @@ final class admin_people_test extends install_test_case
         );
     }
 
-    public function test_admin_order_delete_after_cod_checkout(): void
-    {
+    public function test_admin_order_delete_after_cod_checkout(): void {
         $shop_http = installer_bootstrap::client();
         $this->register_storefront_customer(
             $shop_http,
@@ -169,8 +165,7 @@ final class admin_people_test extends install_test_case
         $this->assertContains($registered->getStatusCode(), [200, 302]);
     }
 
-    private function complete_cod_checkout(HttpClientInterface $shop_http): void
-    {
+    private function complete_cod_checkout(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/index.php', [
             'query' => [
                 'action' => 'buy_now',

@@ -11,16 +11,14 @@ final class path_test extends phoenix_test_case
 {
     private string $temp_dir;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->temp_dir = sys_get_temp_dir() . '/phoenix-path-test-' . uniqid('', true);
         mkdir($this->temp_dir, 0777, true);
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         if (is_dir($this->temp_dir)) {
             $this->remove_directory($this->temp_dir);
         }
@@ -28,8 +26,7 @@ final class path_test extends phoenix_test_case
         parent::tearDown();
     }
 
-    public function test_normalize_converts_backslashes(): void
-    {
+    public function test_normalize_converts_backslashes(): void {
         $subdir = $this->temp_dir . '/nested';
         mkdir($subdir);
 
@@ -42,21 +39,18 @@ final class path_test extends phoenix_test_case
         $this->assertSame(Path::normalize($expected), $normalized);
     }
 
-    public function test_is_writable_for_writable_directory(): void
-    {
+    public function test_is_writable_for_writable_directory(): void {
         $this->assertTrue(Path::is_writable($this->temp_dir));
     }
 
-    public function test_is_writable_for_writable_file(): void
-    {
+    public function test_is_writable_for_writable_file(): void {
         $file = $this->temp_dir . '/file.txt';
         file_put_contents($file, 'content');
 
         $this->assertTrue(Path::is_writable($file));
     }
 
-    public function test_remove_deletes_directory_tree(): void
-    {
+    public function test_remove_deletes_directory_tree(): void {
         $nested = $this->temp_dir . '/parent/child';
         mkdir($nested, 0777, true);
         file_put_contents($nested . '/leaf.txt', 'leaf');
@@ -65,8 +59,7 @@ final class path_test extends phoenix_test_case
         $this->assertDirectoryDoesNotExist($this->temp_dir . '/parent');
     }
 
-    public function test_remove_deletes_single_file(): void
-    {
+    public function test_remove_deletes_single_file(): void {
         $file = $this->temp_dir . '/single.txt';
         file_put_contents($file, 'single');
 
@@ -74,8 +67,7 @@ final class path_test extends phoenix_test_case
         $this->assertFileDoesNotExist($file);
     }
 
-    private function remove_directory(string $path): void
-    {
+    private function remove_directory(string $path): void {
         if (!is_dir($path)) {
             return;
         }

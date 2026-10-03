@@ -61,16 +61,14 @@ final class admin_modules_config_test extends install_test_case
         'order_total',
     ];
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
         self::prepare_module_sets_for_install_tests();
     }
 
-    private static function prepare_module_sets_for_install_tests(): void
-    {
+    private static function prepare_module_sets_for_install_tests(): void {
         $runner = new self('prepare_module_sets_for_install_tests');
         $runner->setUp();
         $admin_http = $runner->login_installed_admin();
@@ -80,8 +78,7 @@ final class admin_modules_config_test extends install_test_case
     }
 
     #[DataProvider('module_set_provider')]
-    public function test_admin_module_set_install_and_remove(string $set): void
-    {
+    public function test_admin_module_set_install_and_remove(string $set): void {
         $admin_http = $this->login_installed_admin();
         $module_code = $this->first_new_module_code($admin_http, $set);
         if ($module_code === null) {
@@ -92,8 +89,7 @@ final class admin_modules_config_test extends install_test_case
     }
 
     #[DataProvider('configuration_group_provider')]
-    public function test_admin_configuration_group_round_trip(string $group_id): void
-    {
+    public function test_admin_configuration_group_round_trip(string $group_id): void {
         $admin_http = $this->login_installed_admin();
         $this->round_trip_configuration_group($admin_http, $group_id);
     }
@@ -101,8 +97,7 @@ final class admin_modules_config_test extends install_test_case
     /**
      * @return iterable<string, array{string}>
      */
-    public static function module_set_provider(): iterable
-    {
+    public static function module_set_provider(): iterable {
         foreach (self::MODULE_SETS as $set) {
             yield $set => [$set];
         }
@@ -111,8 +106,7 @@ final class admin_modules_config_test extends install_test_case
     /**
      * @return iterable<string, array{string}>
      */
-    public static function configuration_group_provider(): iterable
-    {
+    public static function configuration_group_provider(): iterable {
         foreach (self::CONFIGURATION_GROUPS as $group_id) {
             yield 'group_' . $group_id => [$group_id];
         }

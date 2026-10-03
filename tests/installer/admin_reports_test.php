@@ -13,15 +13,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[Group('installer')]
 final class admin_reports_test extends install_test_case
 {
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_stats_products_purchased_renders(): void
-    {
+    public function test_admin_stats_products_purchased_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -31,8 +29,7 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_stats_customers_renders(): void
-    {
+    public function test_admin_stats_customers_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -42,32 +39,27 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_whos_online_renders(): void
-    {
+    public function test_admin_whos_online_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/whos_online.php', [], "Who's Online");
     }
 
-    public function test_admin_action_recorder_renders(): void
-    {
+    public function test_admin_action_recorder_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/action_recorder.php', [], 'Action Recorder');
     }
 
-    public function test_admin_store_logo_renders(): void
-    {
+    public function test_admin_store_logo_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/store_logo.php', [], 'Store Logo');
     }
 
-    public function test_admin_newsletters_renders(): void
-    {
+    public function test_admin_newsletters_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/newsletters.php', [], 'Newsletter Manager');
     }
 
-    public function test_admin_content_modules_list_renders(): void
-    {
+    public function test_admin_content_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -77,8 +69,7 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_header_tags_modules_list_renders(): void
-    {
+    public function test_admin_header_tags_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -88,8 +79,7 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_dashboard_modules_list_renders(): void
-    {
+    public function test_admin_dashboard_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -99,8 +89,7 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_customer_data_modules_list_renders(): void
-    {
+    public function test_admin_customer_data_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -110,8 +99,7 @@ final class admin_reports_test extends install_test_case
         );
     }
 
-    public function test_admin_testimonials_toggles_status(): void
-    {
+    public function test_admin_testimonials_toggles_status(): void {
         $admin_http = $this->login_installed_admin();
         $testimonials_html = $this->fetch_testimonials_html_with_active_testimonial($admin_http);
         $disable_href = $this->extract_set_flag_href($testimonials_html, '0');
@@ -138,16 +126,14 @@ final class admin_reports_test extends install_test_case
         $this->assertStringContainsString('fa-check-circle text-success', $after_enable);
     }
 
-    private function fetch_testimonials_list(HttpClientInterface $admin_http): string
-    {
+    private function fetch_testimonials_list(HttpClientInterface $admin_http): string {
         $response = $admin_http->request('GET', '/admin/testimonials.php');
         $this->assertSame(200, $response->getStatusCode());
 
         return $response->getContent(false);
     }
 
-    private function fetch_testimonials_html_with_active_testimonial(HttpClientInterface $admin_http): string
-    {
+    private function fetch_testimonials_html_with_active_testimonial(HttpClientInterface $admin_http): string {
         $html = $this->fetch_testimonials_list($admin_http);
         $this->assertStringContainsString('John Doe', $html);
         if (str_contains($html, 'action=set_flag') && str_contains($html, 'flag=0')) {
@@ -157,8 +143,7 @@ final class admin_reports_test extends install_test_case
         $this->fail('testimonials.php did not list an active testimonial with a status toggle');
     }
 
-    private function extract_set_flag_href(string $html, string $flag): string
-    {
+    private function extract_set_flag_href(string $html, string $flag): string {
         $pattern = '/href="([^"]*action=set_flag[^"]*flag=' . preg_quote($flag, '/') . '[^"]*)"/';
         if (preg_match($pattern, $html, $matches) !== 1) {
             return '';
@@ -170,8 +155,7 @@ final class admin_reports_test extends install_test_case
     /**
      * @return array<string, string>
      */
-    private function admin_query_from_href(string $href): array
-    {
+    private function admin_query_from_href(string $href): array {
         $query_string = parse_url($href, PHP_URL_QUERY);
         if (!is_string($query_string) || $query_string === '') {
             return [];
@@ -183,8 +167,7 @@ final class admin_reports_test extends install_test_case
         return array_map(static fn ($value) => (string) $value, $query);
     }
 
-    private function admin_path_from_href(string $href): string
-    {
+    private function admin_path_from_href(string $href): string {
         $path = parse_url($href, PHP_URL_PATH);
         if (is_string($path) && str_starts_with($path, '/admin/')) {
             return $path;

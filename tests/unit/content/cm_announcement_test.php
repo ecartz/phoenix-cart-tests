@@ -9,8 +9,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_announcement_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->define_constants([
@@ -20,8 +19,7 @@ final class cm_announcement_test extends content_module_test_case
         ]);
     }
 
-    public function test_execute_buffers_mapped_template_into_navigation_group(): void
-    {
+    public function test_execute_buffers_mapped_template_into_navigation_group(): void {
         $this->execute_module(cm_announcement::class);
 
         $content = $this->buffered_content('navigation');

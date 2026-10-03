@@ -24,8 +24,7 @@ final class mock_catalog_database
      *
      * @return list<array<string, mixed>>
      */
-    public function fetch_all($db_query): array
-    {
+    public function fetch_all($db_query): array {
         if ($db_query instanceof mock_catalog_query_result) {
             return $db_query->remaining_rows();
         }
@@ -40,18 +39,15 @@ final class mock_catalog_database
     /**
      * @param string $query
      */
-    public function query($query): mock_catalog_query_result
-    {
+    public function query($query): mock_catalog_query_result {
         return new mock_catalog_query_result($this->rows_for_sql($query));
     }
 
-    public function escape(string $value): string
-    {
+    public function escape(string $value): string {
         return $value;
     }
 
-    public function install_as_global(): self
-    {
+    public function install_as_global(): self {
         $GLOBALS['db'] = $this;
 
         return $this;
@@ -60,8 +56,7 @@ final class mock_catalog_database
     /**
      * @return list<array<string, mixed>>
      */
-    private function rows_for_sql(string $sql): array
-    {
+    private function rows_for_sql(string $sql): array {
         if (preg_match('/\bFROM\s+`?configuration`?\b/i', $sql) === 1) {
             return $this->configuration_rows;
         }

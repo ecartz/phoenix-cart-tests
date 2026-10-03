@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_moneyorder_test extends http_test_case
 {
-    public function test_logged_in_customer_completes_checkout_with_money_order(): void
-    {
+    public function test_logged_in_customer_completes_checkout_with_money_order(): void {
         $this->login_fixture_customer();
 
         $this->get_http()->request('GET', '/index.php', [

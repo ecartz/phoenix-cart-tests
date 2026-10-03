@@ -80,8 +80,7 @@ HTML;
         );
     }
 
-    private function module_list_needle_for_test(string $html, string $module_code): string
-    {
+    private function module_list_needle_for_test(string $html, string $module_code): string {
         return $this->admin_module_list_needle(
             $this->admin_list_html_for_needle_assertion($html),
             $module_code,

@@ -28,24 +28,21 @@ final class date_transformers_test extends phoenix_test_case
 {
     private DateTime $date_time;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->date_time = new DateTime('2024-06-15 14:30:45');
     }
 
     #[DataProvider('year_format_provider')]
-    public function test_year_transformer(int $length, string $expected): void
-    {
+    public function test_year_transformer(int $length, string $expected): void {
         $transformer = new YearTransformer();
 
         $this->assertSame($expected, $transformer->format($this->date_time, $length));
         $this->assertSame(['year' => 2024], $transformer->extractDateOptions('2024', $length));
     }
 
-    public static function year_format_provider(): array
-    {
+    public static function year_format_provider(): array {
         return [
             'two digit year' => [2, '24'],
             'four digit year' => [4, '2024'],
@@ -54,15 +51,13 @@ final class date_transformers_test extends phoenix_test_case
     }
 
     #[DataProvider('month_format_provider')]
-    public function test_month_transformer(int $length, string $expected): void
-    {
+    public function test_month_transformer(int $length, string $expected): void {
         $transformer = new MonthTransformer();
 
         $this->assertSame($expected, $transformer->format($this->date_time, $length));
     }
 
-    public static function month_format_provider(): array
-    {
+    public static function month_format_provider(): array {
         return [
             'numeric month' => [1, '6'],
             'padded month' => [2, '06'],
@@ -72,8 +67,7 @@ final class date_transformers_test extends phoenix_test_case
         ];
     }
 
-    public function test_month_transformer_extracts_numeric_and_named_months(): void
-    {
+    public function test_month_transformer_extracts_numeric_and_named_months(): void {
         $transformer = new MonthTransformer();
 
         $this->assertSame(['month' => 6], $transformer->extractDateOptions('6', 1));
@@ -82,16 +76,14 @@ final class date_transformers_test extends phoenix_test_case
     }
 
     #[DataProvider('day_format_provider')]
-    public function test_day_transformer(int $length, string $expected): void
-    {
+    public function test_day_transformer(int $length, string $expected): void {
         $transformer = new DayTransformer();
 
         $this->assertSame($expected, $transformer->format($this->date_time, $length));
         $this->assertSame(['day' => 15], $transformer->extractDateOptions('15', $length));
     }
 
-    public static function day_format_provider(): array
-    {
+    public static function day_format_provider(): array {
         return [
             'single digit day' => [1, '15'],
             'padded day' => [2, '15'],
@@ -99,8 +91,7 @@ final class date_transformers_test extends phoenix_test_case
         ];
     }
 
-    public function test_hour_transformers(): void
-    {
+    public function test_hour_transformers(): void {
         $hour2400 = new Hour2400Transformer();
         $hour1200 = new Hour1200Transformer();
 
@@ -111,8 +102,7 @@ final class date_transformers_test extends phoenix_test_case
         $this->assertSame(15, $hour1200->normalizeHour(3, 'PM'));
     }
 
-    public function test_minute_and_second_transformers(): void
-    {
+    public function test_minute_and_second_transformers(): void {
         $minute = new MinuteTransformer();
         $second = new SecondTransformer();
 
@@ -122,8 +112,7 @@ final class date_transformers_test extends phoenix_test_case
         $this->assertSame(['second' => 45], $second->extractDateOptions('45', 2));
     }
 
-    public function test_am_pm_transformer(): void
-    {
+    public function test_am_pm_transformer(): void {
         $transformer = new AmPmTransformer();
 
         $this->assertSame('PM', $transformer->format($this->date_time, 2));
@@ -132,15 +121,13 @@ final class date_transformers_test extends phoenix_test_case
     }
 
     #[DataProvider('day_of_week_format_provider')]
-    public function test_day_of_week_transformer(int $length, string $expected): void
-    {
+    public function test_day_of_week_transformer(int $length, string $expected): void {
         $transformer = new DayOfWeekTransformer();
 
         $this->assertSame($expected, $transformer->format($this->date_time, $length));
     }
 
-    public static function day_of_week_format_provider(): array
-    {
+    public static function day_of_week_format_provider(): array {
         return [
             'abbreviated day' => [3, 'Sat'],
             'full day' => [4, 'Saturday'],
@@ -150,15 +137,13 @@ final class date_transformers_test extends phoenix_test_case
     }
 
     #[DataProvider('quarter_format_provider')]
-    public function test_quarter_transformer(int $length, string $expected): void
-    {
+    public function test_quarter_transformer(int $length, string $expected): void {
         $transformer = new QuarterTransformer();
 
         $this->assertSame($expected, $transformer->format($this->date_time, $length));
     }
 
-    public static function quarter_format_provider(): array
-    {
+    public static function quarter_format_provider(): array {
         return [
             'single digit quarter' => [1, '2'],
             'padded quarter' => [2, '02'],
@@ -167,16 +152,14 @@ final class date_transformers_test extends phoenix_test_case
         ];
     }
 
-    public function test_day_of_year_transformer(): void
-    {
+    public function test_day_of_year_transformer(): void {
         $transformer = new DayOfYearTransformer();
 
         $this->assertSame('167', $transformer->format($this->date_time, 3));
         $this->assertSame('\d{3}', $transformer->getReverseMatchingRegExp(3));
     }
 
-    public function test_reverse_matching_reg_exp_samples(): void
-    {
+    public function test_reverse_matching_reg_exp_samples(): void {
         $year = new YearTransformer();
         $month = new MonthTransformer();
 
@@ -186,8 +169,7 @@ final class date_transformers_test extends phoenix_test_case
         $this->assertStringContainsString('Jun', $month->getReverseMatchingRegExp(3));
     }
 
-    public function test_hour1201_and_hour2401_transformers(): void
-    {
+    public function test_hour1201_and_hour2401_transformers(): void {
         $hour1201 = new Hour1201Transformer();
         $hour2401 = new Hour2401Transformer();
 
@@ -200,8 +182,7 @@ final class date_transformers_test extends phoenix_test_case
         $this->assertSame('24', $hour2401->format($midnight, 2));
     }
 
-    public function test_timezone_transformer_formats_utc_and_gmt(): void
-    {
+    public function test_timezone_transformer_formats_utc_and_gmt(): void {
         $transformer = new TimezoneTransformer();
         $utc = new DateTime('2024-06-15 12:00:00', new DateTimeZone('UTC'));
 
@@ -212,8 +193,7 @@ final class date_transformers_test extends phoenix_test_case
         );
     }
 
-    public function test_full_transformer_formats_pattern(): void
-    {
+    public function test_full_transformer_formats_pattern(): void {
         $transformer = new FullTransformer('yyyy-MM-dd', 'UTC');
         $date_time = new DateTime('2024-06-15 14:30:45', new DateTimeZone('UTC'));
 

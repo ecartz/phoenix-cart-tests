@@ -10,8 +10,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_cas_continue_button_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->with_linker();
@@ -29,15 +28,13 @@ final class cm_cas_continue_button_test extends content_module_test_case
         $_SESSION['navigation'] = $navigation;
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         unset($_SESSION['navigation']);
 
         parent::tearDown();
     }
 
-    public function test_execute_buffers_continue_button_using_navigation_snapshot(): void
-    {
+    public function test_execute_buffers_continue_button_using_navigation_snapshot(): void {
         $this->execute_module(cm_cas_continue_button::class);
 
         $content = $this->buffered_content('create_account_success');
@@ -48,8 +45,7 @@ final class cm_cas_continue_button_test extends content_module_test_case
         $this->assertSame([], $_SESSION['navigation']->snapshot);
     }
 
-    public function test_execute_falls_back_to_index_when_snapshot_empty(): void
-    {
+    public function test_execute_falls_back_to_index_when_snapshot_empty(): void {
         $_SESSION['navigation'] = new navigationHistory();
         $this->reset_template();
 

@@ -16,8 +16,7 @@ final class zone_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_by_country_returns_seeded_zones(): void
-    {
+    public function test_fetch_by_country_returns_seeded_zones(): void {
         $zones = [
             ['id' => '1', 'text' => 'North'],
             ['id' => '2', 'text' => 'South'],
@@ -30,8 +29,7 @@ final class zone_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_name_reads_from_query_result(): void
-    {
+    public function test_fetch_name_reads_from_query_result(): void {
         (new mock_catalog_database([], [
             'zones' => [
                 ['zone_name' => 'Midlands'],
@@ -43,8 +41,7 @@ final class zone_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_code_reads_from_query_result(): void
-    {
+    public function test_fetch_code_reads_from_query_result(): void {
         (new mock_catalog_database([], [
             'zones' => [
                 ['zone_code' => 'MID'],
@@ -56,8 +53,7 @@ final class zone_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_name_returns_default_when_row_missing(): void
-    {
+    public function test_fetch_name_returns_default_when_row_missing(): void {
         (new mock_catalog_database([], ['zones' => []]))->install_as_global();
 
         $this->assertSame('Fallback', Zone::fetch_name(99, null, 'Fallback'));

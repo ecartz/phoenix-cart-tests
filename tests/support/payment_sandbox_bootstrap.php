@@ -13,8 +13,7 @@ final class payment_sandbox_bootstrap
 
     private const SECRET_ENV = 'PHOENIX_STRIPE_SCA_TEST_SECRET_KEY';
 
-    public static function is_enabled(): bool
-    {
+    public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_PAYMENT_SANDBOX_ENABLED');
 
         if ($flag === false || $flag === '' || $flag === '0') {
@@ -24,8 +23,7 @@ final class payment_sandbox_bootstrap
         return self::publishable_key() !== '' && self::secret_key() !== '';
     }
 
-    public static function apply_to_database(): void
-    {
+    public static function apply_to_database(): void {
         if (!self::is_enabled()) {
             throw new \RuntimeException('Payment sandbox env is not configured.');
         }
@@ -58,8 +56,7 @@ final class payment_sandbox_bootstrap
         $mysqli->close();
     }
 
-    public static function fetch_configuration_value(string $configuration_key): ?string
-    {
+    public static function fetch_configuration_value(string $configuration_key): ?string {
         mysql_bootstrap::define_connection_constants();
 
         $mysqli = new \mysqli(
@@ -96,25 +93,21 @@ final class payment_sandbox_bootstrap
         return (string) $row['configuration_value'];
     }
 
-    private static function publishable_key(): string
-    {
+    private static function publishable_key(): string {
         return self::env(self::PUBLISHABLE_ENV);
     }
 
-    private static function secret_key(): string
-    {
+    private static function secret_key(): string {
         return self::env(self::SECRET_ENV);
     }
 
-    private static function env(string $name): string
-    {
+    private static function env(string $name): string {
         $value = getenv($name);
 
         return ($value !== false && $value !== '') ? $value : '';
     }
 
-    private static function append_payment_module(\mysqli $mysqli, string $module_filename): void
-    {
+    private static function append_payment_module(\mysqli $mysqli, string $module_filename): void {
         $key = 'MODULE_PAYMENT_INSTALLED';
         $current = self::fetch_configuration_value_via($mysqli, $key) ?? 'cod.php;moneyorder.php';
         $modules = array_filter(array_map('trim', explode(';', $current)));
@@ -126,8 +119,7 @@ final class payment_sandbox_bootstrap
         self::upsert_configuration($mysqli, $key, implode(';', $modules));
     }
 
-    private static function fetch_configuration_value_via(\mysqli $mysqli, string $configuration_key): ?string
-    {
+    private static function fetch_configuration_value_via(\mysqli $mysqli, string $configuration_key): ?string {
         $statement = $mysqli->prepare(
             'SELECT configuration_value FROM configuration WHERE configuration_key = ? LIMIT 1'
         );

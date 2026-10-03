@@ -17,8 +17,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 #[Group('http')]
 final class request_security_test extends http_test_case
 {
-    public function test_changed_user_agent_redirects_to_login(): void
-    {
+    public function test_changed_user_agent_redirects_to_login(): void {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');
 
@@ -31,8 +30,7 @@ final class request_security_test extends http_test_case
         $this->assert_redirect_to_login($response);
     }
 
-    public function test_changed_client_ip_redirects_to_login(): void
-    {
+    public function test_changed_client_ip_redirects_to_login(): void {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');
 
@@ -45,8 +43,7 @@ final class request_security_test extends http_test_case
         $this->assert_redirect_to_login($response);
     }
 
-    private function assert_redirect_to_login(ResponseInterface $response): void
-    {
+    private function assert_redirect_to_login(ResponseInterface $response): void {
         $this->assertSame(302, $response->getStatusCode());
 
         $location = $response->getHeaders(false)['location'][0] ?? '';

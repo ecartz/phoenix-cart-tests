@@ -18,8 +18,7 @@ final class installer_wizard
 
     public const SAMPLE_STORE_NAME = 'Phoenix Installer Test Shop';
 
-    public static function install_sample_shop(HttpClientInterface $http): void
-    {
+    public static function install_sample_shop(HttpClientInterface $http): void {
         self::clear_installed_configure();
 
         $base_url = installer_bootstrap::base_url() . '/';
@@ -103,8 +102,7 @@ final class installer_wizard
         Assert::assertStringContainsString('Citrus Fruit', $category->getContent(false));
     }
 
-    private static function clear_installed_configure(): void
-    {
+    private static function clear_installed_configure(): void {
         $root = installer_bootstrap::catalog_copy_root();
         foreach ([
             $root . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'configure.php',

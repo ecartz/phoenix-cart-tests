@@ -16,8 +16,7 @@ final class language_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_load_all_indexes_languages_by_code(): void
-    {
+    public function test_load_all_indexes_languages_by_code(): void {
         $rows = [
             [
                 'id' => '1',
@@ -48,8 +47,7 @@ final class language_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_constructor_selects_default_language(): void
-    {
+    public function test_constructor_selects_default_language(): void {
         if (!defined('DEFAULT_LANGUAGE')) {
             define('DEFAULT_LANGUAGE', 'en');
         }

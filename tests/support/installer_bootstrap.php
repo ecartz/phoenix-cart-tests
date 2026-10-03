@@ -12,20 +12,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class installer_bootstrap
 {
-    public static function is_enabled(): bool
-    {
+    public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_INSTALLER_ENABLED');
 
         return $flag !== false && $flag !== '' && $flag !== '0';
     }
 
-    public static function base_url(): string
-    {
+    public static function base_url(): string {
         return rtrim(self::env('PHOENIX_INSTALLER_BASE_URL', 'http://127.0.0.1:8766'), '/');
     }
 
-    public static function source_catalog_root(): string
-    {
+    public static function source_catalog_root(): string {
         if (getenv('PHOENIX_CART_ROOT')) {
             return rtrim(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, (string) getenv('PHOENIX_CART_ROOT')), DIRECTORY_SEPARATOR);
         }
@@ -38,8 +35,7 @@ final class installer_bootstrap
         throw new \RuntimeException('PHOENIX_CART_ROOT or ./PhoenixCart required for installer tests.');
     }
 
-    public static function catalog_copy_root(): string
-    {
+    public static function catalog_copy_root(): string {
         $relative = self::env('PHOENIX_INSTALLER_CATALOG_ROOT', 'working/installer-catalog');
 
         if (str_contains($relative, ':') || str_starts_with($relative, DIRECTORY_SEPARATOR) || str_starts_with($relative, '\\\\')) {
@@ -49,33 +45,27 @@ final class installer_bootstrap
         return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
     }
 
-    public static function installer_db_name(): string
-    {
+    public static function installer_db_name(): string {
         return self::env('PHOENIX_INSTALLER_DB_NAME', 'phoenix_install');
     }
 
-    public static function db_host(): string
-    {
+    public static function db_host(): string {
         return self::env('PHOENIX_DB_HOST', '127.0.0.1');
     }
 
-    public static function db_port(): string
-    {
+    public static function db_port(): string {
         return self::env('PHOENIX_DB_PORT', '3306');
     }
 
-    public static function db_user(): string
-    {
+    public static function db_user(): string {
         return self::env('PHOENIX_DB_USER', 'phoenix');
     }
 
-    public static function db_password(): string
-    {
+    public static function db_password(): string {
         return self::env('PHOENIX_DB_PASSWORD', 'phoenix');
     }
 
-    public static function client(int $max_redirects = 10): HttpClientInterface
-    {
+    public static function client(int $max_redirects = 10): HttpClientInterface {
         $inner = HttpClient::create([
             'base_uri' => self::base_url(),
             'max_redirects' => 0,
@@ -87,8 +77,7 @@ final class installer_bootstrap
         return new cookie_jar_http_client($inner, $max_redirects);
     }
 
-    public static function prepare_catalog(): void
-    {
+    public static function prepare_catalog(): void {
         $source = self::source_catalog_root();
         $dest = self::catalog_copy_root();
 
@@ -106,8 +95,7 @@ final class installer_bootstrap
         }
     }
 
-    public static function ensure_install_directory(): void
-    {
+    public static function ensure_install_directory(): void {
         $dest_install = self::catalog_copy_root() . DIRECTORY_SEPARATOR . 'install';
         if (is_file($dest_install . DIRECTORY_SEPARATOR . 'index.php')) {
             return;
@@ -121,8 +109,7 @@ final class installer_bootstrap
         self::copy_directory($source_install, $dest_install);
     }
 
-    public static function cleanup_catalog(): void
-    {
+    public static function cleanup_catalog(): void {
         $dest = self::catalog_copy_root();
         if (!is_dir($dest)) {
             return;
@@ -140,8 +127,7 @@ final class installer_bootstrap
         self::remove_directory($dest);
     }
 
-    public static function reset_installer_database(): void
-    {
+    public static function reset_installer_database(): void {
         $name = self::installer_db_name();
         $port = (int) self::db_port();
         $escaped = str_replace('`', '``', $name);
@@ -209,8 +195,7 @@ final class installer_bootstrap
         self::reset_installer_database_via_shell($last_error);
     }
 
-    private static function reset_installer_database_via_shell(string $prior_error): void
-    {
+    private static function reset_installer_database_via_shell(string $prior_error): void {
         $script = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'reset-installer-database.sh';
         if (!is_file($script)) {
             throw new \RuntimeException($prior_error);
@@ -224,15 +209,13 @@ final class installer_bootstrap
         }
     }
 
-    public static function catalog_filesystem_root(): string
-    {
+    public static function catalog_filesystem_root(): string {
         $root = self::catalog_copy_root();
 
         return rtrim(str_replace('\\', '/', realpath($root) ?: $root), '/') . '/';
     }
 
-    private static function copy_directory(string $source, string $dest): void
-    {
+    private static function copy_directory(string $source, string $dest): void {
         if (!is_dir($dest) && !mkdir($dest, 0775, true) && !is_dir($dest)) {
             throw new \RuntimeException('Cannot create ' . $dest);
         }
@@ -255,8 +238,7 @@ final class installer_bootstrap
         }
     }
 
-    private static function remove_directory(string $path): void
-    {
+    private static function remove_directory(string $path): void {
         if (!is_dir($path)) {
             return;
         }
@@ -279,8 +261,7 @@ final class installer_bootstrap
         @rmdir($path);
     }
 
-    private static function env(string $name, string $default): string
-    {
+    private static function env(string $name, string $default): string {
         $value = getenv($name);
 
         return ($value !== false && $value !== '') ? $value : $default;

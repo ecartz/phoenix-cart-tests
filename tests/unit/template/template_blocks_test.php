@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class template_blocks_test extends phoenix_test_case
 {
-    private function create_template(): Template
-    {
+    private function create_template(): Template {
         if (!defined('BOOTSTRAP_CONTENT')) {
             define('BOOTSTRAP_CONTENT', 8);
         }
@@ -20,8 +19,7 @@ final class template_blocks_test extends phoenix_test_case
         return new Template(new default_template());
     }
 
-    public function test_title_round_trip(): void
-    {
+    public function test_title_round_trip(): void {
         $template = $this->create_template();
         $template->set_title('Checkout');
 
@@ -32,8 +30,7 @@ final class template_blocks_test extends phoenix_test_case
      * @param list<string> $blocks
      */
     #[DataProvider('blocks_provider')]
-    public function test_block_helpers(array $blocks, string $group, bool $has_blocks, ?string $expected_output): void
-    {
+    public function test_block_helpers(array $blocks, string $group, bool $has_blocks, ?string $expected_output): void {
         $template = $this->create_template();
 
         foreach ($blocks as $block) {
@@ -49,8 +46,7 @@ final class template_blocks_test extends phoenix_test_case
         }
     }
 
-    public static function blocks_provider(): array
-    {
+    public static function blocks_provider(): array {
         return [
             'empty group has no blocks' => [[], 'footer', false, null],
             'single block returned as string' => [['<nav />'], 'header', true, '<nav />'],
@@ -58,15 +54,13 @@ final class template_blocks_test extends phoenix_test_case
         ];
     }
 
-    public function test_has_blocks_is_false_for_unknown_group(): void
-    {
+    public function test_has_blocks_is_false_for_unknown_group(): void {
         $template = $this->create_template();
 
         $this->assertFalse($template->has_blocks('unknown'));
     }
 
-    public function test_get_template_returns_injected_template_object(): void
-    {
+    public function test_get_template_returns_injected_template_object(): void {
         $default_template = new default_template();
         $template = new Template($default_template);
 

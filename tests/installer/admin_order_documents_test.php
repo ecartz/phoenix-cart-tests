@@ -21,15 +21,13 @@ final class admin_order_documents_test extends install_test_case
 
     private const CUSTOMER_PASSWORD = 'phoenix-install-test';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_invoice_and_packingslip_show_cod_order(): void
-    {
+    public function test_admin_invoice_and_packingslip_show_cod_order(): void {
         $shop_http = installer_bootstrap::client();
         $customer_name = self::CUSTOMER_FIRSTNAME . ' ' . self::CUSTOMER_LASTNAME;
 
@@ -47,8 +45,7 @@ final class admin_order_documents_test extends install_test_case
         $this->assert_admin_order_document($admin_http, '/admin/packingslip.php', $order_id, $customer_name);
     }
 
-    private function register_storefront_customer(HttpClientInterface $shop_http): void
-    {
+    private function register_storefront_customer(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/');
 
         $create_account_page = $shop_http->request('GET', '/create_account.php');
@@ -81,8 +78,7 @@ final class admin_order_documents_test extends install_test_case
         $this->assertStringContainsString('cm-account-title', $account_body);
     }
 
-    private function complete_cod_checkout(HttpClientInterface $shop_http): void
-    {
+    private function complete_cod_checkout(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/index.php', [
             'query' => [
                 'action' => 'buy_now',
@@ -137,8 +133,7 @@ final class admin_order_documents_test extends install_test_case
         $this->assertStringContainsString('checkout_success.php', $final_url);
     }
 
-    private function parse_order_id_from_orders_html(string $html): string
-    {
+    private function parse_order_id_from_orders_html(string $html): string {
         if (preg_match('/[?&]oID=(\d+)/', $html, $matches) === 1) {
             return $matches[1];
         }

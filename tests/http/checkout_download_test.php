@@ -19,22 +19,19 @@ final class checkout_download_test extends http_test_case
 
     private ?string $download_path = null;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::insert_virtual_download_for_pears();
         $this->write_download_file();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         $this->remove_download_file();
         http_checkout_fixture_sql::remove_virtual_download_for_pears();
         parent::tearDown();
     }
 
-    public function test_processing_order_allows_logged_in_download(): void
-    {
+    public function test_processing_order_allows_logged_in_download(): void {
         $this->login_fixture_customer();
 
         $option_id = http_checkout_fixture_sql::virtual_option_id();
@@ -80,8 +77,7 @@ final class checkout_download_test extends http_test_case
         $this->assertSame(self::DOWNLOAD_PAYLOAD, $download->getContent());
     }
 
-    private function write_download_file(): void
-    {
+    private function write_download_file(): void {
         $directory = http_bootstrap::catalog_root() . DIRECTORY_SEPARATOR . 'download';
         if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
             throw new \RuntimeException('Cannot create download directory: ' . $directory);
@@ -93,8 +89,7 @@ final class checkout_download_test extends http_test_case
         }
     }
 
-    private function remove_download_file(): void
-    {
+    private function remove_download_file(): void {
         if ($this->download_path !== null && is_file($this->download_path)) {
             unlink($this->download_path);
         }

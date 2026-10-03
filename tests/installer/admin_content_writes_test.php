@@ -42,15 +42,13 @@ final class admin_content_writes_test extends install_test_case
 
     private const SPECIAL_OFFER_PRICE = '0.42';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_content_entities_insert_and_delete(): void
-    {
+    public function test_admin_content_entities_insert_and_delete(): void {
         $shop_http = installer_bootstrap::client();
         $this->register_storefront_customer($shop_http);
         $customer_id = $this->parse_customer_id_from_admin();
@@ -65,8 +63,7 @@ final class admin_content_writes_test extends install_test_case
         $this->insert_and_delete_outgoing_template($admin_http);
     }
 
-    private function insert_and_delete_special(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_special(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/specials.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -89,8 +86,7 @@ final class admin_content_writes_test extends install_test_case
         $this->assertStringNotContainsString(self::SPECIAL_OFFER_PRICE, $after);
     }
 
-    private function insert_and_delete_review(HttpClientInterface $admin_http, string $customer_id): void
-    {
+    private function insert_and_delete_review(HttpClientInterface $admin_http, string $customer_id): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/reviews.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -132,8 +128,7 @@ final class admin_content_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/testimonials.php', [], self::TESTIMONIAL_NICK);
     }
 
-    private function insert_and_delete_info_page(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_info_page(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/info_pages.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -168,8 +163,7 @@ final class admin_content_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/info_pages.php', [], self::INFO_PAGE_SLUG);
     }
 
-    private function insert_and_delete_advert(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_advert(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/advert_manager.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -199,8 +193,7 @@ final class admin_content_writes_test extends install_test_case
         $this->assert_admin_list_not_contains($admin_http, '/admin/advert_manager.php', [], self::ADVERT_TITLE);
     }
 
-    private function insert_and_delete_outgoing_template(HttpClientInterface $admin_http): void
-    {
+    private function insert_and_delete_outgoing_template(HttpClientInterface $admin_http): void {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/outgoing_tpl.php', ['action' => 'new']);
         $formid = self::parse_hidden_input($new_html, 'formid');
         $this->assertNotSame('', $formid);
@@ -246,8 +239,7 @@ final class admin_content_writes_test extends install_test_case
         );
     }
 
-    private function register_storefront_customer(HttpClientInterface $shop_http): void
-    {
+    private function register_storefront_customer(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/');
 
         $create_account_page = $shop_http->request('GET', '/create_account.php');
@@ -276,8 +268,7 @@ final class admin_content_writes_test extends install_test_case
         $this->assertContains($registered->getStatusCode(), [200, 302]);
     }
 
-    private function parse_customer_id_from_admin(): string
-    {
+    private function parse_customer_id_from_admin(): string {
         $admin_http = $this->login_installed_admin();
         $customers_page = $admin_http->request('GET', '/admin/customers.php', [
             'query' => ['search' => self::CUSTOMER_EMAIL],
@@ -293,8 +284,7 @@ final class admin_content_writes_test extends install_test_case
         $this->fail('customers.php did not expose cID for the content test customer');
     }
 
-    private function parse_first_select_option_value(string $html, string $name): string
-    {
+    private function parse_first_select_option_value(string $html, string $name): string {
         $pattern = '/name="' . preg_quote($name, '/') . '"[^>]*>(.*?)<\/select>/s';
         if (preg_match($pattern, $html, $select_match) !== 1) {
             return '';

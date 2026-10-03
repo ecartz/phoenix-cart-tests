@@ -12,8 +12,7 @@ final class database_perform_test extends mysql_test_case
 {
     private const TEST_KEY = 'PHOENIX_INTEGRATION_TEST_KEY';
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         $this->db()->query(
             "DELETE FROM configuration WHERE configuration_key = '" . $this->db()->escape(self::TEST_KEY) . "'"
         );
@@ -21,8 +20,7 @@ final class database_perform_test extends mysql_test_case
         parent::tearDown();
     }
 
-    public function test_perform_inserts_configuration_row(): void
-    {
+    public function test_perform_inserts_configuration_row(): void {
         $inserted = $this->db()->perform('configuration', [
             'configuration_title' => 'PHPUnit integration probe',
             'configuration_key' => self::TEST_KEY,

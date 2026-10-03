@@ -30,15 +30,13 @@ final class admin_catalog_writes_test extends install_test_case
 
     private const PRODUCT_MODEL = 'INSTALL-CAT';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_catalog_category_product_copy_and_move(): void
-    {
+    public function test_admin_catalog_category_product_copy_and_move(): void {
         $admin_http = $this->login_installed_admin();
 
         $category_id = $this->insert_category($admin_http);
@@ -73,8 +71,7 @@ final class admin_catalog_writes_test extends install_test_case
         $this->delete_category($admin_http, $child_path, $category_id);
     }
 
-    private function insert_category(HttpClientInterface $admin_http): string
-    {
+    private function insert_category(HttpClientInterface $admin_http): string {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
             'cPath' => self::ROOT_CATEGORY_PATH,
             'action' => 'new_category',
@@ -383,8 +380,7 @@ final class admin_catalog_writes_test extends install_test_case
         ];
     }
 
-    private function parse_products_name_language_id(string $html): string
-    {
+    private function parse_products_name_language_id(string $html): string {
         if (preg_match('/name="products_name\[(\d+)\]"/', $html, $matches) === 1) {
             return $matches[1];
         }

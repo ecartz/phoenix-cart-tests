@@ -32,15 +32,13 @@ final class admin_forms_test extends install_test_case
 
     private const CATEGORY_PATH = '1';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_catalog_inserts_and_deletes_product(): void
-    {
+    public function test_admin_catalog_inserts_and_deletes_product(): void {
         $admin_http = $this->login_installed_admin();
 
         $new_product = $admin_http->request('GET', '/admin/catalog.php', [
@@ -111,8 +109,7 @@ final class admin_forms_test extends install_test_case
         $this->assertStringNotContainsString(self::PRODUCT_NAME, $after_delete->getContent(false));
     }
 
-    public function test_admin_customer_and_order_form_round_trips(): void
-    {
+    public function test_admin_customer_and_order_form_round_trips(): void {
         $shop_http = installer_bootstrap::client();
         $this->register_storefront_customer($shop_http);
         $this->complete_cod_checkout($shop_http);
@@ -199,8 +196,7 @@ final class admin_forms_test extends install_test_case
         ];
     }
 
-    private function parse_products_name_language_id(string $html): string
-    {
+    private function parse_products_name_language_id(string $html): string {
         if (preg_match('/name="products_name\[(\d+)\]"/', $html, $matches) === 1) {
             return $matches[1];
         }
@@ -208,8 +204,7 @@ final class admin_forms_test extends install_test_case
         return '1';
     }
 
-    private function parse_product_id_from_url_or_catalog(string $url, string $catalog_html): string
-    {
+    private function parse_product_id_from_url_or_catalog(string $url, string $catalog_html): string {
         if (preg_match('/[?&]pID=(\d+)/', $url, $matches) === 1) {
             return $matches[1];
         }
@@ -221,8 +216,7 @@ final class admin_forms_test extends install_test_case
         return '';
     }
 
-    private function parse_customer_id_from_list(HttpClientInterface $admin_http): string
-    {
+    private function parse_customer_id_from_list(HttpClientInterface $admin_http): string {
         $customers_page = $admin_http->request('GET', '/admin/customers.php', [
             'query' => ['search' => self::CUSTOMER_EMAIL],
         ]);
@@ -299,8 +293,7 @@ final class admin_forms_test extends install_test_case
         $this->assertContains($update->getStatusCode(), [200, 302]);
     }
 
-    private function register_storefront_customer(HttpClientInterface $shop_http): void
-    {
+    private function register_storefront_customer(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/');
 
         $create_account_page = $shop_http->request('GET', '/create_account.php');
@@ -329,8 +322,7 @@ final class admin_forms_test extends install_test_case
         $this->assertContains($registered->getStatusCode(), [200, 302]);
     }
 
-    private function complete_cod_checkout(HttpClientInterface $shop_http): void
-    {
+    private function complete_cod_checkout(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/index.php', [
             'query' => [
                 'action' => 'buy_now',
@@ -376,8 +368,7 @@ final class admin_forms_test extends install_test_case
         $this->assertStringContainsString('checkout_success.php', $final_url);
     }
 
-    private function parse_order_id_from_orders_html(string $html): string
-    {
+    private function parse_order_id_from_orders_html(string $html): string {
         if (preg_match('/[?&]oID=(\d+)/', $html, $matches) === 1) {
             return $matches[1];
         }

@@ -30,8 +30,7 @@ final class admin_mail_test extends install_test_case
 
     private const NEWSLETTER_CONTENT = 'Installer acceptance test newsletter send body.';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
@@ -40,8 +39,7 @@ final class admin_mail_test extends install_test_case
         self::register_storefront_customer($shop_http);
     }
 
-    public function test_admin_compose_mail_reaches_capture(): void
-    {
+    public function test_admin_compose_mail_reaches_capture(): void {
         $this->require_installer_mail_capture();
         $this->clear_captured_mail();
 
@@ -89,8 +87,7 @@ final class admin_mail_test extends install_test_case
         }
     }
 
-    public function test_admin_newsletter_send_reaches_capture(): void
-    {
+    public function test_admin_newsletter_send_reaches_capture(): void {
         $this->require_installer_mail_capture();
         $this->clear_captured_mail();
 
@@ -123,8 +120,7 @@ final class admin_mail_test extends install_test_case
         $this->delete_newsletter($admin_http, $newsletter_id);
     }
 
-    public function test_admin_order_status_notify_reaches_capture(): void
-    {
+    public function test_admin_order_status_notify_reaches_capture(): void {
         $this->require_installer_mail_capture();
 
         $shop_http = installer_bootstrap::client();
@@ -164,8 +160,7 @@ final class admin_mail_test extends install_test_case
         $this->assert_captured_mail_contains(self::CUSTOMER_EMAIL);
     }
 
-    private function insert_newsletter_draft(HttpClientInterface $admin_http): string
-    {
+    private function insert_newsletter_draft(HttpClientInterface $admin_http): string {
         $new_page = $admin_http->request('GET', '/admin/newsletters.php', [
             'query' => ['action' => 'new'],
         ]);
@@ -196,8 +191,7 @@ final class admin_mail_test extends install_test_case
         return $matches[1];
     }
 
-    private function delete_newsletter(HttpClientInterface $admin_http, string $newsletter_id): void
-    {
+    private function delete_newsletter(HttpClientInterface $admin_http, string $newsletter_id): void {
         $selected = $admin_http->request('GET', '/admin/newsletters.php', [
             'query' => ['nID' => $newsletter_id],
         ]);
@@ -217,8 +211,7 @@ final class admin_mail_test extends install_test_case
         $this->assertContains($delete->getStatusCode(), [200, 302]);
     }
 
-    private static function register_storefront_customer(HttpClientInterface $shop_http): void
-    {
+    private static function register_storefront_customer(HttpClientInterface $shop_http): void {
         $shop_http->request('GET', '/');
 
         $create_account_page = $shop_http->request('GET', '/create_account.php');
@@ -255,8 +248,7 @@ final class admin_mail_test extends install_test_case
         }
     }
 
-    private function login_storefront_customer(HttpClientInterface $shop_http): void
-    {
+    private function login_storefront_customer(HttpClientInterface $shop_http): void {
         $login_page = $shop_http->request('GET', '/login.php');
         $this->assertSame(200, $login_page->getStatusCode());
         $formid = self::parse_hidden_input($login_page->getContent(false), 'formid');
@@ -273,8 +265,7 @@ final class admin_mail_test extends install_test_case
         $this->assertContains($login->getStatusCode(), [200, 302]);
     }
 
-    private function complete_cod_checkout(HttpClientInterface $shop_http): void
-    {
+    private function complete_cod_checkout(HttpClientInterface $shop_http): void {
         $this->login_storefront_customer($shop_http);
 
         $shop_http->request('GET', '/index.php', [
@@ -319,8 +310,7 @@ final class admin_mail_test extends install_test_case
         $this->assertStringContainsString('checkout_success.php', $final_url);
     }
 
-    private function parse_order_id_from_orders_html(string $html): string
-    {
+    private function parse_order_id_from_orders_html(string $html): string {
         if (preg_match('/[?&]oID=(\d+)/', $html, $matches) === 1) {
             return $matches[1];
         }

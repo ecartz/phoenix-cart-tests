@@ -13,8 +13,7 @@ final class address_book_test extends http_test_case
 {
     private ?int $extra_address_id = null;
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         if ($this->extra_address_id !== null) {
             http_customer_fixture_sql::delete_address_book_entry($this->extra_address_id);
         }
@@ -22,8 +21,7 @@ final class address_book_test extends http_test_case
         parent::tearDown();
     }
 
-    public function test_customer_can_add_and_delete_secondary_address(): void
-    {
+    public function test_customer_can_add_and_delete_secondary_address(): void {
         $this->login_fixture_customer();
 
         $new_page = $this->get_http()->request('GET', '/address_book_process.php');

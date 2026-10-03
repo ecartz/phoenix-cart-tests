@@ -8,8 +8,7 @@ use PhoenixCart\Tests\support\phoenix_test_case;
 
 final class catalog_pin_test extends phoenix_test_case
 {
-    public function test_catalog_pin_file_declares_ce_phoenixcart_tag(): void
-    {
+    public function test_catalog_pin_file_declares_ce_phoenixcart_tag(): void {
         $path = dirname(__DIR__, 3) . '/fixtures/catalog_pin.txt';
 
         $this->assertFileExists($path);

@@ -10,8 +10,7 @@ abstract class install_test_case extends phoenix_test_case
 {
     private HttpClientInterface $http;
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         if (!installer_bootstrap::is_enabled()) {
@@ -47,19 +46,16 @@ abstract class install_test_case extends phoenix_test_case
         }
     }
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         $this->http = installer_bootstrap::client();
     }
 
-    protected function get_http(): HttpClientInterface
-    {
+    protected function get_http(): HttpClientInterface {
         return $this->http;
     }
 
-    protected function login_installed_admin(): HttpClientInterface
-    {
+    protected function login_installed_admin(): HttpClientInterface {
         $admin_http = installer_bootstrap::client();
 
         $admin_login_page = $admin_http->request('GET', '/admin/login.php');
@@ -94,8 +90,7 @@ abstract class install_test_case extends phoenix_test_case
         $this->assertStringContainsString($body_contains, $response->getContent(false));
     }
 
-    protected static function parse_hidden_input(string $html, string $name): string
-    {
+    protected static function parse_hidden_input(string $html, string $name): string {
         $quoted = preg_quote($name, '/');
 
         if (preg_match('/name="' . $quoted . '"[^>]*\svalue="([^"]*)"/', $html, $matches) === 1) {
@@ -109,8 +104,7 @@ abstract class install_test_case extends phoenix_test_case
         return '';
     }
 
-    protected static function parse_formid_from_page(string $html): string
-    {
+    protected static function parse_formid_from_page(string $html): string {
         $formid = self::parse_hidden_input($html, 'formid');
         if ($formid !== '') {
             return $formid;
@@ -123,8 +117,7 @@ abstract class install_test_case extends phoenix_test_case
         return '';
     }
 
-    protected function require_installer_mail_capture(): void
-    {
+    protected function require_installer_mail_capture(): void {
         if (!installer_mail_capture::is_enabled()) {
             $this->markTestSkipped(
                 'Installer mail capture is disabled. Run composer test:installer (or scripts/installer-server.sh with sendmail_path) on Linux.'
@@ -132,13 +125,11 @@ abstract class install_test_case extends phoenix_test_case
         }
     }
 
-    protected function clear_captured_mail(): void
-    {
+    protected function clear_captured_mail(): void {
         installer_mail_capture::clear();
     }
 
-    protected function assert_captured_mail_contains(string $needle): void
-    {
+    protected function assert_captured_mail_contains(string $needle): void {
         $body = installer_mail_capture::read_combined();
         if ($body === '') {
             $body = installer_outgoing_lookup::combined_body();

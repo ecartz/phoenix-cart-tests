@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class category_listing_test extends http_test_case
 {
-    public function test_fruit_category_lists_sample_oranges(): void
-    {
+    public function test_fruit_category_lists_sample_oranges(): void {
         $response = $this->get_http()->request('GET', '/index.php', [
             'query' => [
                 'cPath' => '1',
@@ -26,8 +25,7 @@ final class category_listing_test extends http_test_case
         $this->assertStringContainsString('Citrus Fruit', $body);
     }
 
-    public function test_citrus_subcategory_lists_sample_lemons(): void
-    {
+    public function test_citrus_subcategory_lists_sample_lemons(): void {
         $response = $this->get_http()->request('GET', '/index.php', [
             'query' => [
                 'cPath' => '1_4',

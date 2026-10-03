@@ -110,15 +110,13 @@ trait installer_admin_writes
         $this->assertStringNotContainsString($needle, $this->admin_list_html_for_needle_assertion($html));
     }
 
-    protected function admin_list_html_for_needle_assertion(string $html): string
-    {
+    protected function admin_list_html_for_needle_assertion(string $html): string {
         $html = (string) preg_replace('/<input\b(?:(?!>).)*\bname="search"(?:(?!>).)*>/i', '', $html);
 
         return $this->admin_list_table_body($html);
     }
 
-    protected function parse_entity_id_near_needle(string $html, string $needle, string $param): string
-    {
+    protected function parse_entity_id_near_needle(string $html, string $needle, string $param): string {
         $html = str_replace('&amp;', '&', $html);
         $list_html = $this->admin_list_table_body($html);
         if (!str_contains($list_html, $needle)) {
@@ -133,8 +131,7 @@ trait installer_admin_writes
         $this->fail('Could not parse ' . $param . ' for: ' . $needle);
     }
 
-    protected function admin_list_table_body(string $html): string
-    {
+    protected function admin_list_table_body(string $html): string {
         if (preg_match(
             '/<table class="table table-striped table-hover">\s*<thead class="table-dark">.*?<tbody>(.*?)<\/tbody>/s',
             $html,
@@ -191,8 +188,7 @@ trait installer_admin_writes
      *
      * @return array<string, string>
      */
-    protected function parse_admin_edit_form_body(string $html, array $overrides = []): array
-    {
+    protected function parse_admin_edit_form_body(string $html, array $overrides = []): array {
         $body = [];
 
         if (preg_match_all('/<input[^>]+name="([^"]+)"[^>]*>/', $html, $inputs, PREG_SET_ORDER) !== false) {
@@ -244,8 +240,7 @@ trait installer_admin_writes
         return $body;
     }
 
-    protected static function parse_formid_for_admin_action(string $html, string $action): string
-    {
+    protected static function parse_formid_for_admin_action(string $html, string $action): string {
         $html = html_entity_decode($html, ENT_QUOTES);
         $quoted_action = preg_quote($action, '/');
         if (preg_match(
@@ -267,8 +262,7 @@ trait installer_admin_writes
         return self::parse_formid_from_page($html);
     }
 
-    protected function parse_id_from_redirect_url(string $url, string $param): string
-    {
+    protected function parse_id_from_redirect_url(string $url, string $param): string {
         if (preg_match('/[?&]' . preg_quote($param, '/') . '=(\d+)/', $url, $matches) === 1) {
             return $matches[1];
         }
@@ -276,8 +270,7 @@ trait installer_admin_writes
         return '';
     }
 
-    protected function resolve_admin_formid(HttpClientInterface $admin_http): string
-    {
+    protected function resolve_admin_formid(HttpClientInterface $admin_http): string {
         foreach ([
             '/admin/mail.php',
             '/admin/languages.php',
@@ -335,8 +328,7 @@ trait installer_admin_writes
     /**
      * @return list<string>
      */
-    protected function parse_bracket_language_ids(string $html, string $field_prefix): array
-    {
+    protected function parse_bracket_language_ids(string $html, string $field_prefix): array {
         $pattern = '/name="' . preg_quote($field_prefix, '/') . '\[(\d+)\]"/';
         if (preg_match_all($pattern, $html, $matches) === false || $matches[1] === []) {
             return ['1'];
@@ -514,8 +506,7 @@ trait installer_admin_writes
         ], ['formid' => $remove_formid]);
     }
 
-    protected function assert_admin_module_list_contains(string $html, string $module_code): void
-    {
+    protected function assert_admin_module_list_contains(string $html, string $module_code): void {
         $list_html = $this->admin_list_html_for_needle_assertion($html);
         $needle = $this->admin_module_list_needle($list_html, $module_code);
         $this->assertTrue(
@@ -524,15 +515,13 @@ trait installer_admin_writes
         );
     }
 
-    protected function assert_admin_module_list_not_contains(string $html, string $module_code): void
-    {
+    protected function assert_admin_module_list_not_contains(string $html, string $module_code): void {
         $list_html = $this->admin_list_html_for_needle_assertion($html);
         $needle = $this->admin_module_list_needle($list_html, $module_code);
         $this->assertSame('', $needle, 'Module list still contained: ' . $module_code);
     }
 
-    protected function admin_module_list_needle(string $list_html, string $module_code): string
-    {
+    protected function admin_module_list_needle(string $list_html, string $module_code): string {
         $list_html = str_replace('&amp;', '&', $list_html);
 
         if (preg_match('/[?&]module=' . preg_quote($module_code, '/') . '(?:&|"|\'|$)/', $list_html) === 1) {
@@ -550,8 +539,7 @@ trait installer_admin_writes
      * Sample import often pre-installs every module in a set, leaving list=new empty.
      * Remove one installed module so install/remove coverage can pick from list=new.
      */
-    protected function ensure_module_set_has_new_candidate(HttpClientInterface $admin_http, string $set): void
-    {
+    protected function ensure_module_set_has_new_candidate(HttpClientInterface $admin_http, string $set): void {
         if ($this->first_new_module_code($admin_http, $set) !== null) {
             return;
         }
@@ -572,8 +560,7 @@ trait installer_admin_writes
     /**
      * @param list<string> $installed_codes
      */
-    protected static function installed_module_to_remove_for_new_candidate(string $set, array $installed_codes): string
-    {
+    protected static function installed_module_to_remove_for_new_candidate(string $set, array $installed_codes): string {
         if ($set === 'action_recorder') {
             foreach ($installed_codes as $module_code) {
                 if ($module_code !== 'ar_admin_login') {
@@ -585,8 +572,7 @@ trait installer_admin_writes
         return $installed_codes[0];
     }
 
-    protected function first_new_module_code(HttpClientInterface $admin_http, string $set): ?string
-    {
+    protected function first_new_module_code(HttpClientInterface $admin_http, string $set): ?string {
         $html = $this->fetch_admin_page($admin_http, '/admin/modules.php', [
             'set' => $set,
             'list' => 'new',
@@ -662,8 +648,7 @@ trait installer_admin_writes
         return $list_set;
     }
 
-    protected static function parse_new_module_code_from_modules_html(string $html): ?string
-    {
+    protected static function parse_new_module_code_from_modules_html(string $html): ?string {
         $html = str_replace('&amp;', '&', $html);
 
         if (preg_match(
@@ -699,8 +684,7 @@ trait installer_admin_writes
     /**
      * @return list<string>
      */
-    protected static function parse_new_module_codes_from_modules_html(string $html): array
-    {
+    protected static function parse_new_module_codes_from_modules_html(string $html): array {
         $html = str_replace('&amp;', '&', $html);
         $codes = [];
 
@@ -729,8 +713,7 @@ trait installer_admin_writes
     /**
      * @return list<string>
      */
-    protected static function parse_module_codes_from_modules_table_html(string $html): array
-    {
+    protected static function parse_module_codes_from_modules_table_html(string $html): array {
         $html = str_replace('&amp;', '&', $html);
         if (preg_match(
             '/<table class="table table-striped table-hover">\s*<thead class="table-dark">.*?<tbody>(.*?)<\/tbody>/s',
@@ -747,8 +730,7 @@ trait installer_admin_writes
         return array_values(array_unique($module_matches[1]));
     }
 
-    protected static function parse_module_query_parameter(string $url): ?string
-    {
+    protected static function parse_module_query_parameter(string $url): ?string {
         if (preg_match('/[?&]module=([a-z0-9_]+)/', $url, $matches) === 1) {
             return $matches[1];
         }
@@ -756,8 +738,7 @@ trait installer_admin_writes
         return null;
     }
 
-    private function mutated_configuration_value(string $original): string
-    {
+    private function mutated_configuration_value(string $original): string {
         if ($original !== '' && is_numeric($original)) {
             return (string) ((int) $original + 1);
         }

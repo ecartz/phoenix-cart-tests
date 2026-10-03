@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('mysql')]
 final class abstract_module_check_test extends mysql_test_case
 {
-    public function test_check_finds_status_row_in_configuration(): void
-    {
+    public function test_check_finds_status_row_in_configuration(): void {
         $this->assertTrue(defined('MODULE_HEADER_TAGS_ROBOT_NOINDEX_STATUS'));
 
         if (!defined('MODULE_HEADER_TAGS_ROBOT_NOINDEX_TITLE')) {

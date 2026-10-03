@@ -13,8 +13,7 @@ final class http_customer_fixture_sql
 
     private const SEED_PASSWORD_HASH = '$2y$12$yLp3Jl/6JtaqZru2oUgwnO5fL.t9i8ZwPKt3URtZqRJ52gST.G44.';
 
-    public static function password_reset_key_for_fixture_customer(): ?string
-    {
+    public static function password_reset_key_for_fixture_customer(): ?string {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -42,8 +41,7 @@ final class http_customer_fixture_sql
         return (string) $row['password_reset_key'];
     }
 
-    public static function restore_fixture_password_and_clear_reset_key(): void
-    {
+    public static function restore_fixture_password_and_clear_reset_key(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -70,8 +68,7 @@ final class http_customer_fixture_sql
         $mysqli->close();
     }
 
-    public static function clear_fixture_customer_basket(): void
-    {
+    public static function clear_fixture_customer_basket(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -85,8 +82,7 @@ final class http_customer_fixture_sql
         $mysqli->close();
     }
 
-    public static function restore_fixture_firstname(): void
-    {
+    public static function restore_fixture_firstname(): void {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -104,8 +100,7 @@ final class http_customer_fixture_sql
         $mysqli->close();
     }
 
-    public static function latest_non_primary_address_book_id(): ?int
-    {
+    public static function latest_non_primary_address_book_id(): ?int {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
@@ -136,8 +131,7 @@ final class http_customer_fixture_sql
         return (int) $row['address_book_id'];
     }
 
-    public static function delete_address_book_entry(int $address_book_id): void
-    {
+    public static function delete_address_book_entry(int $address_book_id): void {
         if ($address_book_id <= 0) {
             return;
         }
@@ -160,8 +154,7 @@ final class http_customer_fixture_sql
         $mysqli->close();
     }
 
-    private static function connect(): \mysqli
-    {
+    private static function connect(): \mysqli {
         $mysqli = new \mysqli(
             (string) DB_SERVER,
             (string) DB_SERVER_USERNAME,
@@ -178,8 +171,7 @@ final class http_customer_fixture_sql
         return $mysqli;
     }
 
-    private static function exec(\mysqli $mysqli, string $sql): void
-    {
+    private static function exec(\mysqli $mysqli, string $sql): void {
         if (!$mysqli->query($sql)) {
             throw new \RuntimeException('Query failed: ' . $mysqli->error . ' [' . $sql . ']');
         }

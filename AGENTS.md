@@ -10,7 +10,7 @@ PHPUnit tests for CE Phoenix Cart. Exercise **real** shop classes via catalog au
 - Test methods, data providers, and other members in this repo use **snake_case** as well (e.g. `test_real_link`, `real_link_provider`); PHPUnit `#[DataProvider('real_link_provider')]` attributes
 - **`tests/browser/`** Playwright specs: **`const` / `let` bindings** use **snake_case** (Playwright fixture names such as `page` stay as-is); enforced by `tests/unit/invariants/browser_spec_snake_case_test.php`
 - Prefer data providers; assert behavior, not source text
-- **`tests/unit/html/`** test files match `tickable_test.php` layout: opening brace on the same line as the class/method signature; cast `Stringable` values with `"$object"` in assertions
+- **PHP braces:** when a function or method has a return type, put the opening `{` on the same line as that return type (e.g. `): void {`); multi-line signatures keep their line breaks—only move the brace. **`tests/unit/html/`** also match `tickable_test.php` class layout; cast `Stringable` values with `"$object"` in assertions
 - If a constructor needs config constants, see [`TESTING.md`](TESTING.md): production loads them from the `configuration` table; tests may use **`define()` only for isolated keys**, a **mock `$GLOBALS['db']`** via `configuration_test_helper` / `mock_catalog_database` (`#[Group('mockdb')]`), or MySQL fixtures — not full `application_top.php` in isolated unit tests
 - Run `vendor/bin/phpunit` after each new test class; fix failures before committing
 - New shell scripts under `scripts/`, `.cursor/scripts/`, or `fixtures/` must be committed executable (`git add --chmod=+x`; separately from non-executable files); CI runs `scripts/verify-shell-script-modes.sh`

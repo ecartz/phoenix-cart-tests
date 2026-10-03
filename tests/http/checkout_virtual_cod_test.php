@@ -12,20 +12,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_virtual_cod_test extends http_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::insert_virtual_download_for_pears();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_checkout_fixture_sql::remove_virtual_download_for_pears();
         parent::tearDown();
     }
 
-    public function test_virtual_download_cart_skips_shipping_and_hides_cod(): void
-    {
+    public function test_virtual_download_cart_skips_shipping_and_hides_cod(): void {
         $this->login_fixture_customer();
 
         $option_id = http_checkout_fixture_sql::virtual_option_id();

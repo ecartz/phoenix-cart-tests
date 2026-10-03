@@ -14,8 +14,7 @@ final class checkout_alternate_address_test extends http_test_case
 {
     private ?int $extra_address_id = null;
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         if ($this->extra_address_id !== null) {
             http_customer_fixture_sql::delete_address_book_entry($this->extra_address_id);
         }
@@ -23,8 +22,7 @@ final class checkout_alternate_address_test extends http_test_case
         parent::tearDown();
     }
 
-    public function test_checkout_uses_secondary_shipping_and_payment_address(): void
-    {
+    public function test_checkout_uses_secondary_shipping_and_payment_address(): void {
         $this->login_fixture_customer();
         $city = 'Checkout Alt City';
         $this->insert_secondary_address($city);
@@ -103,8 +101,7 @@ final class checkout_alternate_address_test extends http_test_case
         );
     }
 
-    private function insert_secondary_address(string $city): void
-    {
+    private function insert_secondary_address(string $city): void {
         $new_page = $this->get_http()->request('GET', '/address_book_process.php');
         $formid = self::parse_hidden_input($new_page->getContent(false), 'formid');
         $this->assertNotSame('', $formid);

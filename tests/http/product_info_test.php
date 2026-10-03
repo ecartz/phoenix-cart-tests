@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class product_info_test extends http_test_case
 {
-    public function test_product_info_page_shows_sample_oranges(): void
-    {
+    public function test_product_info_page_shows_sample_oranges(): void {
         $response = $this->get_http()->request('GET', '/product_info.php', [
             'query' => [
                 'products_id' => '1',
@@ -25,8 +24,7 @@ final class product_info_test extends http_test_case
         $this->assertStringContainsString('ORA-1', $body);
     }
 
-    public function test_unknown_product_shows_not_found_page_not_oranges(): void
-    {
+    public function test_unknown_product_shows_not_found_page_not_oranges(): void {
         $response = $this->get_http()->request('GET', '/product_info.php', [
             'query' => [
                 'products_id' => '999999',

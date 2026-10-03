@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_comments_test extends http_test_case
 {
-    public function test_checkout_process_stores_customer_comment_in_order_history(): void
-    {
+    public function test_checkout_process_stores_customer_comment_in_order_history(): void {
         $comment = 'HTTP fixture checkout comment ' . uniqid('', true);
 
         $this->login_fixture_customer();

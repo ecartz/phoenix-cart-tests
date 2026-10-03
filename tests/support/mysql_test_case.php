@@ -6,8 +6,7 @@ namespace PhoenixCart\Tests\support;
 
 abstract class mysql_test_case extends phoenix_test_case
 {
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         if (!mysql_bootstrap::is_enabled()) {
@@ -31,8 +30,7 @@ abstract class mysql_test_case extends phoenix_test_case
         }
     }
 
-    protected function db(): \Database
-    {
+    protected function db(): \Database {
         return mysql_database_helper::connection();
     }
 }

@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_new_account_test extends http_test_case
 {
-    public function test_logged_out_checkout_creates_account_and_completes_cod(): void
-    {
+    public function test_logged_out_checkout_creates_account_and_completes_cod(): void {
         $email = 'phoenix-http-new-checkout-' . uniqid('', true) . '@example.com';
         $password = 'phoenix-test';
 

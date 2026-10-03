@@ -12,16 +12,14 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_shipping_modules_test extends http_test_case
 {
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_checkout_fixture_sql::restore_flat_shipping_geo_zone();
         http_checkout_fixture_sql::restore_shipping_modules();
         http_checkout_fixture_sql::restore_free_shipping();
         parent::tearDown();
     }
 
-    public function test_extra_shipping_modules_list_rates_and_item_checkout_completes(): void
-    {
+    public function test_extra_shipping_modules_list_rates_and_item_checkout_completes(): void {
         http_checkout_fixture_sql::install_extra_shipping_modules();
 
         $this->login_fixture_customer();
@@ -71,8 +69,7 @@ final class checkout_shipping_modules_test extends http_test_case
         );
     }
 
-    public function test_flat_shipping_hidden_outside_zone_while_item_remains_available(): void
-    {
+    public function test_flat_shipping_hidden_outside_zone_while_item_remains_available(): void {
         http_checkout_fixture_sql::install_extra_shipping_modules();
         http_checkout_fixture_sql::restrict_flat_shipping_to_non_fixture_geo_zone();
 
@@ -90,8 +87,7 @@ final class checkout_shipping_modules_test extends http_test_case
         $this->assertStringContainsString('Per Item', $shipping_html);
     }
 
-    public function test_free_shipping_zeroes_shipping_on_confirmation(): void
-    {
+    public function test_free_shipping_zeroes_shipping_on_confirmation(): void {
         http_checkout_fixture_sql::enable_free_shipping_over_one_dollar();
 
         $this->login_fixture_customer();

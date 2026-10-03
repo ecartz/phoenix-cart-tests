@@ -11,20 +11,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_geo_zone_cod_test extends http_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::restrict_cod_to_non_fixture_geo_zone();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_checkout_fixture_sql::restore_cod_geo_zone();
         parent::tearDown();
     }
 
-    public function test_cod_hidden_when_delivery_address_outside_payment_zone(): void
-    {
+    public function test_cod_hidden_when_delivery_address_outside_payment_zone(): void {
         $this->login_fixture_customer();
 
         $this->get_http()->request('GET', '/index.php', [

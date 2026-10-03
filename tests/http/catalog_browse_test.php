@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class catalog_browse_test extends http_test_case
 {
-    public function test_search_specials_new_testimonials_and_manufacturer_listing(): void
-    {
+    public function test_search_specials_new_testimonials_and_manufacturer_listing(): void {
         $search = $this->get_http()->request('GET', '/advanced_search_result.php', [
             'query' => [
                 'keywords' => 'Oranges',

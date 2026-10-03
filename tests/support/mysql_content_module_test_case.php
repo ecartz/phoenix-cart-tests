@@ -14,8 +14,7 @@ use Template;
  */
 abstract class mysql_content_module_test_case extends mysql_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->define_constants([
@@ -30,8 +29,7 @@ abstract class mysql_content_module_test_case extends mysql_test_case
     /**
      * @param array<string, mixed> $constants
      */
-    protected function define_constants(array $constants): void
-    {
+    protected function define_constants(array $constants): void {
         foreach ($constants as $name => $value) {
             if (!defined($name)) {
                 define($name, $value);
@@ -39,8 +37,7 @@ abstract class mysql_content_module_test_case extends mysql_test_case
         }
     }
 
-    protected function with_linker(string $prefix = 'https://shop.example.com/'): void
-    {
+    protected function with_linker(string $prefix = 'https://shop.example.com/'): void {
         $this->define_constants([
             'HTTP_SERVER' => 'https://shop.example.com',
             'DIR_WS_CATALOG' => '/',
@@ -51,8 +48,7 @@ abstract class mysql_content_module_test_case extends mysql_test_case
         $GLOBALS['Linker'] = new Linker($prefix);
     }
 
-    protected function execute_module(string $class): void
-    {
+    protected function execute_module(string $class): void {
         $previous_directory = getcwd();
         $buffer_level = ob_get_level();
         chdir(DIR_FS_CATALOG);

@@ -18,8 +18,7 @@ final class cm_header_breadcrumb_test extends content_module_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_schema_emits_json_ld_without_product(): void
-    {
+    public function test_execute_schema_emits_json_ld_without_product(): void {
         $this->load_breadcrumb_configuration('Schema');
         $this->with_linker();
 
@@ -50,8 +49,7 @@ final class cm_header_breadcrumb_test extends content_module_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_schema_prepends_product_model_from_mock_query(): void
-    {
+    public function test_execute_schema_prepends_product_model_from_mock_query(): void {
         $this->load_breadcrumb_configuration('Schema');
         $this->with_linker();
 
@@ -78,14 +76,12 @@ final class cm_header_breadcrumb_test extends content_module_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_schema_prepends_category_names_from_stub_tree(): void
-    {
+    public function test_execute_schema_prepends_category_names_from_stub_tree(): void {
         $this->load_breadcrumb_configuration('Schema');
         $this->with_linker();
 
         $GLOBALS['category_tree'] = new class {
-            public function get($category_id, string $key): string
-            {
+            public function get($category_id, string $key): string {
                 return match ((string) $category_id . ':' . $key) {
                     '1:name' => 'Root',
                     '2:name' => 'Child',
@@ -110,14 +106,12 @@ final class cm_header_breadcrumb_test extends content_module_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_schema_prepends_manufacturer_name_from_stub_brand(): void
-    {
+    public function test_execute_schema_prepends_manufacturer_name_from_stub_brand(): void {
         $this->load_breadcrumb_configuration('Schema');
         $this->with_linker();
 
         $GLOBALS['brand'] = new class {
-            public function getData(string $key): string
-            {
+            public function getData(string $key): string {
                 return $key === 'manufacturers_name' ? 'Acme Corp' : '';
             }
         };
@@ -137,8 +131,7 @@ final class cm_header_breadcrumb_test extends content_module_test_case
         );
     }
 
-    private function load_breadcrumb_configuration(string $location): void
-    {
+    private function load_breadcrumb_configuration(string $location): void {
         $rows = [
             [
                 'configuration_key' => 'MODULE_CONTENT_HEADER_BREADCRUMB_STATUS',

@@ -20,8 +20,7 @@ final class template_build_blocks_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_loads_constants_via_mock_database(): void
-    {
+    public function test_build_blocks_loads_constants_via_mock_database(): void {
         if (!defined('BOOTSTRAP_CONTENT')) {
             define('BOOTSTRAP_CONTENT', 8);
         }
@@ -42,8 +41,7 @@ final class template_build_blocks_test extends phoenix_test_case
         $this->assertSame('', TEMPLATE_BLOCK_GROUPS);
     }
 
-    public function test_build_blocks_no_ops_when_block_groups_empty(): void
-    {
+    public function test_build_blocks_no_ops_when_block_groups_empty(): void {
         if (!defined('BOOTSTRAP_CONTENT')) {
             define('BOOTSTRAP_CONTENT', 8);
         }
@@ -60,8 +58,7 @@ final class template_build_blocks_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_enabled_header_tags_module(): void
-    {
+    public function test_build_blocks_executes_enabled_header_tags_module(): void {
         $this->prepare_request_page('login.php');
 
         $rows = [
@@ -112,8 +109,7 @@ final class template_build_blocks_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_skips_disabled_header_tags_module(): void
-    {
+    public function test_build_blocks_skips_disabled_header_tags_module(): void {
         $this->prepare_request_page('login.php');
 
         $rows = [
@@ -151,8 +147,7 @@ final class template_build_blocks_test extends phoenix_test_case
         $this->assertFalse($template->has_blocks('header_tags'));
     }
 
-    private function prepare_request_page(string $page): void
-    {
+    private function prepare_request_page(string $page): void {
         if (!defined('DIR_WS_CATALOG')) {
             define('DIR_WS_CATALOG', '/');
         }

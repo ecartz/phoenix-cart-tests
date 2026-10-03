@@ -12,20 +12,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class http_bootstrap
 {
-    public static function is_enabled(): bool
-    {
+    public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_HTTP_ENABLED');
 
         return $flag !== false && $flag !== '' && $flag !== '0';
     }
 
-    public static function base_url(): string
-    {
+    public static function base_url(): string {
         return rtrim(self::env('PHOENIX_HTTP_BASE_URL', 'http://127.0.0.1:8765'), '/');
     }
 
-    public static function catalog_root(): string
-    {
+    public static function catalog_root(): string {
         if (getenv('PHOENIX_CART_ROOT')) {
             return rtrim((string) getenv('PHOENIX_CART_ROOT'), DIRECTORY_SEPARATOR);
         }
@@ -37,8 +34,7 @@ final class http_bootstrap
         throw new \RuntimeException('PHOENIX_CART_ROOT or DIR_FS_CATALOG required for HTTP tests.');
     }
 
-    public static function write_local_configure(): void
-    {
+    public static function write_local_configure(): void {
         mysql_bootstrap::define_connection_constants();
 
         $base_url = self::base_url();
@@ -83,8 +79,7 @@ PHP;
         }
     }
 
-    public static function client(int $max_redirects = 10): HttpClientInterface
-    {
+    public static function client(int $max_redirects = 10): HttpClientInterface {
         $inner = HttpClient::create([
             'base_uri' => self::base_url(),
             'max_redirects' => 0,
@@ -96,15 +91,13 @@ PHP;
         return new cookie_jar_http_client($inner, $max_redirects);
     }
 
-    private static function env(string $name, string $default): string
-    {
+    private static function env(string $name, string $default): string {
         $value = getenv($name);
 
         return ($value !== false && $value !== '') ? $value : $default;
     }
 
-    private static function escape(string $value): string
-    {
+    private static function escape(string $value): string {
         return addcslashes($value, "'\\");
     }
 }

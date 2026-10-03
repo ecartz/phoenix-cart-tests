@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class default_template_mapping_test extends phoenix_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('BOOTSTRAP_CONTENT')) {
@@ -20,15 +19,13 @@ final class default_template_mapping_test extends phoenix_test_case
     }
 
     #[DataProvider('template_mapping_provider')]
-    public function test_get_template_mapping_for(string $file, string $type, string $expected_suffix): void
-    {
+    public function test_get_template_mapping_for(string $file, string $type, string $expected_suffix): void {
         $result = default_template::_get_template_mapping_for($file, $type);
 
         $this->assertStringEndsWith($expected_suffix, str_replace('\\', '/', $result));
     }
 
-    public static function template_mapping_provider(): array
-    {
+    public static function template_mapping_provider(): array {
         $catalog = DIR_FS_CATALOG;
 
         return [
@@ -70,8 +67,7 @@ final class default_template_mapping_test extends phoenix_test_case
         ];
     }
 
-    public function test_extract_relative_path_strips_catalog_root(): void
-    {
+    public function test_extract_relative_path_strips_catalog_root(): void {
         $relative = 'ext/modules/content/reviews/write.php';
         $base = rtrim(str_replace('\\', '/', DIR_FS_CATALOG), '/') . '/';
         $absolute = $base . $relative;
@@ -82,8 +78,7 @@ final class default_template_mapping_test extends phoenix_test_case
         );
     }
 
-    public function test_get_template_mapping_for_returns_existing_file(): void
-    {
+    public function test_get_template_mapping_for_returns_existing_file(): void {
         $template = new default_template();
 
         $mapping = $template->get_template_mapping_for('index.php', 'page');
@@ -92,8 +87,7 @@ final class default_template_mapping_test extends phoenix_test_case
         $this->assertFileExists($mapping);
     }
 
-    public function test_get_template_mapping_for_returns_null_for_missing_file(): void
-    {
+    public function test_get_template_mapping_for_returns_null_for_missing_file(): void {
         $template = new default_template();
 
         $this->assertNull($template->get_template_mapping_for('does_not_exist.php', 'page'));

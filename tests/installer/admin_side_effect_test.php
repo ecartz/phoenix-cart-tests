@@ -12,15 +12,13 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('installer')]
 final class admin_side_effect_test extends install_test_case
 {
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_version_check_page_renders(): void
-    {
+    public function test_admin_version_check_page_renders(): void {
         $admin_http = $this->login_installed_admin();
         $response = $admin_http->request('GET', '/admin/version_check.php');
         $this->assertSame(200, $response->getStatusCode());
@@ -31,8 +29,7 @@ final class admin_side_effect_test extends install_test_case
         $this->assert_version_check_outcome($body);
     }
 
-    public function test_admin_backup_now_lists_uncompressed_sql(): void
-    {
+    public function test_admin_backup_now_lists_uncompressed_sql(): void {
         $admin_http = $this->login_installed_admin();
 
         $backup_form_page = $admin_http->request('GET', '/admin/backup.php', [
@@ -59,14 +56,12 @@ final class admin_side_effect_test extends install_test_case
         $this->assertStringContainsString('.sql', $list_html);
     }
 
-    public function test_admin_mail_compose_page_renders(): void
-    {
+    public function test_admin_mail_compose_page_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/mail.php', [], 'Send Email To Customers');
     }
 
-    public function test_admin_backup_manager_page_renders(): void
-    {
+    public function test_admin_backup_manager_page_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -76,8 +71,7 @@ final class admin_side_effect_test extends install_test_case
         );
     }
 
-    public function test_admin_command_runner_help_lists_commands(): void
-    {
+    public function test_admin_command_runner_help_lists_commands(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -87,8 +81,7 @@ final class admin_side_effect_test extends install_test_case
         );
     }
 
-    private function assert_version_check_outcome(string $body): void
-    {
+    private function assert_version_check_outcome(string $body): void {
         $outcomes = [
             'You are running the latest version of Phoenix.',
             'is the latest version available.',

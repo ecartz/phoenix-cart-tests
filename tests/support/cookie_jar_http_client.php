@@ -22,8 +22,7 @@ final class cookie_jar_http_client implements HttpClientInterface
     ) {
     }
 
-    public function request(string $method, string $url, array $options = []): ResponseInterface
-    {
+    public function request(string $method, string $url, array $options = []): ResponseInterface {
         $redirects_remaining = $this->max_redirects;
         $current_method = $method;
         $current_url = $url;
@@ -59,21 +58,18 @@ final class cookie_jar_http_client implements HttpClientInterface
         }
     }
 
-    public function stream(iterable|ResponseInterface $responses, ?float $timeout = null): ResponseStreamInterface
-    {
+    public function stream(iterable|ResponseInterface $responses, ?float $timeout = null): ResponseStreamInterface {
         return $this->client->stream($responses, $timeout);
     }
 
-    public function withOptions(array $options): static
-    {
+    public function withOptions(array $options): static {
         $clone = new self($this->client->withOptions($options), $this->max_redirects);
         $clone->cookies = $this->cookies;
 
         return $clone;
     }
 
-    public function with_max_redirects(int $max_redirects): self
-    {
+    public function with_max_redirects(int $max_redirects): self {
         $clone = new self($this->client, $max_redirects);
         $clone->cookies = $this->cookies;
 
@@ -83,8 +79,7 @@ final class cookie_jar_http_client implements HttpClientInterface
     /**
      * @param array<string, list<string>> $headers
      */
-    private function absorb_cookies(array $headers): void
-    {
+    private function absorb_cookies(array $headers): void {
         foreach ($headers['set-cookie'] ?? [] as $line) {
             $pair = explode(';', $line, 2)[0];
             $name_value = explode('=', trim($pair), 2);
@@ -94,8 +89,7 @@ final class cookie_jar_http_client implements HttpClientInterface
         }
     }
 
-    private function format_cookie_header(): string
-    {
+    private function format_cookie_header(): string {
         $parts = [];
         foreach ($this->cookies as $name => $value) {
             $parts[] = $name . '=' . $value;

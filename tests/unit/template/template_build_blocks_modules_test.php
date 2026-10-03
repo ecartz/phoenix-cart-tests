@@ -22,8 +22,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_table_click_jquery(): void
-    {
+    public function test_build_blocks_executes_table_click_jquery(): void {
         $this->prepare_request_page('checkout_payment.php');
 
         $rows = $this->header_tags_rows('ht_table_click_jquery.php', [
@@ -47,8 +46,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_canonical_for_index(): void
-    {
+    public function test_build_blocks_executes_canonical_for_index(): void {
         $this->prepare_request_page('index.php');
         $this->with_linker_and_hooks();
 
@@ -75,8 +73,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_pages_seo_with_stub_page(): void
-    {
+    public function test_build_blocks_executes_pages_seo_with_stub_page(): void {
         $this->prepare_request_page('info.php');
         $this->with_linker_and_hooks();
 
@@ -111,8 +108,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_category_title_with_stub_tree(): void
-    {
+    public function test_build_blocks_executes_category_title_with_stub_tree(): void {
         $this->prepare_request_page('index.php');
         $this->with_linker_and_hooks();
 
@@ -130,8 +126,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 
         $GLOBALS['current_category_id'] = 5;
         $GLOBALS['category_tree'] = new class {
-            public function get($id, string $key): string
-            {
+            public function get($id, string $key): string {
                 return $key === 'name' ? 'Gadgets' : '';
             }
         };
@@ -146,8 +141,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_build_blocks_executes_bm_home_box(): void
-    {
+    public function test_build_blocks_executes_bm_home_box(): void {
         $this->with_linker_and_hooks();
 
         $rows = [
@@ -200,8 +194,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
      *
      * @return list<array{configuration_key: string, configuration_value: string}>
      */
-    private function header_tags_rows(string $installed, array $module_constants): array
-    {
+    private function header_tags_rows(string $installed, array $module_constants): array {
         $rows = [
             [
                 'configuration_key' => 'TEMPLATE_BLOCK_GROUPS',
@@ -223,8 +216,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
         return $rows;
     }
 
-    private function with_linker_and_hooks(): void
-    {
+    private function with_linker_and_hooks(): void {
         $this->define_if_missing('HTTP_SERVER', 'https://shop.example.com');
         $this->define_if_missing('DIR_WS_CATALOG', '/');
         $this->define_if_missing('SESSION_FORCE_COOKIE_USE', 'False');
@@ -235,8 +227,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
         $GLOBALS['all_hooks'] = $GLOBALS['hooks'];
     }
 
-    private function prepare_request_page(string $page): void
-    {
+    private function prepare_request_page(string $page): void {
         $this->define_if_missing('DIR_WS_CATALOG', '/');
         $_SERVER['SCRIPT_NAME'] = '/' . $page;
 
@@ -246,8 +237,7 @@ final class template_build_blocks_modules_test extends phoenix_test_case
         $property->setValue(null, null);
     }
 
-    private function define_if_missing(string $name, mixed $value): void
-    {
+    private function define_if_missing(string $name, mixed $value): void {
         if (!defined($name)) {
             define($name, $value);
         }

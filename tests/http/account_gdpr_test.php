@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class account_gdpr_test extends http_test_case
 {
-    public function test_logged_in_customer_sees_account_and_gdpr_pages(): void
-    {
+    public function test_logged_in_customer_sees_account_and_gdpr_pages(): void {
         $this->login_fixture_customer();
 
         $account = $this->get_http()->request('GET', '/account.php');

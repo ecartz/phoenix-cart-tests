@@ -13,14 +13,12 @@ final class password_reset_test extends http_test_case
 {
     private const RESET_PASSWORD = 'phoenix-reset-test';
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
         parent::tearDown();
     }
 
-    public function test_password_forgotten_flow_resets_fixture_password(): void
-    {
+    public function test_password_forgotten_flow_resets_fixture_password(): void {
         $this->get_http()->request('GET', '/');
 
         $forgot_page = $this->get_http()->request('GET', '/password_forgotten.php');
@@ -67,8 +65,7 @@ final class password_reset_test extends http_test_case
         $this->login_with_password(self::RESET_PASSWORD);
     }
 
-    private function login_with_password(string $password): void
-    {
+    private function login_with_password(string $password): void {
         $login_page = $this->get_http()->request('GET', '/login.php');
         $formid = self::parse_hidden_input($login_page->getContent(false), 'formid');
         $this->assertNotSame('', $formid);

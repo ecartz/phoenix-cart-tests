@@ -14,13 +14,11 @@ final class url_query_test extends phoenix_test_case
      * @param array<string, mixed> $expected
      */
     #[DataProvider('parse_provider')]
-    public function test_parse(string $query, array $expected): void
-    {
+    public function test_parse(string $query, array $expected): void {
         $this->assertSame($expected, url_query::parse($query));
     }
 
-    public static function parse_provider(): array
-    {
+    public static function parse_provider(): array {
         return [
             'empty query' => ['', []],
             'single parameter' => ['foo=bar', ['foo' => 'bar']],

@@ -12,8 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class template_content_test extends phoenix_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('BOOTSTRAP_CONTENT')) {
@@ -27,8 +26,7 @@ final class template_content_test extends phoenix_test_case
         $GLOBALS['all_hooks'] = new hooks('shop');
     }
 
-    private function create_template(): Template
-    {
+    private function create_template(): Template {
         return new Template(new default_template());
     }
 
@@ -36,8 +34,7 @@ final class template_content_test extends phoenix_test_case
      * @param list<string> $chunks
      */
     #[DataProvider('content_provider')]
-    public function test_content_helpers(array $chunks, string $group, bool $has_content, ?string $expected_output): void
-    {
+    public function test_content_helpers(array $chunks, string $group, bool $has_content, ?string $expected_output): void {
         $template = $this->create_template();
 
         foreach ($chunks as $chunk) {
@@ -53,8 +50,7 @@ final class template_content_test extends phoenix_test_case
         }
     }
 
-    public static function content_provider(): array
-    {
+    public static function content_provider(): array {
         return [
             'empty group has no content' => [[], 'unused_group', false, null],
             'single chunk returned as string' => [['<p>hello</p>'], 'body', true, '<p>hello</p>'],
@@ -62,8 +58,7 @@ final class template_content_test extends phoenix_test_case
         ];
     }
 
-    public function test_has_content_is_false_for_unknown_group(): void
-    {
+    public function test_has_content_is_false_for_unknown_group(): void {
         $template = $this->create_template();
 
         $this->assertFalse($template->has_content('unknown'));

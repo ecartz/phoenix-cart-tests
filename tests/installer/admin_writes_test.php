@@ -21,15 +21,13 @@ final class admin_writes_test extends install_test_case
 
     private const ADDRESS_BOOK_MAX_CHANGED = '6';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_reviews_toggles_status(): void
-    {
+    public function test_admin_reviews_toggles_status(): void {
         $admin_http = $this->login_installed_admin();
         $reviews_html = $this->fetch_reviews_list($admin_http);
         $this->assertStringContainsString('John Doe', $reviews_html);
@@ -58,8 +56,7 @@ final class admin_writes_test extends install_test_case
         $this->assertStringContainsString('fa-check-circle text-success', $after_enable);
     }
 
-    public function test_admin_newsletter_draft_insert_and_delete(): void
-    {
+    public function test_admin_newsletter_draft_insert_and_delete(): void {
         $admin_http = $this->login_installed_admin();
 
         $new_page = $admin_http->request('GET', '/admin/newsletters.php', [
@@ -110,8 +107,7 @@ final class admin_writes_test extends install_test_case
         $this->assertStringNotContainsString(self::NEWSLETTER_TITLE, $list_after_delete);
     }
 
-    public function test_admin_boxes_module_install_and_remove(): void
-    {
+    public function test_admin_boxes_module_install_and_remove(): void {
         $admin_http = $this->login_installed_admin();
 
         $new_modules = $admin_http->request('GET', '/admin/modules.php', [
@@ -176,8 +172,7 @@ final class admin_writes_test extends install_test_case
         $this->assertStringNotContainsString('bm_categories', $after_remove->getContent(false));
     }
 
-    public function test_admin_max_address_book_entries_configuration_round_trip(): void
-    {
+    public function test_admin_max_address_book_entries_configuration_round_trip(): void {
         $admin_http = $this->login_installed_admin();
         $configuration_id = $this->resolve_address_book_max_configuration_id($admin_http);
         $this->assertNotSame('', $configuration_id);
@@ -209,24 +204,21 @@ final class admin_writes_test extends install_test_case
         );
     }
 
-    private function fetch_reviews_list(HttpClientInterface $admin_http): string
-    {
+    private function fetch_reviews_list(HttpClientInterface $admin_http): string {
         $response = $admin_http->request('GET', '/admin/reviews.php');
         $this->assertSame(200, $response->getStatusCode());
 
         return $response->getContent(false);
     }
 
-    private function fetch_newsletters_list(HttpClientInterface $admin_http): string
-    {
+    private function fetch_newsletters_list(HttpClientInterface $admin_http): string {
         $response = $admin_http->request('GET', '/admin/newsletters.php');
         $this->assertSame(200, $response->getStatusCode());
 
         return $response->getContent(false);
     }
 
-    private function parse_newsletter_id_from_list(string $html, string $title): string
-    {
+    private function parse_newsletter_id_from_list(string $html, string $title): string {
         if (!str_contains($html, $title)) {
             $this->fail('newsletters.php list did not contain the draft title');
         }
@@ -238,8 +230,7 @@ final class admin_writes_test extends install_test_case
         $this->fail('newsletters.php did not expose nID for the draft newsletter');
     }
 
-    private function resolve_address_book_max_configuration_id(HttpClientInterface $admin_http): string
-    {
+    private function resolve_address_book_max_configuration_id(HttpClientInterface $admin_http): string {
         $list = $admin_http->request('GET', '/admin/configuration.php', [
             'query' => ['gID' => '3'],
         ]);
@@ -309,8 +300,7 @@ final class admin_writes_test extends install_test_case
         $this->assertContains($save->getStatusCode(), [200, 302]);
     }
 
-    private function extract_set_flag_href(string $html, string $flag): string
-    {
+    private function extract_set_flag_href(string $html, string $flag): string {
         $pattern = '/href="([^"]*action=set_flag[^"]*flag=' . preg_quote($flag, '/') . '[^"]*)"/';
         if (preg_match($pattern, $html, $matches) !== 1) {
             return '';
@@ -322,8 +312,7 @@ final class admin_writes_test extends install_test_case
     /**
      * @return array<string, string>
      */
-    private function admin_query_from_href(string $href): array
-    {
+    private function admin_query_from_href(string $href): array {
         $query_string = parse_url($href, PHP_URL_QUERY);
         if (!is_string($query_string) || $query_string === '') {
             return [];
@@ -335,8 +324,7 @@ final class admin_writes_test extends install_test_case
         return array_map(static fn ($item) => (string) $item, $query);
     }
 
-    private function admin_path_from_href(string $href): string
-    {
+    private function admin_path_from_href(string $href): string {
         $path = parse_url($href, PHP_URL_PATH);
         if (is_string($path) && str_starts_with($path, '/admin/')) {
             return $path;

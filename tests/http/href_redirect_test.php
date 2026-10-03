@@ -12,8 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class href_redirect_test extends http_test_case
 {
     #[DataProvider('info_page_redirect_provider')]
-    public function test_unpublished_or_missing_info_page_redirects_to_index(string $pages_id): void
-    {
+    public function test_unpublished_or_missing_info_page_redirects_to_index(string $pages_id): void {
         $http = $this->get_http_without_redirects();
 
         $response = $http->request('GET', '/info.php', [
@@ -28,16 +27,14 @@ final class href_redirect_test extends http_test_case
         $this->assertStringContainsString('index.php', $location);
     }
 
-    public static function info_page_redirect_provider(): array
-    {
+    public static function info_page_redirect_provider(): array {
         return [
             'unpublished ssl_check page' => ['4'],
             'missing pages_id' => ['999'],
         ];
     }
 
-    public function test_product_info_without_products_id_redirects_to_index(): void
-    {
+    public function test_product_info_without_products_id_redirects_to_index(): void {
         $http = $this->get_http_without_redirects();
 
         $response = $http->request('GET', '/product_info.php');
@@ -48,8 +45,7 @@ final class href_redirect_test extends http_test_case
         $this->assertStringContainsString('index.php', $location);
     }
 
-    public function test_buy_now_redirects_to_shopping_cart_when_display_cart_enabled(): void
-    {
+    public function test_buy_now_redirects_to_shopping_cart_when_display_cart_enabled(): void {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');
 

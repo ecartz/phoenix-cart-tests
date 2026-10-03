@@ -9,8 +9,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_footer_information_links_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->with_linker();
@@ -25,8 +24,7 @@ final class cm_footer_information_links_test extends content_module_test_case
         ]);
     }
 
-    public function test_execute_buffers_information_links_into_footer_group(): void
-    {
+    public function test_execute_buffers_information_links_into_footer_group(): void {
         $this->execute_module(cm_footer_information_links::class);
 
         $content = $this->buffered_content('footer');

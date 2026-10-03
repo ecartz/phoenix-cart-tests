@@ -23,8 +23,7 @@ final class http_local_redirect_bootstrap
 
     private static ?string $saved_installed = null;
 
-    public static function install_fixture_module(): void
-    {
+    public static function install_fixture_module(): void {
         $repo_root = dirname(__DIR__, 2);
         $module_source = $repo_root . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'http'
             . DIRECTORY_SEPARATOR . self::MODULE_FILENAME;
@@ -82,8 +81,7 @@ final class http_local_redirect_bootstrap
         $mysqli->close();
     }
 
-    public static function remove_fixture_module(): void
-    {
+    public static function remove_fixture_module(): void {
         $payment_dir = http_bootstrap::catalog_root() . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR
             . 'modules' . DIRECTORY_SEPARATOR . 'payment';
         $lang_dir = http_bootstrap::catalog_root() . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR
@@ -107,8 +105,7 @@ final class http_local_redirect_bootstrap
         self::$saved_installed = null;
     }
 
-    private static function append_module(string $installed_list): string
-    {
+    private static function append_module(string $installed_list): string {
         $modules = array_filter(array_map('trim', explode(';', $installed_list)));
 
         if (!in_array(self::MODULE_FILENAME, $modules, true)) {
@@ -118,13 +115,11 @@ final class http_local_redirect_bootstrap
         return implode(';', $modules);
     }
 
-    public static function ext_return_path(): string
-    {
+    public static function ext_return_path(): string {
         return '/ext/modules/payment/' . self::MODULE_CODE . '/' . self::RETURN_SCRIPT_FILENAME;
     }
 
-    private static function remove_catalog_files(string $payment_dir, string $lang_dir, ?string $ext_dir = null): void
-    {
+    private static function remove_catalog_files(string $payment_dir, string $lang_dir, ?string $ext_dir = null): void {
         $module_path = $payment_dir . DIRECTORY_SEPARATOR . self::MODULE_FILENAME;
         if (is_file($module_path)) {
             @unlink($module_path);
@@ -146,8 +141,7 @@ final class http_local_redirect_bootstrap
         }
     }
 
-    private static function connect(): \mysqli
-    {
+    private static function connect(): \mysqli {
         $mysqli = new \mysqli(
             (string) DB_SERVER,
             (string) DB_SERVER_USERNAME,
@@ -164,8 +158,7 @@ final class http_local_redirect_bootstrap
         return $mysqli;
     }
 
-    private static function fetch_configuration_value_via(\mysqli $mysqli, string $configuration_key): ?string
-    {
+    private static function fetch_configuration_value_via(\mysqli $mysqli, string $configuration_key): ?string {
         $statement = $mysqli->prepare(
             'SELECT configuration_value FROM configuration WHERE configuration_key = ? LIMIT 1'
         );

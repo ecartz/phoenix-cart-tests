@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class search_test extends phoenix_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('ADVANCED_SEARCH_DEFAULT_OPERATOR')) {
@@ -23,13 +22,11 @@ final class search_test extends phoenix_test_case
      * @param list<string>|null $expected
      */
     #[DataProvider('build_provider')]
-    public function test_build(string $input, ?array $expected): void
-    {
+    public function test_build(string $input, ?array $expected): void {
         $this->assertSame($expected, Search::build($input));
     }
 
-    public static function build_provider(): array
-    {
+    public static function build_provider(): array {
         return [
             'two terms gain default and operator' => [
                 'alpha beta',
@@ -62,13 +59,11 @@ final class search_test extends phoenix_test_case
      * @param list<string> $tokens
      */
     #[DataProvider('balanced_provider')]
-    public function test_is_balanced(array $tokens, bool $expected): void
-    {
+    public function test_is_balanced(array $tokens, bool $expected): void {
         $this->assertSame($expected, Search::is_balanced($tokens));
     }
 
-    public static function balanced_provider(): array
-    {
+    public static function balanced_provider(): array {
         return [
             'valid search tokens' => [['term', 'and', 'other'], true],
             'balanced parentheses' => [['(', 'alpha', 'and', 'beta', ')'], true],

@@ -10,8 +10,7 @@ use PhoenixCart\Tests\support\content_module_test_case;
 
 final class cm_header_messagestack_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->define_constants([
@@ -21,8 +20,7 @@ final class cm_header_messagestack_test extends content_module_test_case
         ]);
     }
 
-    public function test_execute_buffers_header_messages_when_stack_has_entries(): void
-    {
+    public function test_execute_buffers_header_messages_when_stack_has_entries(): void {
         $stack = new messageStack();
         $stack->add('header', 'Checkout notice', 'warning');
         $GLOBALS['messageStack'] = $stack;
@@ -35,8 +33,7 @@ final class cm_header_messagestack_test extends content_module_test_case
         $this->assertStringContainsString('cm-header-messagestack', $content);
     }
 
-    public function test_execute_skips_buffering_when_header_stack_empty(): void
-    {
+    public function test_execute_skips_buffering_when_header_stack_empty(): void {
         $GLOBALS['messageStack'] = new messageStack();
 
         $this->execute_module(cm_header_messagestack::class);

@@ -9,15 +9,13 @@ namespace PhoenixCart\Tests\support;
  */
 final class installer_mail_capture
 {
-    public static function is_enabled(): bool
-    {
+    public static function is_enabled(): bool {
         $flag = getenv('PHOENIX_INSTALLER_MAIL_CAPTURE');
 
         return $flag !== false && $flag !== '' && $flag !== '0';
     }
 
-    public static function directory(): string
-    {
+    public static function directory(): string {
         $configured = getenv('PHOENIX_INSTALLER_MAIL_DIR');
         if (is_string($configured) && $configured !== '') {
             return rtrim(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $configured), DIRECTORY_SEPARATOR);
@@ -26,8 +24,7 @@ final class installer_mail_capture
         return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'working' . DIRECTORY_SEPARATOR . 'installer-mail';
     }
 
-    public static function clear(): void
-    {
+    public static function clear(): void {
         $directory = self::directory();
         if (!is_dir($directory)) {
             return;
@@ -40,8 +37,7 @@ final class installer_mail_capture
         }
     }
 
-    public static function read_combined(): string
-    {
+    public static function read_combined(): string {
         $directory = self::directory();
         if (!is_dir($directory)) {
             return '';

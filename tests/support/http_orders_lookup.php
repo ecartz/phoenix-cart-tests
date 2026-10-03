@@ -9,8 +9,7 @@ namespace PhoenixCart\Tests\support;
  */
 final class http_orders_lookup
 {
-    public static function latest_payment_method_for_email(string $customers_email_address): ?string
-    {
+    public static function latest_payment_method_for_email(string $customers_email_address): ?string {
         mysql_bootstrap::define_connection_constants();
 
         $mysqli = self::connect();
@@ -38,8 +37,7 @@ final class http_orders_lookup
         return (string) $row['payment_method'];
     }
 
-    public static function max_orders_id_for_email(string $customers_email_address): int
-    {
+    public static function max_orders_id_for_email(string $customers_email_address): int {
         mysql_bootstrap::define_connection_constants();
 
         $mysqli = self::connect();
@@ -67,13 +65,11 @@ final class http_orders_lookup
         return (int) $row['max_id'];
     }
 
-    public static function latest_orders_id_for_email(string $customers_email_address): int
-    {
+    public static function latest_orders_id_for_email(string $customers_email_address): int {
         return self::max_orders_id_for_email($customers_email_address);
     }
 
-    public static function orders_status_history_comment_for_order(int $orders_id): ?string
-    {
+    public static function orders_status_history_comment_for_order(int $orders_id): ?string {
         if ($orders_id <= 0) {
             return null;
         }
@@ -109,8 +105,7 @@ final class http_orders_lookup
     /**
      * @return array{title: string, text: string, value: float}|null
      */
-    public static function ot_tax_row_for_order(int $orders_id): ?array
-    {
+    public static function ot_tax_row_for_order(int $orders_id): ?array {
         if ($orders_id <= 0) {
             return null;
         }
@@ -146,8 +141,7 @@ final class http_orders_lookup
         ];
     }
 
-    public static function orders_products_download_id_for_order(int $orders_id): ?int
-    {
+    public static function orders_products_download_id_for_order(int $orders_id): ?int {
         if ($orders_id <= 0) {
             return null;
         }
@@ -178,8 +172,7 @@ final class http_orders_lookup
         return (int) $row['orders_products_download_id'];
     }
 
-    public static function set_order_status(int $orders_id, int $orders_status_id): void
-    {
+    public static function set_order_status(int $orders_id, int $orders_status_id): void {
         if ($orders_id <= 0) {
             return;
         }
@@ -199,8 +192,7 @@ final class http_orders_lookup
         $mysqli->close();
     }
 
-    private static function connect(): \mysqli
-    {
+    private static function connect(): \mysqli {
         $mysqli = new \mysqli(
             (string) DB_SERVER,
             (string) DB_SERVER_USERNAME,

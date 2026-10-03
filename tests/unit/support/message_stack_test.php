@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class message_stack_test extends phoenix_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('IMAGE_BUTTON_CLOSE')) {
@@ -19,8 +18,7 @@ final class message_stack_test extends phoenix_test_case
         }
     }
 
-    public function test_add_and_size_filter_by_class(): void
-    {
+    public function test_add_and_size_filter_by_class(): void {
         $stack = new messageStack();
         $stack->add('general', 'First error', 'error');
         $stack->add('checkout', 'Checkout warning', 'warning');
@@ -31,8 +29,7 @@ final class message_stack_test extends phoenix_test_case
     }
 
     #[DataProvider('alert_type_provider')]
-    public function test_output_includes_alert_class_for_type(string $type, string $expected_class): void
-    {
+    public function test_output_includes_alert_class_for_type(string $type, string $expected_class): void {
         $stack = new messageStack();
         $stack->add('banner', 'Notice text', $type);
 
@@ -43,8 +40,7 @@ final class message_stack_test extends phoenix_test_case
         $this->assertStringContainsString('aria-label="Close"', $output);
     }
 
-    public static function alert_type_provider(): array
-    {
+    public static function alert_type_provider(): array {
         return [
             'error' => ['error', 'alert-danger'],
             'warning' => ['warning', 'alert-warning'],
@@ -53,8 +49,7 @@ final class message_stack_test extends phoenix_test_case
         ];
     }
 
-    public function test_reset_clears_messages(): void
-    {
+    public function test_reset_clears_messages(): void {
         $stack = new messageStack();
         $stack->add('general', 'Temporary', 'error');
         $stack->reset();
@@ -62,8 +57,7 @@ final class message_stack_test extends phoenix_test_case
         $this->assertSame(0, $stack->size('general'));
     }
 
-    public function test_add_classed_delegates_to_add(): void
-    {
+    public function test_add_classed_delegates_to_add(): void {
         $stack = new messageStack();
         $stack->add_classed('account', 'Saved', 'success');
 
@@ -71,8 +65,7 @@ final class message_stack_test extends phoenix_test_case
         $this->assertStringContainsString('alert-success', $stack->output('account'));
     }
 
-    public function test_add_session_stores_messages_for_next_request(): void
-    {
+    public function test_add_session_stores_messages_for_next_request(): void {
         unset($_SESSION['messageToStack']);
 
         $stack = new messageStack();
@@ -91,8 +84,7 @@ final class message_stack_test extends phoenix_test_case
         $this->assertSame(0, $stack->size('checkout'));
     }
 
-    public function test_constructor_restores_and_clears_session_messages(): void
-    {
+    public function test_constructor_restores_and_clears_session_messages(): void {
         $_SESSION['messageToStack'] = [
             [
                 'class' => 'general',

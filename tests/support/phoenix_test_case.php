@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class phoenix_test_case extends TestCase
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('PHOENIX_TEST_RUNNING')) {

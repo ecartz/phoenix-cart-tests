@@ -16,8 +16,7 @@ final class read_configuration_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_read_configuration_defines_keys_from_mock_database(): void
-    {
+    public function test_read_configuration_defines_keys_from_mock_database(): void {
         $rows = [
             [
                 'configuration_key' => 'MODULE_CONTENT_INSTALLED',
@@ -37,8 +36,7 @@ final class read_configuration_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_load_skips_constants_already_defined_in_process(): void
-    {
+    public function test_load_skips_constants_already_defined_in_process(): void {
         define('STORE_NAME', 'Acme Shop');
 
         $rows = [

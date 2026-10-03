@@ -11,13 +11,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class old_password_test extends phoenix_test_case
 {
     #[DataProvider('validate_provider')]
-    public function test_validate(string $plain, string $encrypted, bool $expected): void
-    {
+    public function test_validate(string $plain, string $encrypted, bool $expected): void {
         $this->assertSame($expected, old_password::validate($plain, $encrypted));
     }
 
-    public static function validate_provider(): array
-    {
+    public static function validate_provider(): array {
         $salt = 'test-salt';
         $plain = 'secret';
         $valid = md5($salt . $plain) . ':' . $salt;

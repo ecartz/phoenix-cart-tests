@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 final class cm_i_title_test extends content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->define_constants([
@@ -25,8 +24,7 @@ final class cm_i_title_test extends content_module_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_buffers_store_welcome_into_index_group(): void
-    {
+    public function test_execute_buffers_store_welcome_into_index_group(): void {
         $this->execute_module(cm_i_title::class);
 
         $content = $this->buffered_content('index');

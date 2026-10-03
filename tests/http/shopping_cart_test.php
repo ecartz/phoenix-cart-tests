@@ -11,8 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class shopping_cart_test extends http_test_case
 {
-    public function test_buy_now_adds_sample_oranges_and_shows_cart(): void
-    {
+    public function test_buy_now_adds_sample_oranges_and_shows_cart(): void {
         // Establish PHP session cookie (required by parse_actions.php).
         $this->get_http()->request('GET', '/');
 
@@ -33,8 +32,7 @@ final class shopping_cart_test extends http_test_case
         $this->assertStringContainsString('>Oranges</a>', $body);
     }
 
-    public function test_shopping_cart_lists_line_after_buy_now_action(): void
-    {
+    public function test_shopping_cart_lists_line_after_buy_now_action(): void {
         $this->get_http()->request('GET', '/');
 
         $this->get_http()->request('GET', '/index.php', [
@@ -52,8 +50,7 @@ final class shopping_cart_test extends http_test_case
         $this->assertStringContainsString('>Pears</a>', $body);
     }
 
-    public function test_cart_quantity_update_and_line_removal(): void
-    {
+    public function test_cart_quantity_update_and_line_removal(): void {
         $this->get_http()->request('GET', '/');
 
         $this->get_http()->request('GET', '/index.php', [
@@ -99,8 +96,7 @@ final class shopping_cart_test extends http_test_case
         $this->assertStringNotContainsString('>Oranges</a>', $removed_body);
     }
 
-    public function test_cart_lists_non_download_product_attribute(): void
-    {
+    public function test_cart_lists_non_download_product_attribute(): void {
         http_checkout_fixture_sql::insert_cart_attribute_for_pears();
 
         try {

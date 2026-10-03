@@ -12,8 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('mysql')]
 final class cm_header_breadcrumb_test extends mysql_content_module_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $_SESSION['languages_id'] = 1;
@@ -30,15 +29,13 @@ final class cm_header_breadcrumb_test extends mysql_content_module_test_case
         $_GET['products_id'] = '1';
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         unset($_GET['products_id'], $GLOBALS['breadcrumb']);
 
         parent::tearDown();
     }
 
-    public function test_execute_schema_prepends_sample_product_model_from_database(): void
-    {
+    public function test_execute_schema_prepends_sample_product_model_from_database(): void {
         $this->assertTrue(defined('MODULE_CONTENT_HEADER_BREADCRUMB_STATUS'));
         $this->assertSame('True', MODULE_CONTENT_HEADER_BREADCRUMB_STATUS);
         $this->assertSame('Schema', MODULE_CONTENT_HEADER_BREADCRUMB_LOCATION);

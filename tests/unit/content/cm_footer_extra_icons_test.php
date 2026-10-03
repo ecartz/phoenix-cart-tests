@@ -13,8 +13,7 @@ final class cm_footer_extra_icons_test extends content_module_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_uses_raw_text_when_icons_text_defined(): void
-    {
+    public function test_execute_uses_raw_text_when_icons_text_defined(): void {
         $this->define_constants([
             'MODULE_CONTENT_FOOTER_EXTRA_ICONS_STATUS' => 'True',
             'MODULE_CONTENT_FOOTER_EXTRA_ICONS_CONTENT_WIDTH' => 'col-sm-6',
@@ -33,8 +32,7 @@ final class cm_footer_extra_icons_test extends content_module_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_execute_renders_icon_classes_from_display_list(): void
-    {
+    public function test_execute_renders_icon_classes_from_display_list(): void {
         $this->define_constants([
             'MODULE_CONTENT_FOOTER_EXTRA_ICONS_STATUS' => 'True',
             'MODULE_CONTENT_FOOTER_EXTRA_ICONS_CONTENT_WIDTH' => 'col-sm-6',

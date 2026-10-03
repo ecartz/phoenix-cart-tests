@@ -16,8 +16,7 @@ final class tax_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_classes_returns_seeded_tax_classes(): void
-    {
+    public function test_fetch_classes_returns_seeded_tax_classes(): void {
         $classes = [
             ['id' => '1', 'text' => 'Taxable Goods'],
             ['id' => '2', 'text' => 'Shipping'],
@@ -30,8 +29,7 @@ final class tax_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_get_class_title_reads_from_query_result(): void
-    {
+    public function test_get_class_title_reads_from_query_result(): void {
         (new mock_catalog_database([], [
             'tax_class' => [
                 ['tax_class_title' => 'Standard'],
@@ -43,8 +41,7 @@ final class tax_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_get_class_title_returns_none_for_zero(): void
-    {
+    public function test_get_class_title_returns_none_for_zero(): void {
         if (!defined('TEXT_NONE')) {
             define('TEXT_NONE', 'None');
         }

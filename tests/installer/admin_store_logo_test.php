@@ -17,15 +17,13 @@ final class admin_store_logo_test extends install_test_case
 
     private const FIXTURE_LOGO = 'fixtures/installer-store-logo-test.png';
 
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_store_logo_upload_and_restore(): void
-    {
+    public function test_admin_store_logo_upload_and_restore(): void {
         $fixture_path = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, self::FIXTURE_LOGO);
         $this->assertFileExists($fixture_path);
 
@@ -88,8 +86,7 @@ final class admin_store_logo_test extends install_test_case
         @unlink($backup_path);
     }
 
-    private function fetch_store_logo_filename(): string
-    {
+    private function fetch_store_logo_filename(): string {
         $mysqli = new \mysqli(
             installer_bootstrap::db_host(),
             installer_bootstrap::db_user(),
@@ -127,13 +124,11 @@ final class admin_store_logo_test extends install_test_case
         return (string) $row['configuration_value'];
     }
 
-    private function store_logo_image_path(string $catalog_root, string $filename): string
-    {
+    private function store_logo_image_path(string $catalog_root, string $filename): string {
         return $catalog_root . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . $filename;
     }
 
-    private function store_logo_backup_path(string $original_filename): string
-    {
+    private function store_logo_backup_path(string $original_filename): string {
         $repo_root = dirname(__DIR__, 2);
 
         return $repo_root . DIRECTORY_SEPARATOR . 'working' . DIRECTORY_SEPARATOR . 'installer-store-logo-backup'

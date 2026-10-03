@@ -12,21 +12,18 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('installer')]
 final class admin_outgoing_test extends install_test_case
 {
-    public static function setUpBeforeClass(): void
-    {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_outgoing_queue_renders(): void
-    {
+    public function test_admin_outgoing_queue_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page($admin_http, '/admin/outgoing.php', [], 'Outgoing Queue');
     }
 
-    public function test_admin_outgoing_email_templates_renders(): void
-    {
+    public function test_admin_outgoing_email_templates_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -36,8 +33,7 @@ final class admin_outgoing_test extends install_test_case
         );
     }
 
-    public function test_admin_layout_modules_list_renders(): void
-    {
+    public function test_admin_layout_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,
@@ -47,8 +43,7 @@ final class admin_outgoing_test extends install_test_case
         );
     }
 
-    public function test_admin_update_currency_modules_list_renders(): void
-    {
+    public function test_admin_update_currency_modules_list_renders(): void {
         $admin_http = $this->login_installed_admin();
         $this->assert_admin_get_page(
             $admin_http,

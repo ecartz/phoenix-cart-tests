@@ -11,20 +11,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_stock_test extends http_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
         http_checkout_fixture_sql::block_checkout_when_pears_out_of_stock();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         http_checkout_fixture_sql::restore_pears_stock_and_checkout_flag();
         parent::tearDown();
     }
 
-    public function test_checkout_process_redirects_to_cart_when_stock_blocked(): void
-    {
+    public function test_checkout_process_redirects_to_cart_when_stock_blocked(): void {
         $this->login_fixture_customer();
 
         $this->get_http()->request('GET', '/index.php', [

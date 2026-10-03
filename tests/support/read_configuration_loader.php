@@ -9,8 +9,7 @@ namespace PhoenixCart\Tests\support;
  */
 final class read_configuration_loader
 {
-    public static function load_from_global_database(): void
-    {
+    public static function load_from_global_database(): void {
         /** @var object $db */
         $db = $GLOBALS['db'];
 
@@ -19,8 +18,7 @@ final class read_configuration_loader
         }
     }
 
-    private static function define_if_absent(string $key, string $value): void
-    {
+    private static function define_if_absent(string $key, string $value): void {
         if (defined($key)) {
             return;
         }

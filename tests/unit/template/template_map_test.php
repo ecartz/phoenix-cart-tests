@@ -10,8 +10,7 @@ use Template;
 
 final class template_map_test extends phoenix_test_case
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         if (!defined('BOOTSTRAP_CONTENT')) {
@@ -19,8 +18,7 @@ final class template_map_test extends phoenix_test_case
         }
     }
 
-    public function test_map_uses_template_mapping_when_file_exists(): void
-    {
+    public function test_map_uses_template_mapping_when_file_exists(): void {
         $template = new Template(new default_template());
 
         $mapped = $template->map('index.php', 'page');
@@ -32,8 +30,7 @@ final class template_map_test extends phoenix_test_case
         );
     }
 
-    public function test_map_falls_back_when_template_returns_null(): void
-    {
+    public function test_map_falls_back_when_template_returns_null(): void {
         $stub = new class {
             public function get_template_mapping_for($file, $type)
             {
@@ -47,8 +44,7 @@ final class template_map_test extends phoenix_test_case
         $this->assertSame($expected, $template->map('index.php', 'page'));
     }
 
-    public function test_map_module_type_builds_tpl_path(): void
-    {
+    public function test_map_module_type_builds_tpl_path(): void {
         $module_file = DIR_FS_CATALOG . 'includes/modules/content/header/cm_header_menu.php';
         $template = new Template(new default_template());
 

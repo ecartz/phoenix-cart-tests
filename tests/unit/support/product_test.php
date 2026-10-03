@@ -16,8 +16,7 @@ final class product_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_name_returns_products_name(): void
-    {
+    public function test_fetch_name_returns_products_name(): void {
         $_SESSION['languages_id'] = 1;
 
         (new mock_catalog_database([], [
@@ -31,8 +30,7 @@ final class product_test extends phoenix_test_case
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_fetch_name_returns_na_when_missing(): void
-    {
+    public function test_fetch_name_returns_na_when_missing(): void {
         $_SESSION['languages_id'] = 1;
 
         (new mock_catalog_database([], [

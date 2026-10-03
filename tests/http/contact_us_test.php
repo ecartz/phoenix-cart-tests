@@ -10,8 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class contact_us_test extends http_test_case
 {
-    public function test_contact_form_submission_shows_success_message(): void
-    {
+    public function test_contact_form_submission_shows_success_message(): void {
         $this->get_http()->request('GET', '/contact_us.php');
         $page = $this->get_http()->request('GET', '/contact_us.php');
         $html = $page->getContent(false);

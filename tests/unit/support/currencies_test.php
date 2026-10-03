@@ -16,8 +16,7 @@ final class currencies_test extends phoenix_test_case
 {
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function test_constructor_loads_currencies_and_formats(): void
-    {
+    public function test_constructor_loads_currencies_and_formats(): void {
         if (!defined('DEFAULT_CURRENCY')) {
             define('DEFAULT_CURRENCY', 'USD');
         }
