@@ -38,6 +38,16 @@ final class info_page_test extends http_test_case {
         ];
     }
 
+    public function test_privacy_php_shows_slug_page_from_seed(): void {
+        $response = $this->get_http()->request('GET', '/privacy.php');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('Privacy', $body);
+        $this->assertStringContainsString('Privacy/Cookie Policies Text', $body);
+    }
+
     public function test_cookie_usage_php_shows_slug_page_from_seed(): void {
         $response = $this->get_http()->request('GET', '/cookie_usage.php');
 

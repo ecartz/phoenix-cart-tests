@@ -17,7 +17,55 @@ final class account_preferences_test extends http_test_case {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
         http_customer_fixture_sql::restore_fixture_newsletter();
         http_customer_fixture_sql::restore_fixture_global_product_notifications();
+        http_customer_fixture_sql::restore_fixture_per_product_notifications();
         parent::tearDown();
+    }
+
+    public function test_wrong_current_password_is_rejected(): void {
+        $this->login_fixture_customer();
+
+        $password_page = $this->get_http()->request('GET', '/account_password.php');
+        $password_html = $password_page->getContent(false);
+        $password_formid = self::parse_hidden_input($password_html, 'formid');
+
+        $response = $this->get_http()->request('POST', '/account_password.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $password_formid,
+                'password_current' => 'definitely-wrong-password',
+                'password' => 'another-new-password',
+                'password_confirmation' => 'another-new-password',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString(
+            'Your Current Password did not match',
+            $response->getContent(false)
+        );
+    }
+
+    public function test_fixture_customer_can_subscribe_to_single_product_notification(): void {
+        $this->login_fixture_customer();
+
+        $notifications_page = $this->get_http()->request('GET', '/account_notifications.php');
+        $notifications_html = $notifications_page->getContent(false);
+        $notifications_formid = self::parse_hidden_input($notifications_html, 'formid');
+        $this->assertNotSame('', $notifications_formid);
+
+        $response = $this->get_http()->request('POST', '/account_notifications.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $notifications_formid,
+                'products' => ['3'],
+            ],
+        ]);
+
+        $this->assertContains($response->getStatusCode(), [200, 302]);
+        $this->assertStringContainsString(
+            'Your product notifications have been successfully updated.',
+            $response->getContent(false)
+        );
     }
 
     public function test_fixture_customer_can_update_password_newsletter_and_notifications(): void {
