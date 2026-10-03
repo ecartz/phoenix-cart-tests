@@ -77,6 +77,20 @@ final class checkout_download_test extends http_test_case {
         $this->assertSame(self::DOWNLOAD_PAYLOAD, $download->getContent());
     }
 
+    public function test_bogus_download_id_is_rejected(): void {
+        $this->login_fixture_customer();
+
+        $bogus = $this->get_http_without_redirects()->request('GET', '/download.php', [
+            'query' => [
+                'order' => '999999',
+                'id' => '999999',
+            ],
+        ]);
+
+        $this->assertSame(200, $bogus->getStatusCode());
+        $this->assertSame('', $bogus->getContent());
+    }
+
     private function write_download_file(): void {
         $directory = http_bootstrap::catalog_root() . DIRECTORY_SEPARATOR . 'download';
         if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\http;
 
+use PhoenixCart\Tests\support\http_action_recorder_fixture_sql;
 use PhoenixCart\Tests\support\http_customer_fixture_sql;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
@@ -13,9 +14,37 @@ final class password_reset_test extends http_test_case {
 
     private const RESET_PASSWORD = 'phoenix-reset-test';
 
+    protected function setUp(): void {
+        parent::setUp();
+        http_action_recorder_fixture_sql::clear_modules(['ar_reset_password']);
+    }
+
     protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
         parent::tearDown();
+    }
+
+    public function test_password_forgotten_unknown_email_shows_generic_message(): void {
+        $this->get_http()->request('GET', '/');
+
+        $forgot_page = $this->get_http()->request('GET', '/password_forgotten.php');
+        $forgot_html = $forgot_page->getContent(false);
+        $formid = self::parse_hidden_input($forgot_html, 'formid');
+        $this->assertNotSame('', $formid);
+
+        $response = $this->get_http()->request('POST', '/password_forgotten.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $formid,
+                'email_address' => 'nobody-at-all@example.com',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString(
+            "If this email is in our records, we've sent you a reset link.",
+            $response->getContent(false)
+        );
     }
 
     public function test_password_forgotten_flow_resets_fixture_password(): void {

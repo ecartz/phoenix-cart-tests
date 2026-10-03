@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\http;
 
+use PhoenixCart\Tests\support\http_action_recorder_fixture_sql;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
 final class contact_us_test extends http_test_case {
+
+    protected function setUp(): void {
+        parent::setUp();
+        http_action_recorder_fixture_sql::clear_modules(['ar_contact_us']);
+    }
 
     public function test_contact_form_submission_shows_success_message(): void {
         $this->get_http()->request('GET', '/contact_us.php');
