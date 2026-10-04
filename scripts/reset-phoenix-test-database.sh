@@ -8,7 +8,7 @@ cd "$ROOT"
 : "${PHOENIX_DB_HOST:=127.0.0.1}"
 : "${PHOENIX_DB_NAME:=phoenix_test}"
 
-mysql -h "$PHOENIX_DB_HOST" -u root <<SQL
+"$ROOT/scripts/mysql-root-cli.sh" <<SQL
 DROP DATABASE IF EXISTS ${PHOENIX_DB_NAME};
 CREATE DATABASE ${PHOENIX_DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 SQL

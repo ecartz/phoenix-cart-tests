@@ -22,7 +22,7 @@ if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
 
-mysql -u root <<'SQL'
+bash "$ROOT/scripts/mysql-root-cli.sh" <<'SQL'
 DROP DATABASE IF EXISTS phoenix_test;
 CREATE DATABASE phoenix_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 DROP DATABASE IF EXISTS phoenix_install;
