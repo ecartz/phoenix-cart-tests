@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\http;
 
+use PhoenixCart\Tests\support\http_checkout_success_order_id_bootstrap;
 use PhoenixCart\Tests\support\http_checkout_success_redirect_fixture_sql;
 use PhoenixCart\Tests\support\http_orders_lookup;
 use PhoenixCart\Tests\support\http_test_case;
@@ -11,6 +12,17 @@ use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
 final class checkout_success_stale_redirect_test extends http_test_case {
+
+    public static function setUpBeforeClass(): void {
+        parent::setUpBeforeClass();
+
+        http_checkout_success_order_id_bootstrap::install_fixture_hook();
+    }
+
+    public static function tearDownAfterClass(): void {
+        http_checkout_success_order_id_bootstrap::remove_fixture_hook();
+        parent::tearDownAfterClass();
+    }
 
     protected function tearDown(): void {
         http_checkout_success_redirect_fixture_sql::restore();
