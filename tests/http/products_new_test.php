@@ -16,10 +16,8 @@ final class products_new_test extends http_test_case {
         $this->assertSame(200, $response->getStatusCode());
         $body = $response->getContent(false);
         $this->assertStringContainsString('is-product', $body);
-        $this->assertTrue(
-            str_contains($body, 'Oranges') || str_contains($body, 'Pears'),
-            'products_new should list sample catalog items'
-        );
+        $this->assertStringContainsString('>Oranges</a>', $body);
+        $this->assertStringContainsString('>Pears</a>', $body);
     }
 
 }
