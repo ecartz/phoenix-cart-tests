@@ -49,7 +49,7 @@ Examples in this suite:
 - `<title>` and canonical links (`header_tags_test.php`); oranges regular vs special price on product 1 (`product_info_test`)
 - `advanced_search.php` form plus existing browse/search flows (`catalog_browse_test`)
 - COD confirmation subtotal/shipping/total lines (`checkout_cod_test`)
-- Stale `checkout_success.php` redirects to `account.php` when `MODULE_CONTENT_CHECKOUT_SUCCESS_REDIRECT_OLD_ORDER_MINUTES` is enabled and the session order is older than the threshold (`checkout_success_stale_redirect_test`; minutes + `date_purchased` restored in `tearDown` via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php) and [`http_order_fixture_sql.php`](../tests/support/http_order_fixture_sql.php))
+- Stale `checkout_success.php` redirects to `account.php` when `MODULE_CONTENT_CHECKOUT_SUCCESS_REDIRECT_OLD_ORDER_MINUTES` is enabled and the latest `date_purchased` order is older than the threshold (`checkout_success_stale_redirect_test`; COD checkout, all fixture-customer `date_purchased` values aged in SQL, minutes + dates restored in `tearDown` via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php) and [`http_order_fixture_sql.php`](../tests/support/http_order_fixture_sql.php))
 - `cm_cs_redirect_old_order` unit guard when redirect minutes are disabled ([`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php)); `cm_pi_review_stars` unit ([`cm_pi_review_stars_test.php`](../tests/unit/content/cm_pi_review_stars_test.php))
 - GDPR JSON export includes orders and reviews after COD + review (`account_gdpr_test`); throwaway account nuke (`account_gdpr_nuke_test.php`)
 - Bogus `download.php` order/id (`download_bogus_id_test.php`)
