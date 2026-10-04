@@ -11,12 +11,21 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class account_history_info_test extends http_test_case {
 
+    private const EXPECTED_SUBTOTAL = 4.99;
+
+    private const EXPECTED_SHIPPING = 5.0;
+
+    private const EXPECTED_TAX = 0.3493;
+
+    private const EXPECTED_TOTAL = 10.3393;
+
     public function test_order_detail_after_cod_checkout_and_bad_order_id_redirects(): void {
         $this->login_fixture_customer();
+        $orders_before = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
         $this->complete_cod_checkout_for_pears();
 
-        $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
-        $this->assertGreaterThan(0, $orders_id);
+        $orders_id = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+        $this->assertGreaterThan($orders_before, $orders_id);
 
         $detail = $this->get_http()->request('GET', '/account_history_info.php', [
             'query' => [
@@ -32,6 +41,22 @@ final class account_history_info_test extends http_test_case {
         $this->assertSame(
             'Cash on Delivery',
             http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
+        );
+        $this->assertSame(
+            self::EXPECTED_SUBTOTAL,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_subtotal')
+        );
+        $this->assertSame(
+            self::EXPECTED_SHIPPING,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_shipping')
+        );
+        $this->assertSame(
+            self::EXPECTED_TAX,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_tax')
+        );
+        $this->assertSame(
+            self::EXPECTED_TOTAL,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_total')
         );
 
         $bad_id = $this->get_http_without_redirects()->request('GET', '/account_history_info.php', [

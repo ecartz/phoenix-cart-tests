@@ -43,6 +43,10 @@ final class http_checkout_fixture_sql {
 
     private static ?int $saved_pears_quantity = null;
 
+    private static ?string $saved_display_price_with_tax = null;
+
+    private static ?string $saved_flat_shipping_tax_class = null;
+
     public static function insert_virtual_download_for_pears(): void {
         self::remove_virtual_download_for_pears();
 
@@ -421,6 +425,42 @@ final class http_checkout_fixture_sql {
         $mysqli->close();
         self::$saved_pears_quantity = null;
         self::$saved_stock_allow_checkout = null;
+    }
+
+    public static function enable_display_price_with_tax_and_flat_shipping_tax(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        if (self::$saved_display_price_with_tax === null) {
+            self::$saved_display_price_with_tax = self::fetch_configuration_value($mysqli, 'DISPLAY_PRICE_WITH_TAX') ?? 'false';
+            self::$saved_flat_shipping_tax_class = self::fetch_configuration_value($mysqli, 'MODULE_SHIPPING_FLAT_TAX_CLASS') ?? '0';
+        }
+
+        self::set_configuration($mysqli, 'DISPLAY_PRICE_WITH_TAX', 'true');
+        self::set_configuration($mysqli, 'MODULE_SHIPPING_FLAT_TAX_CLASS', '1');
+
+        $mysqli->close();
+    }
+
+    public static function restore_display_price_with_tax_and_flat_shipping_tax(): void {
+        if (self::$saved_display_price_with_tax === null && self::$saved_flat_shipping_tax_class === null) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        if (self::$saved_display_price_with_tax !== null) {
+            self::set_configuration($mysqli, 'DISPLAY_PRICE_WITH_TAX', self::$saved_display_price_with_tax);
+        }
+
+        if (self::$saved_flat_shipping_tax_class !== null) {
+            self::set_configuration($mysqli, 'MODULE_SHIPPING_FLAT_TAX_CLASS', self::$saved_flat_shipping_tax_class);
+        }
+
+        $mysqli->close();
+        self::$saved_display_price_with_tax = null;
+        self::$saved_flat_shipping_tax_class = null;
     }
 
     public static function restrict_cod_to_non_fixture_geo_zone(): void {

@@ -51,9 +51,10 @@ Examples in this suite:
 - `cm_cs_redirect_old_order` unit guard when redirect minutes are disabled ([`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php)); `cm_pi_review_stars` unit ([`cm_pi_review_stars_test.php`](../tests/unit/content/cm_pi_review_stars_test.php))
 - GDPR JSON export includes orders and reviews after COD + review (`account_gdpr_test`); throwaway account nuke (`account_gdpr_nuke_test.php`)
 - Bogus `download.php` order/id (`download_bogus_id_test.php`)
-- COD checkout then `account_history_info.php` shows order line (Pears, Flat Rate, `$4.99`); stored `payment_method` **Cash on Delivery** via [`http_orders_lookup`](../tests/support/http_orders_lookup.php); non-numeric `order_id` redirects to `account_history.php` (`account_history_info_test`)
+- COD checkout then `account_history_info.php` shows order line (Pears, Flat Rate, `$4.99`); stored `payment_method` **Cash on Delivery** and order totals subtotal `4.99`, shipping `5.00`, tax `0.3493`, total `10.3393` on the new `orders_id` via [`http_orders_lookup`](../tests/support/http_orders_lookup.php); non-numeric `order_id` redirects to `account_history.php` (`account_history_info_test`)
 - Account password, newsletter, and global product notification POSTs with fixture restore in `tearDown` (`account_preferences_test`)
 - `?currency=` on `product_info.php` sets **Selected Currency** (EUR vs USD) and converted pears price (`data-product-price="4.25"` vs displayed `$4.99`); English `language=en` and unknown `language` fallback (`session_locale_test`)
+- Checkout with session currency **EUR** stores `orders.currency` **EUR** and `orders.currency_value` `0.8522` (`checkout_currency_test`)
 - GDPR intro page and logged-in `gdpr_data` JSON export with store name (`account_gdpr_test`)
 - Address book insert and delete (`address_book_test`)
 - Password forgotten → reset key from MySQL → new password login (`password_reset_test`; restores seed hash in `tearDown`)
@@ -63,11 +64,12 @@ Examples in this suite:
 - Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
 - Checkout with a secondary address on shipping/payment address steps (`checkout_alternate_address_test`)
 - Stock block redirect when `STOCK_ALLOW_CHECKOUT` is false and product quantity is zero (`checkout_stock_test`)
-- Item, zone, and table shipping modules plus flat geo-zone hide, free-shipping confirmation, and stored **`ot_shipping`** `0` (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
+- Item, zone, and table shipping modules plus flat geo-zone hide, free-shipping confirmation, and stored **`ot_shipping`** `0` (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php)); per-item module `item_item` stores title **Per Item** and **`ot_shipping`** `2.50` on the new order id
 - Priced attribute (+`$1.25`) on Pears with quantity 2 and exact `orders_total` rows (`checkout_priced_attribute_test`; [`http_orders_lookup.php`](../tests/support/http_orders_lookup.php))
 - Mixed virtual + physical cart still shows shipping and COD (`checkout_mixed_cart_test`)
 - Money-order virtual order download after status **Processing** (`checkout_download_test`; writes `download/http-test-download.zip` under the catalog root for the test)
-- Same flow with Check/Money Order (`checkout_moneyorder_test`; confirmation shows fixture payee **Your Store** from `MODULE_PAYMENT_MONEYORDER_PAYTO`); asserts `payment_method` **Check/Money Order**
+- Same flow with Check/Money Order (`checkout_moneyorder_test`; confirmation shows fixture payee **Your Store** from `MODULE_PAYMENT_MONEYORDER_PAYTO`); asserts `payment_method` **Check/Money Order** and exact subtotal `4.99`, shipping `5.00`, tax `0.3493`, total `10.3393`
+- `DISPLAY_PRICE_WITH_TAX` **true** and flat shipping tax class **Taxable Goods** store gross subtotal `5.34`, shipping `5.35`, tax `0.6993`, and total `10.69` (`checkout_tax_display_test`; configuration restored in `tearDown` via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - Virtual download cart skips shipping, hides COD, completes with money order (`checkout_virtual_cod_test`; temporary attribute/download rows on product 3 via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - COD payment zone excludes the fixture Florida address (`checkout_geo_zone_cod_test`; temporary geo zone + `MODULE_PAYMENT_COD_ZONE`)
 - Logged-out checkout creates an account mid-flow then completes COD (`checkout_new_account_test`)
