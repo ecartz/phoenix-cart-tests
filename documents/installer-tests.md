@@ -101,7 +101,9 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/modules_actions.php`** — Actions module set
 - **`/admin/importers.php`** — Importers list (empty table is valid)
 
-[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, `buy_now` product **Pears**, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, and **`/admin/invoice.php`** and **`/admin/packingslip.php`** with that order’s **`oID`** show **Pears** and the customer name.
+[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, **Pears** quantity **2** via `product_info.php`, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, **`/admin/orders.php?action=edit`** shows **`2 x Pears`**, and **`/admin/invoice.php`** / **`/admin/packingslip.php`** with that order’s **`oID`** show the doubled line and customer name.
+
+[`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) copies [`fixtures/http/http_storefront_hook_marker.php`](../fixtures/http/http_storefront_hook_marker.php) into the installed catalog, toggles **`HTTP_TEST_STOREFRONT_HOOK_MARKER_STATUS`**, asserts the HTML marker on/off on the storefront homepage, and lists the hook on **`/admin/modules_hooks.php`**.
 
 [`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
 
@@ -165,7 +167,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_store_logo_test.php`](../tests/installer/admin_store_logo_test.php) uploads [`fixtures/installer-store-logo-test.png`](../fixtures/installer-store-logo-test.png) via **`store_logo.php?action=save`**, asserts **`STORE_LOGO`** and **`/admin/store_logo.php`** show the new file, then re-uploads the backed-up original logo from the disposable catalog copy.
 
-Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-one classes → twenty-one installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
+Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-two classes → twenty-two installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
 
 Step 1’s browser `fetch` calls are exercised directly via HttpClient (no Playwright). **`rpc.php` passes the database password in the query string** — do not log request URLs.
 
