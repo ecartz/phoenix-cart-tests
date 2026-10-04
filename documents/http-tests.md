@@ -16,8 +16,9 @@ HTTP tests are included in **`composer test:stack`** and **`composer test:all`**
 ## Prerequisites
 
 1. Import fixtures: **`bash fixtures/import-mysql-fixtures.sh`**
-2. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; assertions use [`http_mail_capture.php`](../tests/support/http_mail_capture.php)).
-3. Set skip gate and origin:
+2. Optional: with **`PHOENIX_CART_ROOT`** pointing at the pinned catalog checkout, **`composer test:stack`** runs [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) to compare vendored install SQL bytes to the catalog tree.
+3. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; assertions use [`http_mail_capture.php`](../tests/support/http_mail_capture.php)).
+4. Set skip gate and origin:
 
 ```bash
 export PHOENIX_HTTP_ENABLED=1
@@ -58,7 +59,7 @@ Examples in this suite:
 - GDPR intro page and logged-in `gdpr_data` JSON export with store name (`account_gdpr_test`)
 - Address book insert and delete (`address_book_test`)
 - Password forgotten → reset key from MySQL → new password login (`password_reset_test`; restores seed hash in `tearDown`); captured reset mail after that test enables `n_password_forgotten` ([`http_notification_fixture_sql.php`](../tests/support/http_notification_fixture_sql.php))
-- Contact form success message, bad **`formid`**, captured shopowner mail, seeded **`ar_contact_us`** throttle, and repeat submit without clearing recorder (`contact_us_test`; [`http_mail_capture.php`](../tests/support/http_mail_capture.php), [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php))
+- Contact form success message, bad **`formid`**, captured shopowner mail, seeded **`ar_contact_us`** throttle, and a second contact blocked when the recorder is not cleared (`contact_us_test`; [`http_mail_capture.php`](../tests/support/http_mail_capture.php), [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php))
 - Search, specials, new products (both **Oranges** and **Pears** links), testimonials, manufacturer browse, and `manufacturers.php` index; category, price, and description filters (`catalog_browse_test`); dedicated **`products_new.php`** listing (`products_new_test`)
 - Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql)); asserts stored `orders.payment_method` is **Cash on Delivery** and the latest order has Florida **`ot_tax`**
 - Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
