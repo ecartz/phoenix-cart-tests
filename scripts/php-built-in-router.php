@@ -10,19 +10,14 @@ if (PHP_SAPI !== 'cli-server') {
     return false;
 }
 
-static $synced = false;
-if (!$synced) {
-    foreach ($_SERVER as $key => $value) {
-        if (!is_string($value)) {
-            continue;
-        }
-
-        if (str_starts_with($key, 'HTTP_') || $key === 'REMOTE_ADDR') {
-            putenv($key . '=' . $value);
-        }
+foreach ($_SERVER as $key => $value) {
+    if (!is_string($value)) {
+        continue;
     }
 
-    $synced = true;
+    if (str_starts_with($key, 'HTTP_') || $key === 'REMOTE_ADDR') {
+        putenv($key . '=' . $value);
+    }
 }
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';

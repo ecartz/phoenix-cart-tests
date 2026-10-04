@@ -39,11 +39,16 @@ final class login_form_test extends http_test_case {
         $body = $response->getContent(false);
         $this->assertStringContainsString('cm-login-form', $body);
         $this->assertStringNotContainsString('cm-account-title', $body);
-        $this->assertTrue(
-            str_contains($body, 'No match for E-Mail Address and/or Password')
-                || str_contains($body, 'password'),
-            'login failure should keep user on login form with an error'
-        );
+        $this->assertStringContainsString('No match for E-Mail Address and/or Password', $body);
+        $this->assertStringContainsString(self::FIXTURE_CUSTOMER_EMAIL, $body);
+    }
+
+    public function test_valid_password_reaches_account_dashboard(): void {
+        $this->login_fixture_customer();
+
+        $account = $this->get_http()->request('GET', '/account.php');
+        $this->assertSame(200, $account->getStatusCode());
+        $this->assertStringContainsString('cm-account-title', $account->getContent(false));
     }
 
 }

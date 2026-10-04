@@ -30,6 +30,19 @@ final class request_security_test extends http_test_case {
         $this->assert_redirect_to_login($response);
     }
 
+    public function test_changed_user_agent_after_login_redirects_to_login(): void {
+        $this->login_fixture_customer();
+
+        $http = $this->get_http_without_redirects();
+        $response = $http->request('GET', '/account.php', [
+            'headers' => [
+                'User-Agent' => 'phoenix-cart-tests-http/mismatch-user-agent-after-login',
+            ],
+        ]);
+
+        $this->assert_redirect_to_login($response);
+    }
+
     public function test_changed_client_ip_redirects_to_login(): void {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');

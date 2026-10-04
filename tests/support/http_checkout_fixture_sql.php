@@ -19,9 +19,15 @@ final class http_checkout_fixture_sql {
 
     private const CART_VALUE_ID = 90201;
 
+    private const PRICED_OPTION_ID = 90301;
+
+    private const PRICED_VALUE_ID = 90301;
+
     private static ?int $virtual_products_attributes_id = null;
 
     private static ?int $cart_products_attributes_id = null;
+
+    private static ?int $priced_products_attributes_id = null;
 
     private static ?string $saved_cod_zone = null;
 
@@ -198,6 +204,77 @@ final class http_checkout_fixture_sql {
 
     public static function cart_value_id(): int {
         return self::CART_VALUE_ID;
+    }
+
+    public static function insert_priced_attribute_for_pears(): void {
+        self::remove_priced_attribute_for_pears();
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        self::exec(
+            $mysqli,
+            'INSERT INTO products_options (products_options_id, language_id, products_options_name, sort_order)'
+            . " VALUES (" . self::PRICED_OPTION_ID . ", 1, 'HTTP Priced Option', 97)"
+        );
+        self::exec(
+            $mysqli,
+            'INSERT INTO products_options_values (products_options_values_id, language_id, products_options_values_name, sort_order)'
+            . " VALUES (" . self::PRICED_VALUE_ID . ", 1, 'HTTP Priced Value', 97)"
+        );
+        self::exec(
+            $mysqli,
+            'INSERT INTO products_options_values_to_products_options (products_options_id, products_options_values_id)'
+            . ' VALUES (' . self::PRICED_OPTION_ID . ', ' . self::PRICED_VALUE_ID . ')'
+        );
+        self::exec(
+            $mysqli,
+            'INSERT INTO products_attributes (products_id, options_id, options_values_id, options_values_price, price_prefix)'
+            . ' VALUES (3, ' . self::PRICED_OPTION_ID . ', ' . self::PRICED_VALUE_ID . ", '1.2500', '+')"
+        );
+
+        self::$priced_products_attributes_id = (int) $mysqli->insert_id;
+        $mysqli->close();
+    }
+
+    public static function remove_priced_attribute_for_pears(): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        if (self::$priced_products_attributes_id !== null) {
+            $attributes_id = self::$priced_products_attributes_id;
+            self::exec($mysqli, "DELETE FROM products_attributes WHERE products_attributes_id = $attributes_id");
+        } else {
+            self::exec(
+                $mysqli,
+                'DELETE FROM products_attributes WHERE products_id = 3 AND options_id = ' . self::PRICED_OPTION_ID
+            );
+        }
+
+        self::exec(
+            $mysqli,
+            'DELETE FROM products_options_values_to_products_options WHERE products_options_id = '
+            . self::PRICED_OPTION_ID
+        );
+        self::exec(
+            $mysqli,
+            'DELETE FROM products_options_values WHERE products_options_values_id = ' . self::PRICED_VALUE_ID
+        );
+        self::exec(
+            $mysqli,
+            'DELETE FROM products_options WHERE products_options_id = ' . self::PRICED_OPTION_ID
+        );
+
+        $mysqli->close();
+        self::$priced_products_attributes_id = null;
+    }
+
+    public static function priced_option_id(): int {
+        return self::PRICED_OPTION_ID;
+    }
+
+    public static function priced_value_id(): int {
+        return self::PRICED_VALUE_ID;
     }
 
     public static function install_extra_shipping_modules(): void {

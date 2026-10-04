@@ -42,7 +42,7 @@ Examples in this suite:
 - Order history list, foreign `order_id` redirect, and `checkout_success.php` thank-you module (`account_history_test`; other customer order via [`http_order_fixture_sql.php`](../tests/support/http_order_fixture_sql.php))
 - Standalone `create_account.php` registration and login (`create_account_test.php`; tearDown deletes throwaway rows)
 - Logged-in testimonial write (`testimonial_write_test.php`; [`http_testimonial_fixture_sql.php`](../tests/support/http_testimonial_fixture_sql.php))
-- Wrong login password (`login_form_test`), wrong `password_current` (`account_password_wrong_test`), password forgotten for unknown email (`password_forgotten_unknown_test`)
+- Wrong login password with explicit error text and successful fixture login (`login_form_test`), wrong `password_current` (`account_password_wrong_test`), password forgotten for unknown email (`password_forgotten_unknown_test`)
 - Per-product notification checkbox (`account_preferences_test`); address edit, primary switch, and primary delete refusal (`address_book_test`)
 - `<title>` and canonical links (`header_tags_test.php`); oranges regular vs special price on product 1 (`product_info_test`)
 - `advanced_search.php` form plus existing browse/search flows (`catalog_browse_test`)
@@ -56,13 +56,14 @@ Examples in this suite:
 - GDPR intro page and logged-in `gdpr_data` JSON export with store name (`account_gdpr_test`)
 - Address book insert and delete (`address_book_test`)
 - Password forgotten → reset key from MySQL → new password login (`password_reset_test`; restores seed hash in `tearDown`)
-- Contact form success message (`contact_us_test`)
+- Contact form success message with captured `mail()` payload, plus invalid `formid` rejection (`contact_us_test`; [`http_mail_capture`](../tests/support/http_mail_capture.php))
 - Search, specials, new products, testimonials, and manufacturer browse (`catalog_browse_test`)
 - Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql)); asserts stored `orders.payment_method` is **Cash on Delivery** and the latest order has Florida **`ot_tax`**
+- COD checkout with Pears qty 2 and a priced attribute (+$1.25) asserts confirmation totals, `orders_products`, attribute rows, and `orders_total` (`ot_subtotal`, `ot_shipping`, `ot_tax`, `ot_total`) via [`checkout_priced_attribute_test`](../tests/http/checkout_priced_attribute_test.php) and [`http_orders_lookup`](../tests/support/http_orders_lookup.php)
 - Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
 - Checkout with a secondary address on shipping/payment address steps (`checkout_alternate_address_test`)
 - Stock block redirect when `STOCK_ALLOW_CHECKOUT` is false and product quantity is zero (`checkout_stock_test`)
-- Item, zone, and table shipping modules plus flat geo-zone hide and free-shipping confirmation (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
+- Item, zone, and table shipping modules plus flat geo-zone hide and free-shipping confirmation through checkout with stored `ot_shipping` **0** (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - Mixed virtual + physical cart still shows shipping and COD (`checkout_mixed_cart_test`)
 - Money-order virtual order download after status **Processing** (`checkout_download_test`; writes `download/http-test-download.zip` under the catalog root for the test)
 - Same flow with Check/Money Order (`checkout_moneyorder_test`; confirmation shows fixture payee **Your Store** from `MODULE_PAYMENT_MONEYORDER_PAYTO`); asserts `payment_method` **Check/Money Order**
@@ -72,7 +73,7 @@ Examples in this suite:
 - Off-site confirmation form pipeline without PayPal/Stripe (`checkout_local_redirect_test`; copies [`fixtures/http/http_local_redirect.php`](../fixtures/http/http_local_redirect.php) and [`fixtures/http/http_local_redirect_return.php`](../fixtures/http/http_local_redirect_return.php) into the catalog `ext/` tree for the test, exercises good/bad tokens on `ext/modules/payment/http_local_redirect/return.php` and `checkout_process.php`, asserts `payment_method` **HTTP Local Redirect Fixture**)
 - Info and slug pages (`info_page_test`): `info.php?pages_id=` plus `privacy.php`, `conditions.php`, and `shipping.php`; extra SQL in [`fixtures/http/`](../fixtures/http/)
 - Redirect hardening for `Href::redirect` entrypoints (`href_redirect_test`)
-- Request user-agent / IP mismatch → login redirect (`request_security_test`; uses `enable_session_security_checks.sql`)
+- Request user-agent / IP mismatch → login redirect, including after fixture customer login (`request_security_test`; uses `enable_session_security_checks.sql`; [`php-built-in-router.php`](../scripts/php-built-in-router.php) syncs `HTTP_*` / `REMOTE_ADDR` into `getenv()` on every request)
 - Timed homepage smoke (`homepage_timing_test`; budget via **`PHOENIX_HTTP_BUDGET_SECONDS`**, default 10)
 
 Payment sandbox config smoke lives in the same directory but runs via **`composer test:payment-sandbox`** ([`payment-sandbox.md`](payment-sandbox.md)).

@@ -92,6 +92,8 @@ final class checkout_shipping_modules_test extends http_test_case {
 
         $this->login_fixture_customer();
 
+        $orders_id_before = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+
         $this->get_http()->request('GET', '/index.php', [
             'query' => [
                 'action' => 'buy_now',
@@ -111,17 +113,33 @@ final class checkout_shipping_modules_test extends http_test_case {
         ]);
         $payment_formid = self::parse_hidden_input($payment_page->getContent(false), 'formid');
 
-        $confirmation_html = $this->get_http()->request('POST', '/checkout_confirmation.php', [
+        $confirmation_page = $this->get_http()->request('POST', '/checkout_confirmation.php', [
             'body' => [
                 'formid' => $payment_formid,
                 'payment' => 'cod',
             ],
-        ])->getContent(false);
+        ]);
+        $confirmation_html = $confirmation_page->getContent(false);
 
         $this->assertTrue(
             str_contains($confirmation_html, '$0.00') || str_contains($confirmation_html, '0.00'),
             'confirmation should show zero shipping when free shipping qualifies'
         );
+
+        $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
+        $success = $this->get_http()->request('POST', '/checkout_process.php', [
+            'body' => [
+                'formid' => $confirm_formid,
+            ],
+        ]);
+        $this->assertStringContainsString('checkout_success.php', (string) ($success->getInfo('url') ?? ''));
+
+        $orders_id_after = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+        $this->assertGreaterThan($orders_id_before, $orders_id_after);
+
+        $shipping_row = http_orders_lookup::ot_row_for_order($orders_id_after, 'ot_shipping');
+        $this->assertNotNull($shipping_row);
+        $this->assertEqualsWithDelta(0.0, $shipping_row['value'], 0.0001);
     }
 
 }
