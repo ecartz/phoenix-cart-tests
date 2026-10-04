@@ -67,7 +67,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Product attribute select (Lemons **Box Size**) | None | [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts) |
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
-| Vendored install SQL matches catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match vs `install/phoenix*.sql`) |
+| Vendored install SQL vs catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match on `phoenix.sql` + `phoenix_data_sample.sql`) |
 | Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser); no PHP/MySQL version matrix |
 
 ## HTTP storefront — account, GDPR, security (representative)
