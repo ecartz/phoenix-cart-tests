@@ -48,4 +48,24 @@ final class contact_us_test extends http_test_case {
         }
     }
 
+    public function test_bad_formid_keeps_contact_form_without_success_message(): void {
+        $page = $this->get_http()->request('GET', '/contact_us.php');
+        $this->assertSame(200, $page->getStatusCode());
+
+        $response = $this->get_http()->request('POST', '/contact_us.php', [
+            'body' => [
+                'action' => 'send',
+                'formid' => '00000000000000000000000000000000',
+                'name' => 'HTTP Test Visitor',
+                'email' => 'visitor@example.com',
+                'enquiry' => 'Should not be delivered.',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('cm-cu-modular', $body);
+        $this->assertStringNotContainsString('Your message has been sent to the Shopowner.', $body);
+    }
+
 }
