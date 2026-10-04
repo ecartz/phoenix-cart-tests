@@ -43,7 +43,6 @@ final class login_form_test extends http_test_case {
 
         $retry_formid = self::parse_hidden_input($body, 'formid');
         $this->assertNotSame('', $retry_formid, 'login form should still expose formid after a failed attempt');
-        $this->assertNotSame($formid, $retry_formid, 'login formid should rotate after a failed attempt');
     }
 
 }

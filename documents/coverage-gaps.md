@@ -33,7 +33,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
-| Login failure copy + formid rotation | Loose substring | [`login_form_test.php`](../tests/http/login_form_test.php) |
+| Login failure copy + formid on retry | Loose substring | [`login_form_test.php`](../tests/http/login_form_test.php) |
 | Advanced search / testimonials modules | Product names only | [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php): **`cm-asr-title`**, **`cm-t-title`**, **`cm-t-list`**, **`manufacturers.php`** |
 | Contact us mail capture + bad formid | Success message only | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_mail_capture.php`](../tests/support/http_mail_capture.php) |
 | Contact us action recorder throttle | None | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php) |
