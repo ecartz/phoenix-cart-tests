@@ -16,7 +16,7 @@ HTTP tests are included in **`composer test:stack`** and **`composer test:all`**
 ## Prerequisites
 
 1. Import fixtures: **`bash fixtures/import-mysql-fixtures.sh`**
-2. Optional sanity check: **`bash scripts/verify-fixture-sql.sh`**
+2. Optional: with **`PHOENIX_CART_ROOT`** pointing at the pinned catalog checkout, **`composer test:stack`** runs [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) to compare vendored install SQL bytes to the catalog tree.
 3. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; assertions use [`http_mail_capture.php`](../tests/support/http_mail_capture.php)).
 4. Set skip gate and origin:
 
