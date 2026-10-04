@@ -37,10 +37,8 @@ final class catalog_browse_test extends http_test_case {
         $new_products = $this->get_http()->request('GET', '/products_new.php');
         $this->assertSame(200, $new_products->getStatusCode());
         $new_body = $new_products->getContent(false);
-        $this->assertTrue(
-            str_contains($new_body, 'Oranges') || str_contains($new_body, 'Pears'),
-            'products_new should list sample catalog items'
-        );
+        $this->assertStringContainsString('>Oranges</a>', $new_body);
+        $this->assertStringContainsString('>Pears</a>', $new_body);
 
         $testimonials = $this->get_http()->request('GET', '/testimonials.php');
         $this->assertSame(200, $testimonials->getStatusCode());
@@ -65,6 +63,53 @@ final class catalog_browse_test extends http_test_case {
         $manufacturers_index = $this->get_http()->request('GET', '/manufacturers.php');
         $this->assertSame(200, $manufacturers_index->getStatusCode());
         $this->assertStringContainsString('Fiacre', $manufacturers_index->getContent(false));
+    }
+
+    public function test_advanced_search_category_price_and_description_filters(): void {
+        $citrus = $this->advanced_search_body([
+            'keywords' => 'Oranges',
+            'categories_id' => '4',
+        ]);
+        $this->assertStringContainsString('>Oranges</a>', $citrus);
+        $this->assertStringNotContainsString('>Pears</a>', $citrus);
+
+        $apples_and_pears = $this->advanced_search_body([
+            'keywords' => 'Pears',
+            'categories_id' => '3',
+        ]);
+        $this->assertStringContainsString('>Pears</a>', $apples_and_pears);
+        $this->assertStringNotContainsString('>Oranges</a>', $apples_and_pears);
+
+        $mid_price = $this->advanced_search_body([
+            'pfrom' => '4',
+            'pto' => '5',
+        ]);
+        $this->assertStringContainsString('>Pears</a>', $mid_price);
+        $this->assertStringNotContainsString('>Oranges</a>', $mid_price);
+
+        $description = $this->advanced_search_body([
+            'keywords' => 'balanced',
+            'search_in_description' => '1',
+        ]);
+        $this->assertStringContainsString('>Oranges</a>', $description);
+        $this->assertStringNotContainsString('>Pears</a>', $description);
+
+        $name_only = $this->advanced_search_body([
+            'keywords' => 'balanced',
+        ]);
+        $this->assertStringNotContainsString('>Oranges</a>', $name_only);
+    }
+
+    /**
+     * @param array<string, string> $query
+     */
+    private function advanced_search_body(array $query): string {
+        $response = $this->get_http()->request('GET', '/advanced_search_result.php', [
+            'query' => $query,
+        ]);
+        $this->assertSame(200, $response->getStatusCode());
+
+        return $response->getContent(false);
     }
 
 }

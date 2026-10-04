@@ -6,6 +6,8 @@ namespace PhoenixCart\Tests\http;
 
 use PhoenixCart\Tests\support\http_action_recorder_fixture_sql;
 use PhoenixCart\Tests\support\http_customer_fixture_sql;
+use PhoenixCart\Tests\support\http_mail_capture;
+use PhoenixCart\Tests\support\http_notification_fixture_sql;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -17,11 +19,16 @@ final class password_reset_test extends http_test_case {
     protected function setUp(): void {
         parent::setUp();
         http_action_recorder_fixture_sql::clear_module('ar_reset_password');
+        http_notification_fixture_sql::enable_password_forgotten();
+        if (http_mail_capture::is_enabled()) {
+            http_mail_capture::clear();
+        }
     }
 
     protected function tearDown(): void {
         http_customer_fixture_sql::restore_fixture_password_and_clear_reset_key();
         http_action_recorder_fixture_sql::clear_module('ar_reset_password');
+        http_notification_fixture_sql::restore_password_forgotten();
         parent::tearDown();
     }
 
@@ -44,6 +51,13 @@ final class password_reset_test extends http_test_case {
         $reset_key = http_customer_fixture_sql::password_reset_key_for_fixture_customer();
         $this->assertNotNull($reset_key);
         $this->assertSame(40, strlen($reset_key));
+
+        if (http_mail_capture::is_enabled()) {
+            $mail = http_mail_capture::read_combined();
+            $this->assertStringContainsString('Password Reset', $mail);
+            $this->assertStringContainsString(self::FIXTURE_CUSTOMER_EMAIL, $mail);
+            $this->assertStringContainsString($reset_key, $mail);
+        }
 
         $reset_get = $this->get_http()->request('GET', '/password_reset.php', [
             'query' => [

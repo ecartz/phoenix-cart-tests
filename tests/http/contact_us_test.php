@@ -14,10 +14,17 @@ final class contact_us_test extends http_test_case {
 
     protected function setUp(): void {
         parent::setUp();
-        http_action_recorder_fixture_sql::clear_module('ar_contact_us');
+        if ($this->name() !== 'test_repeated_contact_is_blocked_without_clearing_recorder') {
+            http_action_recorder_fixture_sql::clear_module('ar_contact_us');
+        }
         if (http_mail_capture::is_enabled()) {
             http_mail_capture::clear();
         }
+    }
+
+    protected function tearDown(): void {
+        http_action_recorder_fixture_sql::clear_module('ar_contact_us');
+        parent::tearDown();
     }
 
     public function test_contact_form_submission_shows_success_message(): void {
@@ -89,6 +96,57 @@ final class contact_us_test extends http_test_case {
         $body = $response->getContent(false);
         $this->assertStringContainsString('An enquiry has already been sent', $body);
         $this->assertStringNotContainsString('Your message has been sent to the Shopowner.', $body);
+    }
+
+    public function test_repeated_contact_is_blocked_without_clearing_recorder(): void {
+        http_action_recorder_fixture_sql::clear_module('ar_contact_us');
+
+        $first = $this->submit_contact_enquiry(
+            'HTTP Recorder Visitor',
+            'recorder-one@example.com',
+            'First enquiry that should be delivered.'
+        );
+        $this->assertStringContainsString('Your message has been sent to the Shopowner.', $first);
+
+        $second = $this->submit_contact_enquiry(
+            'HTTP Recorder Visitor',
+            'recorder-two@example.com',
+            'Second enquiry that should be blocked.'
+        );
+        $this->assertStringContainsString(
+            'Error: An enquiry has already been sent. Please try again in 15 minutes.',
+            $second
+        );
+        $this->assertStringNotContainsString('Your message has been sent to the Shopowner.', $second);
+        $this->assertStringContainsString('name="enquiry"', $second);
+
+        if (http_mail_capture::is_enabled()) {
+            $mail = http_mail_capture::read_combined();
+            $this->assertStringContainsString('First enquiry that should be delivered.', $mail);
+            $this->assertStringNotContainsString('Second enquiry that should be blocked.', $mail);
+        }
+    }
+
+    private function submit_contact_enquiry(string $name, string $email, string $enquiry): string {
+        $this->get_http()->request('GET', '/contact_us.php');
+        $page = $this->get_http()->request('GET', '/contact_us.php');
+        $this->assertSame(200, $page->getStatusCode());
+        $formid = self::parse_hidden_input($page->getContent(false), 'formid');
+        $this->assertNotSame('', $formid);
+
+        $response = $this->get_http()->request('POST', '/contact_us.php', [
+            'body' => [
+                'action' => 'send',
+                'formid' => $formid,
+                'name' => $name,
+                'email' => $email,
+                'enquiry' => $enquiry,
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        return $response->getContent(false);
     }
 
 }

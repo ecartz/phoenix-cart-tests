@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhoenixCart\Tests\http;
 
 use PhoenixCart\Tests\support\http_customer_fixture_sql;
+use PhoenixCart\Tests\support\http_mail_capture;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -32,6 +33,10 @@ final class create_account_test extends http_test_case {
         $this->assertNotSame('', $formid);
         $this->assertStringContainsString('firstname', $create_html);
 
+        if (http_mail_capture::is_enabled()) {
+            http_mail_capture::clear();
+        }
+
         $registered = $this->get_http()->request('POST', '/create_account.php', [
             'body' => [
                 'action' => 'process',
@@ -57,6 +62,13 @@ final class create_account_test extends http_test_case {
             str_contains($account_url, 'create_account_success.php') || str_contains($account_url, 'account.php'),
             'registration should land on success or account page'
         );
+
+        if (http_mail_capture::is_enabled()) {
+            $mail = http_mail_capture::read_combined();
+            $this->assertStringContainsString($this->registered_email, $mail);
+            $this->assertStringContainsString('Welcome to Phoenix', $mail);
+            $this->assertStringContainsString('Your account is now active.', $mail);
+        }
 
         $this->get_http()->request('GET', '/logoff.php');
 

@@ -37,6 +37,37 @@ final class http_orders_lookup {
         return (string) $row['payment_method'];
     }
 
+    public static function payment_method_for_order(int $orders_id): ?string {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT payment_method FROM orders WHERE orders_id = ? LIMIT 1'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('i', $orders_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (string) $row['payment_method'];
+    }
+
     public static function max_orders_id_for_email(string $customers_email_address): int {
         mysql_bootstrap::define_connection_constants();
 
