@@ -94,7 +94,6 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 
 | Area | Notes |
 |------|--------|
-| Outgoing queue after storefront contact | Compose capture in [`admin_mail_test.php`](../tests/installer/admin_mail_test.php); queue list smoke on [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) |
 | Windows vs Linux path/PHP differences | Linux CI and Cloud are merge gate — [`TESTING.md`](../TESTING.md) |
 
 ## Recently closed (first-four + orphan slices)
@@ -110,5 +109,6 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Mail capture + action recorder (slice) | [`contact_us_test.php`](../tests/http/contact_us_test.php), [`create_account_test.php`](../tests/http/create_account_test.php), [`password_reset_test.php`](../tests/http/password_reset_test.php), [`http_mail_capture.php`](../tests/support/http_mail_capture.php) |
 | Harness limits + vendored SQL pin (slice) | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php), [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts), [`release-certification.md`](release-certification.md) |
 | Installer catalog storefront + account validation (slice) | [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php), [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) |
+| Storefront contact shopowner mail (installer) | [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) — **`contact_us.php`** POST; **`/admin/outgoing.php`** when a queue row exists, else Linux sendmail capture (not an outgoing row on the pinned catalog) |
 
-Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **118** installer tests after the consolidated branch.
+Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **119** installer tests after the consolidated branch.

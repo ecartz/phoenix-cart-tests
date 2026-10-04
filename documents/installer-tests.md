@@ -124,7 +124,7 @@ Catalog pin audit (**order line editor**, plan section 1): after **`scripts/prep
 
 [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
 
-- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid; storefront contact mail path is covered by [`admin_mail_test.php`](../tests/installer/admin_mail_test.php) compose capture)
+- **`/admin/outgoing.php`** — outgoing queue list smoke; **`contact_us.php`** POST asserts the visitor e-mail appears on the queue when CE enqueues a row, otherwise falls back to captured shopowner mail under **`working/installer-mail/`** (see [`installer_outgoing_lookup.php`](../tests/support/installer_outgoing_lookup.php))
 - **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates
 - **`/admin/modules.php?set=layout`** — layout (`&pi;`) modules
 - **`/admin/modules.php?set=currencies`** — **`c_ecb`** update-currency module
