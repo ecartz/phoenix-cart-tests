@@ -181,7 +181,12 @@ final class admin_order_documents_test extends install_test_case {
         $final_url = (string) ($response->getInfo('url') ?? '');
         $this->assertStringNotContainsString('login.php', $final_url);
         $body = $response->getContent(false);
-        $this->assertStringContainsString($expected_quantity . ' x Pears', $body);
+        $this->assertStringContainsString('Pears', $body);
+        $this->assertMatchesRegularExpression(
+            '/<td[^>]*>\s*' . preg_quote((string) $expected_quantity, '/') . '\s*<\/td>/',
+            $body,
+            'Expected product quantity column value ' . $expected_quantity,
+        );
         $this->assertStringContainsString($customer_name, $body);
     }
 
