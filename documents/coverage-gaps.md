@@ -49,7 +49,8 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
-| Catalog category/product CRUD, copy, move | Read-only admin smoke | [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php), [`admin_forms_test.php`](../tests/installer/admin_forms_test.php) |
+| Catalog category/product CRUD, copy, move | Read-only admin smoke | [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php) (storefront price/description + optional **`products_image`** upload), [`admin_forms_test.php`](../tests/installer/admin_forms_test.php) |
+| Storefront **`create_account.php`** validation + address zones | HTTP welcome mail only | [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) |
 | Product attributes on Pears | None | [`admin_attributes_test.php`](../tests/installer/admin_attributes_test.php) |
 | People: admins, customers, orders delete | Partial | [`admin_people_test.php`](../tests/installer/admin_people_test.php) |
 | Invoice/packingslip qty **2** | Single qty smoke | [`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) |
