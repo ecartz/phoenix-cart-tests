@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhoenixCart\Tests\support;
 
 /**
- * Clears action-recorder rows on the disposable installer database.
+ * Clears action-recorder rows on the disposable installer database between storefront form tests.
  */
 final class installer_action_recorder_fixture_sql {
 
@@ -14,34 +14,35 @@ final class installer_action_recorder_fixture_sql {
             return;
         }
 
-        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
 
-        $database = getenv('PHOENIX_INSTALLER_DB_NAME');
-        if (!is_string($database) || $database === '') {
-            $database = 'phoenix_install';
+        $statement = $mysqli->prepare('DELETE FROM action_recorder WHERE module = ?');
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
         }
 
+        $statement->bind_param('s', $module);
+        $statement->execute();
+        $statement->close();
+        $mysqli->close();
+    }
+
+    private static function connect(): \mysqli {
         $mysqli = new \mysqli(
-            (string) (getenv('PHOENIX_DB_HOST') ?: '127.0.0.1'),
-            (string) (getenv('PHOENIX_DB_USER') ?: 'phoenix'),
-            (string) (getenv('PHOENIX_DB_PASSWORD') ?: 'phoenix'),
-            $database
+            installer_bootstrap::db_host(),
+            installer_bootstrap::db_user(),
+            installer_bootstrap::db_password(),
+            installer_bootstrap::installer_db_name()
         );
 
         if ($mysqli->connect_errno) {
-            return;
+            throw new \RuntimeException('MySQL connect failed: ' . $mysqli->connect_error);
         }
 
         $mysqli->set_charset('utf8mb4');
 
-        $statement = $mysqli->prepare('DELETE FROM action_recorder WHERE module = ?');
-        if ($statement !== false) {
-            $statement->bind_param('s', $module);
-            $statement->execute();
-            $statement->close();
-        }
-
-        $mysqli->close();
+        return $mysqli;
     }
 
 }
