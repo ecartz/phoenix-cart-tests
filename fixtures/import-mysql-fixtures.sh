@@ -10,7 +10,7 @@ cd "$ROOT"
 : "${PHOENIX_DB_USER:=phoenix}"
 : "${PHOENIX_DB_PASSWORD:=phoenix}"
 
-MYSQL=(mysql -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -p"$PHOENIX_DB_PASSWORD" "$PHOENIX_DB_NAME")
+MYSQL=(mysql --default-character-set=utf8mb4 -h "$PHOENIX_DB_HOST" -P "$PHOENIX_DB_PORT" -u "$PHOENIX_DB_USER" -p"$PHOENIX_DB_PASSWORD" "$PHOENIX_DB_NAME")
 
 "${MYSQL[@]}" < fixtures/phoenix.sql
 "${MYSQL[@]}" < fixtures/phoenix_data_sample.sql
