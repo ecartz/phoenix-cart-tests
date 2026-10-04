@@ -6,7 +6,6 @@ namespace PhoenixCart\Tests\http;
 
 use PhoenixCart\Tests\support\http_checkout_success_order_id_bootstrap;
 use PhoenixCart\Tests\support\http_checkout_success_redirect_fixture_sql;
-use PhoenixCart\Tests\support\http_orders_lookup;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -33,11 +32,11 @@ final class checkout_success_stale_redirect_test extends http_test_case {
         $this->login_fixture_customer();
         $this->complete_cod_checkout_for_pears();
 
-        $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
-        $this->assertGreaterThan(0, $orders_id);
-
         http_checkout_success_redirect_fixture_sql::enable_redirect_after_minutes(30);
-        http_checkout_success_redirect_fixture_sql::backdate_order($orders_id, 45);
+        http_checkout_success_redirect_fixture_sql::backdate_all_orders_for_email(
+            self::FIXTURE_CUSTOMER_EMAIL,
+            45,
+        );
 
         $response = $this->get_http_without_redirects()->request('GET', '/checkout_success.php');
         $this->assertSame(302, $response->getStatusCode());

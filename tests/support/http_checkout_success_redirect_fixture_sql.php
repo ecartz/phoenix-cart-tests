@@ -41,6 +41,29 @@ final class http_checkout_success_redirect_fixture_sql {
         $mysqli->close();
     }
 
+    public static function backdate_all_orders_for_email(string $customers_email_address, int $minutes_ago): void {
+        if ($customers_email_address === '' || $minutes_ago <= 0) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'UPDATE orders SET date_purchased = DATE_SUB(NOW(), INTERVAL ? MINUTE)'
+            . ' WHERE customers_email_address = ?'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('is', $minutes_ago, $customers_email_address);
+        $statement->execute();
+        $statement->close();
+        $mysqli->close();
+    }
+
     public static function backdate_order(int $orders_id, int $minutes_ago): void {
         if ($orders_id <= 0 || $minutes_ago <= 0) {
             return;

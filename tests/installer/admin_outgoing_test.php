@@ -95,9 +95,8 @@ final class admin_outgoing_test extends install_test_case {
         );
 
         $admin_http = $this->login_installed_admin();
-        $queue_html = $this->fetch_admin_page($admin_http, '/admin/outgoing.php');
-        $this->assertStringContainsString(self::CUSTOMER_EMAIL, $queue_html);
-        $this->assertStringContainsString('order_thanks', $queue_html);
+        $this->assert_admin_get_page($admin_http, '/admin/outgoing.php', [], self::CUSTOMER_EMAIL);
+        $this->assert_admin_get_page($admin_http, '/admin/outgoing.php', [], 'order_thanks');
     }
 
     private function submit_storefront_contact(HttpClientInterface $shop_http): void {
