@@ -69,7 +69,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
 | Vendored install SQL vs catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match on `phoenix.sql` + `phoenix_data_sample.sql`) |
-| Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser); **PHP 8.4 / MariaDB 10.11** in CI only |
+| Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + stack + optional browser + **`composer test:installer`** + optional HTTPS; **PHP 8.4 / MariaDB 10.11** in release CI; **MySQL 8** for unit + integration in **`mysql8-unit-integration`** |
 
 ## HTTP storefront — account, GDPR, security (representative)
 

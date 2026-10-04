@@ -44,8 +44,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, xml, mysqli
+          extensions: mbstring, xml, mysqli, curl
           coverage: none
+
+      - name: Install OS packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client apache2 libapache2-mod-php openssl
+          sudo a2enmod ssl
+          sudo a2enmod php8.4 2>/dev/null || sudo a2enmod php8.3
+          sudo mkdir -p /run/lock/apache2 /var/run/apache2
 
       - name: Set up Node
         uses: actions/setup-node@v5
@@ -72,4 +80,7 @@ jobs:
           PHOENIX_HTTP_ENABLED: '1'
           PHOENIX_HTTP_BASE_URL: http://127.0.0.1:8765
           PHOENIX_BROWSER_ENABLED: '1'
+          PHOENIX_MYSQL_ROOT_PASSWORD: root
+          PHOENIX_HTTPS_ENABLED: '1'
+          PHOENIX_HTTPS_BASE_URL: https://127.0.0.1:8443
         run: bash scripts/release-certification.sh
