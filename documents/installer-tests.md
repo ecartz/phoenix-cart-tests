@@ -158,6 +158,8 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_modules_config_test.php`](../tests/installer/admin_modules_config_test.php) installs one module from **`list=new`** per **`modules.php`** set (skips empty sets), removes it, and round-trips one plain **`configuration_value`** key in visible groups **`4`**, **`7`**, **`8`**, **`9`**, **`10`**, **`12`**, **`13`**, **`14`**, **`15`**, and **`16`** (groups **`1`**, **`3`**, hidden **`6`**, and invisible **`11`** are skipped).
 
+[`admin_order_line_editor_test.php`](../tests/installer/admin_order_line_editor_test.php) is skipped until [`catalog_order_editor_probe.php`](../tests/support/catalog_order_editor_probe.php) finds order-line POST actions on the pinned catalog ref (see [`coverage-gaps.md`](coverage-gaps.md)).
+
 [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php) exercises reversible catalog writes on the disposable shop:
 
 - **`catalog.php?action=insert_category`** / **`delete_category_confirm`** under **`cPath=1`**
