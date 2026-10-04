@@ -3,12 +3,16 @@
 declare(strict_types=1);
 
 /**
- * Captures PHP mail() on stdin when used as sendmail_path (Linux installer server).
+ * Captures PHP mail() on stdin when used as sendmail_path (HTTP and installer PHP servers).
  *
+ * @see scripts/http-server.sh
  * @see scripts/installer-server.sh
  */
 
-$mail_dir = getenv('PHOENIX_INSTALLER_MAIL_DIR');
+$mail_dir = getenv('PHOENIX_MAIL_CAPTURE_DIR');
+if (!is_string($mail_dir) || $mail_dir === '') {
+    $mail_dir = getenv('PHOENIX_INSTALLER_MAIL_DIR');
+}
 if (!is_string($mail_dir) || $mail_dir === '') {
     $mail_dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'working' . DIRECTORY_SEPARATOR . 'installer-mail';
 }

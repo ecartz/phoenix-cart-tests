@@ -13,7 +13,13 @@ if [[ ! -f "$PHOENIX_CART_ROOT/includes/system/autoloader.php" ]]; then
 fi
 
 ROUTER="$ROOT/scripts/php-built-in-router.php"
+CAPTURE_MAIL="$ROOT/scripts/capture-installer-mail.php"
+export PHOENIX_MAIL_CAPTURE_DIR="${PHOENIX_HTTP_MAIL_DIR:-$ROOT/working/http-mail}"
+export PHOENIX_HTTP_MAIL_DIR="$PHOENIX_MAIL_CAPTURE_DIR"
+export PHOENIX_HTTP_MAIL_CAPTURE=1
+mkdir -p "$PHOENIX_MAIL_CAPTURE_DIR"
 
 echo "Serving $PHOENIX_CART_ROOT at http://${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}/"
+echo "HTTP mail capture: $PHOENIX_MAIL_CAPTURE_DIR"
 cd "$PHOENIX_CART_ROOT"
-exec php -S "${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}" -t . "$ROUTER"
+exec php -d "sendmail_path=php $CAPTURE_MAIL -t -i" -S "${PHOENIX_HTTP_HOST}:${PHOENIX_HTTP_PORT}" -t . "$ROUTER"

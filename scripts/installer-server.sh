@@ -16,6 +16,7 @@ fi
 ROUTER="$ROOT/scripts/php-built-in-router.php"
 CAPTURE_MAIL="$ROOT/scripts/capture-installer-mail.php"
 export PHOENIX_INSTALLER_MAIL_DIR="${PHOENIX_INSTALLER_MAIL_DIR:-$ROOT/working/installer-mail}"
+export PHOENIX_MAIL_CAPTURE_DIR="$PHOENIX_INSTALLER_MAIL_DIR"
 export PHOENIX_INSTALLER_MAIL_CAPTURE=1
 mkdir -p "$PHOENIX_INSTALLER_MAIL_DIR"
 

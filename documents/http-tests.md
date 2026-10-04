@@ -16,7 +16,7 @@ HTTP tests are included in **`composer test:stack`** and **`composer test:all`**
 ## Prerequisites
 
 1. Import fixtures: **`bash fixtures/import-mysql-fixtures.sh`**
-2. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**)
+2. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; see [`http_mail_capture.php`](../tests/support/http_mail_capture.php) for future assertions).
 3. Set skip gate and origin:
 
 ```bash
