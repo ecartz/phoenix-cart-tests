@@ -101,7 +101,9 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/modules_actions.php`** — Actions module set
 - **`/admin/importers.php`** — Importers list (empty table is valid)
 
-[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, `buy_now` product **Pears**, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, and **`/admin/invoice.php`** and **`/admin/packingslip.php`** with that order’s **`oID`** show **Pears** and the customer name.
+[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, **Pears** quantity **2** via `product_info.php`, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, **`/admin/orders.php?action=edit`** shows **`2 x Pears`**, and **`/admin/invoice.php`** / **`/admin/packingslip.php`** with that order’s **`oID`** show the doubled line and customer name.
+
+[`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) copies [`fixtures/http/http_storefront_hook_marker.php`](../fixtures/http/http_storefront_hook_marker.php) into the installed catalog, toggles **`HTTP_TEST_STOREFRONT_HOOK_MARKER_STATUS`**, asserts the HTML marker on/off on the storefront homepage, and lists the hook on **`/admin/modules_hooks.php`**.
 
 [`admin_writes_test.php`](../tests/installer/admin_writes_test.php) exercises reversible admin writes (each test restores prior state):
 

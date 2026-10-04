@@ -39,11 +39,13 @@ final class login_form_test extends http_test_case {
         $body = $response->getContent(false);
         $this->assertStringContainsString('cm-login-form', $body);
         $this->assertStringNotContainsString('cm-account-title', $body);
-        $this->assertTrue(
-            str_contains($body, 'No match for E-Mail Address and/or Password')
-                || str_contains($body, 'password'),
-            'login failure should keep user on login form with an error'
+        $this->assertMatchesRegularExpression(
+            '/No match for E-?mail Address and\/or Password/i',
+            $body
         );
+
+        $retry_formid = self::parse_hidden_input($body, 'formid');
+        $this->assertNotSame('', $retry_formid, 'login form should still expose formid after a failed attempt');
     }
 
 }

@@ -27,12 +27,12 @@ final class admin_order_documents_test extends install_test_case {
         installer_wizard::install_sample_shop(installer_bootstrap::client());
     }
 
-    public function test_admin_invoice_and_packingslip_show_cod_order(): void {
+    public function test_admin_invoice_and_packingslip_show_cod_order_with_quantity_two(): void {
         $shop_http = installer_bootstrap::client();
         $customer_name = self::CUSTOMER_FIRSTNAME . ' ' . self::CUSTOMER_LASTNAME;
 
         $this->register_storefront_customer($shop_http);
-        $this->complete_cod_checkout($shop_http);
+        $this->complete_cod_checkout_with_pears_quantity($shop_http, 2);
 
         $admin_http = $this->login_installed_admin();
         $orders_page = $admin_http->request('GET', '/admin/orders.php');
@@ -41,8 +41,19 @@ final class admin_order_documents_test extends install_test_case {
         $this->assertStringContainsString($customer_name, $orders_html);
 
         $order_id = $this->parse_order_id_from_orders_html($orders_html);
-        $this->assert_admin_order_document($admin_http, '/admin/invoice.php', $order_id, $customer_name);
-        $this->assert_admin_order_document($admin_http, '/admin/packingslip.php', $order_id, $customer_name);
+
+        $order_edit = $admin_http->request('GET', '/admin/orders.php', [
+            'query' => [
+                'oID' => $order_id,
+                'action' => 'edit',
+            ],
+        ]);
+        $this->assertSame(200, $order_edit->getStatusCode());
+        $edit_html = $order_edit->getContent(false);
+        $this->assertStringContainsString('2 x Pears', $edit_html);
+
+        $this->assert_admin_order_document($admin_http, '/admin/invoice.php', $order_id, $customer_name, 2);
+        $this->assert_admin_order_document($admin_http, '/admin/packingslip.php', $order_id, $customer_name, 2);
     }
 
     private function register_storefront_customer(HttpClientInterface $shop_http): void {
@@ -78,11 +89,26 @@ final class admin_order_documents_test extends install_test_case {
         $this->assertStringContainsString('cm-account-title', $account_body);
     }
 
-    private function complete_cod_checkout(HttpClientInterface $shop_http): void {
-        $shop_http->request('GET', '/index.php', [
+    private function complete_cod_checkout_with_pears_quantity(HttpClientInterface $shop_http, int $quantity): void {
+        $shop_http->request('GET', '/');
+
+        $product_page = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => '3'],
+        ]);
+        $this->assertSame(200, $product_page->getStatusCode());
+        $product_html = $product_page->getContent(false);
+        $add_formid = self::parse_hidden_input($product_html, 'formid');
+        $this->assertNotSame('', $add_formid);
+
+        $shop_http->request('POST', '/product_info.php', [
             'query' => [
-                'action' => 'buy_now',
                 'products_id' => '3',
+                'action' => 'add_product',
+            ],
+            'body' => [
+                'formid' => $add_formid,
+                'products_id' => '3',
+                'qty' => (string) $quantity,
             ],
         ]);
 
@@ -146,6 +172,7 @@ final class admin_order_documents_test extends install_test_case {
         string $path,
         string $order_id,
         string $customer_name,
+        int $expected_quantity,
     ): void {
         $response = $admin_http->request('GET', $path, [
             'query' => ['oID' => $order_id],
@@ -156,6 +183,16 @@ final class admin_order_documents_test extends install_test_case {
         $body = $response->getContent(false);
         $this->assertStringContainsString('Pears', $body);
         $this->assertStringContainsString($customer_name, $body);
+
+        if (str_contains($path, 'invoice.php') || str_contains($path, 'packingslip.php')) {
+            $this->assertMatchesRegularExpression(
+                '/<td[^>]*>\s*' . $expected_quantity . '\s*<\/td>/',
+                $body,
+                $path . ' should list the order line quantity'
+            );
+        } else {
+            $this->assertStringContainsString($expected_quantity . ' x Pears', $body);
+        }
     }
 
 }

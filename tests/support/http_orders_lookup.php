@@ -172,6 +172,68 @@ final class http_orders_lookup {
         return (int) $row['orders_products_download_id'];
     }
 
+    public static function orders_total_value_for_order(int $orders_id, string $class): ?float {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT value FROM orders_total WHERE orders_id = ? AND class = ? ORDER BY sort_order ASC LIMIT 1'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('is', $orders_id, $class);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (float) $row['value'];
+    }
+
+    public static function orders_products_quantity_for_order(int $orders_id, int $products_id): ?int {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT products_quantity FROM orders_products WHERE orders_id = ? AND products_id = ? LIMIT 1'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('ii', $orders_id, $products_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (int) $row['products_quantity'];
+    }
+
     public static function set_order_status(int $orders_id, int $orders_status_id): void {
         if ($orders_id <= 0) {
             return;

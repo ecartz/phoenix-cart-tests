@@ -122,6 +122,17 @@ final class checkout_shipping_modules_test extends http_test_case {
             str_contains($confirmation_html, '$0.00') || str_contains($confirmation_html, '0.00'),
             'confirmation should show zero shipping when free shipping qualifies'
         );
+
+        $shipping_formid = self::parse_hidden_input($confirmation_html, 'formid');
+        $success = $this->get_http()->request('POST', '/checkout_process.php', [
+            'body' => [
+                'formid' => $shipping_formid,
+            ],
+        ]);
+        $this->assertStringContainsString('checkout_success.php', (string) ($success->getInfo('url') ?? ''));
+
+        $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+        $this->assertSame(0.0, http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_shipping'));
     }
 
 }

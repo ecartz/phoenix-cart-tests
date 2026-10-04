@@ -21,13 +21,16 @@ final class request_security_test extends http_test_case {
         $http = $this->get_http_without_redirects();
         $http->request('GET', '/');
 
+        $mismatch_agent = 'phoenix-cart-tests-http/mismatch-user-agent';
+
         $response = $http->request('GET', '/index.php', [
             'headers' => [
-                'User-Agent' => 'phoenix-cart-tests-http/mismatch-user-agent',
+                'User-Agent' => $mismatch_agent,
             ],
         ]);
 
         $this->assert_redirect_to_login($response);
+        $this->assertSame('', $response->getContent(false));
     }
 
     public function test_changed_client_ip_redirects_to_login(): void {

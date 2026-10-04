@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhoenixCart\Tests\http;
 
 use PhoenixCart\Tests\support\http_action_recorder_fixture_sql;
+use PhoenixCart\Tests\support\http_mail_capture;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -14,6 +15,9 @@ final class contact_us_test extends http_test_case {
     protected function setUp(): void {
         parent::setUp();
         http_action_recorder_fixture_sql::clear_module('ar_contact_us');
+        if (http_mail_capture::is_enabled()) {
+            http_mail_capture::clear();
+        }
     }
 
     public function test_contact_form_submission_shows_success_message(): void {
@@ -36,6 +40,12 @@ final class contact_us_test extends http_test_case {
         $this->assertSame(200, $response->getStatusCode());
         $body = $response->getContent(false);
         $this->assertStringContainsString('Your message has been sent to the Shopowner.', $body);
+
+        if (http_mail_capture::is_enabled()) {
+            $mail = http_mail_capture::read_combined();
+            $this->assertStringContainsString('visitor@example.com', $mail);
+            $this->assertStringContainsString('Fixture enquiry from phoenix-cart-tests HTTP suite.', $mail);
+        }
     }
 
 }

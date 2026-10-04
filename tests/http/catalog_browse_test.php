@@ -16,6 +16,7 @@ final class catalog_browse_test extends http_test_case {
         $advanced_body = $advanced->getContent(false);
         $this->assertStringContainsString('keywords', $advanced_body);
         $this->assertStringContainsString('advanced_search_result.php', $advanced_body);
+        $this->assertStringContainsString('name="keywords"', $advanced_body);
 
         $search = $this->get_http()->request('GET', '/advanced_search_result.php', [
             'query' => [
@@ -53,6 +54,10 @@ final class catalog_browse_test extends http_test_case {
             str_contains($manufacturer_body, 'Oranges') || str_contains($manufacturer_body, 'Pears'),
             'manufacturer listing should include a sample product'
         );
+
+        $manufacturers_index = $this->get_http()->request('GET', '/manufacturers.php');
+        $this->assertSame(200, $manufacturers_index->getStatusCode());
+        $this->assertStringContainsString('Fiacre', $manufacturers_index->getContent(false));
     }
 
 }
