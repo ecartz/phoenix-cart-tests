@@ -57,7 +57,6 @@ DROP DATABASE IF EXISTS phoenix_test;
 CREATE DATABASE phoenix_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 SQL
   bash fixtures/import-mysql-fixtures.sh
-  bash scripts/verify-fixture-sql.sh
 else
   echo "mysql client not found; set PHOENIX_MYSQL_ENABLED=0 only if Integration tests are skipped intentionally." >&2
 fi
@@ -76,6 +75,7 @@ if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
   sleep 1
 fi
 
+# Stack + optional browser only. Installer and HTTPS stay in other suites.
 composer test:stack
 TEST_EXIT=$?
 

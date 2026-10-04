@@ -34,6 +34,12 @@ cp "$PHOENIX_CART_ROOT/install/phoenix_data_sample.sql" fixtures/phoenix_data_sa
 
 Commit with message: `Fixture from CE tag <tag>`.
 
+## Checkout match
+
+[`vendored_install_sql_test`](../tests/unit/invariants/vendored_install_sql_test.php) hashes `fixtures/phoenix.sql` and `fixtures/phoenix_data_sample.sql` against `install/phoenix.sql` and `install/phoenix_data_sample.sql` in the catalog checkout (`PHOENIX_CART_ROOT` / `DIR_FS_CATALOG`). The files must match byte for byte.
+
+The shared header (`# $Id$` and the copyright block) is the same boilerplate on every CE install file, so it is not a version marker and the test does not stop there. The test does not fetch the pin from GitHub. CI clones the ref in [`catalog_pin.txt`](catalog_pin.txt) before PHPUnit. A checkout at another ref, or a checkout that rewrote line endings to CRLF, fails this test until the fixtures are copied again from that tree.
+
 ## Import (local or CI)
 
 On a **non-empty** database, `import-mysql-fixtures.sh` can fail or leave partial data. Reset first on warm Cloud VMs or repeated local runs:

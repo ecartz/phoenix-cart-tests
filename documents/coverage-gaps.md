@@ -62,7 +62,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Visual regression baseline | None | [`homepage_visual.spec.ts`](../tests/browser/homepage_visual.spec.ts) |
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
-| Fixture SQL sanity after import | Manual | [`scripts/verify-fixture-sql.sh`](../scripts/verify-fixture-sql.sh) (products **1** / **3**, HTTP fixture customer, pin file) |
+| Vendored install SQL vs catalog checkout | Unit invariant | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match on `phoenix.sql` + sample data) |
 | Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser); no PHP/MySQL version matrix |
 
 ## HTTP storefront — account, GDPR, security (representative)
@@ -100,4 +100,4 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Storefront hook fixture | [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) |
 | Login / search / free shipping / formid / mail / router / UA | [`login_form_test.php`](../tests/http/login_form_test.php), [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php), [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php), [`contact_us_test.php`](../tests/http/contact_us_test.php), [`request_security_test.php`](../tests/http/request_security_test.php) |
 
-Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, **`bash scripts/verify-fixture-sql.sh`**, and starting HTTP/installer servers (see suite docs).
+Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`** and starting HTTP/installer servers (see suite docs).
