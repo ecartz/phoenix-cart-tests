@@ -1,7 +1,7 @@
 FROM ubuntu:24.04
 
 # Bump when cloud image must rebuild (Cursor keys Dockerfile content).
-ARG PHOENIX_CLOUD_ENV_REVISION=2026-09-29-php-curl
+ARG PHOENIX_CLOUD_ENV_REVISION=2026-10-03-cloud-mariadb-fallback
 
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -133,3 +133,9 @@ git clone --depth 1 --branch master https://github.com/CE-PhoenixCart/PhoenixCar
 ```
 
 Windows developers may see path-separator or PHP version differences versus Linux CI; treat Linux CI on CE-PhoenixCart as the merge gate once workflows exist.
+
+## Cursor Cloud
+
+Cursor agents use [`.cursor/environment.json`](.cursor/environment.json) (`install`: `bash .cursor/scripts/cloud-install.sh`, `start`: MariaDB) and [`.cursor/Dockerfile`](.cursor/Dockerfile) (`PHOENIX_CLOUD_ENV_REVISION` bumps force image rebuilds). **`composer cloud-test`** matches CI: it **drops and re-imports** `phoenix_test` before PHPUnit (see [`.cursor/scripts/cloud-test.sh`](.cursor/scripts/cloud-test.sh)).
+
+Warm VMs forked from an **old environment build** may lack MariaDB, Apache, or `php-curl` until `cloud-install.sh` runs (it can `apt-get` those packages when the image is stale). If `.cursor/cloud.env` is missing, install did not finish—fix the install error, then re-run install rather than `cloud-test` alone. Promote or rebuild the environment when Dockerfile revision on `main` advances past the pod’s build id.

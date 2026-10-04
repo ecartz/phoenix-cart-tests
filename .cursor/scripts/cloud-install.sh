@@ -10,6 +10,14 @@ if [[ ! -f PhoenixCart/includes/system/autoloader.php ]]; then
   bash scripts/clone-catalog.sh
 fi
 
+# Warm Cloud VMs may boot from a snapshot older than `.cursor/Dockerfile` (no MariaDB yet).
+if ! command -v mysql >/dev/null 2>&1 || ! dpkg -s mariadb-server >/dev/null 2>&1; then
+  echo "Installing MariaDB and php-mysql for Cloud harness (image rebuild pending)." >&2
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    mariadb-server mariadb-client php-mysql
+fi
+
 if ! service mariadb status >/dev/null 2>&1; then
   service mariadb start
 fi
