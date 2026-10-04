@@ -171,4 +171,4 @@ Step 1’s browser `fetch` calls are exercised directly via HttpClient (no Playw
 
 Install step 4 overwrites **`includes/configure.php`** and **`admin/includes/configure.php`** only under the disposable copy, never under your main **`PhoenixCart`** clone.
 
-See [`SKIPPED.md`](../SKIPPED.md) for remaining deferred areas (admin UI beyond the installer admin tests above, payment providers, etc.).
+See [`SKIPPED.md`](../SKIPPED.md) for hosted payment providers excluded from storefront checkout tests (PayPal, Stripe, 2Checkout).

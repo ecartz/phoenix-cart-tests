@@ -4,6 +4,8 @@ These pages describe how automated tests in this repository are organized and ho
 
 For quick local commands, see the root [`README.md`](../README.md). For how CE Phoenix Cart CI chooses a git ref for this repo, see [`TESTING.md`](../TESTING.md).
 
+This harness exercises **behavior** on the fixture sample shop and on disposable installer installs: storefront flows over HTTP, representative admin actions, a small Playwright set, and unit/integration checks for shared catalog code. It is not line coverage of the entire Phoenix tree. Hosted card and wallet checkouts (**PayPal**, **Stripe**, **2Checkout**) are out of scope — see [`SKIPPED.md`](../SKIPPED.md).
+
 ## Composer suites
 
 | Script | What runs |
@@ -33,4 +35,4 @@ For quick local commands, see the root [`README.md`](../README.md). For how CE P
 | [`installer-tests.md`](installer-tests.md) | Optional web installer on disposable catalog + DB |
 | [`release-certification.md`](release-certification.md) | Tag-paired certification runs |
 
-Shared support code lives under [`tests/support/`](../tests/support/). Deliberate gaps are listed in [`SKIPPED.md`](../SKIPPED.md).
+Shared support code lives under [`tests/support/`](../tests/support/). Hosted payment exclusions are listed in [`SKIPPED.md`](../SKIPPED.md).

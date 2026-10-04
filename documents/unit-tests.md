@@ -21,7 +21,7 @@ Typical targets:
 - Content modules that buffer a `tpl_` file with stub `$GLOBALS['Template']` / `Linker` / `messageStack` and hand `define()` for isolated module keys
 - Template mapping tests with stubbed `Template` / hooks when no live module list is required
 
-Most shop behavior is configuration- or session-driven; many classes are intentionally covered in integration, HTTP, or browser suites instead. See [`SKIPPED.md`](../SKIPPED.md).
+Most shop behavior is configuration- or session-driven; many classes are intentionally covered in integration, HTTP, or browser suites instead. Hosted payment exclusions are in [`SKIPPED.md`](../SKIPPED.md).
 
 ## Mock database (`#[Group('mockdb')]`)
 

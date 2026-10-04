@@ -15,7 +15,7 @@ Local and cloud runs set `PHOENIX_CART_ROOT` to the catalog tree (sibling `../Ph
 
 ## Documentation
 
-Suite runbooks: [`documents/README.md`](documents/README.md). Deliberate exclusions: [`SKIPPED.md`](SKIPPED.md).
+Suite runbooks: [`documents/README.md`](documents/README.md). Hosted payment exclusions: [`SKIPPED.md`](SKIPPED.md).
 
 ## Configuration constants (unit vs MySQL)
 
@@ -96,11 +96,12 @@ GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit
 | `tests/support/` | Shared support (`mock_catalog_database`, `configuration_test_helper`, `phoenix_test_case`, …) |
 | `tests/http/` | HTTP acceptance (`#[Group('http')]`) |
 | `tests/https/` | Apache HTTPS (`composer test:https` only) |
+| `tests/installer/` | Web installer + admin on disposable catalog (`composer test:installer`) |
 | `tests/browser/` | Playwright specs |
 | `playwright.config.ts` | Playwright base URL + Chromium project |
 | `fixtures/` | SQL seeds; [`fixtures/http/README.md`](fixtures/http/README.md) for HTTP-related SQL and configure |
 | `documents/` | Suite documentation ([`documents/README.md`](documents/README.md)) |
-| `SKIPPED.md` | Explicit deferrals (not yet covered) |
+| `SKIPPED.md` | Hosted payment exclusions (PayPal, Stripe, 2Checkout checkout) |
 
 ## Agent and human conventions
 
@@ -113,7 +114,7 @@ GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit
 - **Catalog fixture PHP:** files under [`fixtures/http/`](fixtures/http/) are copied into the shop at runtime and follow **Phoenix 2-space** layout, not test layout.
 - Prefer **behavior** assertions and data providers.
 - Do not copy Phoenix implementation into this repo.
-- When skipping, update `SKIPPED.md` with **reason** and which suite would cover it later.
+- When adding an intentional exclusion (for example a new hosted payment provider), update `SKIPPED.md` with **reason** and what the harness tests instead. Use `markTestSkipped()` only for optional env-gated suites, not for permanent out-of-scope areas.
 - For configuration-dependent behavior, prefer **mock db + `read_configuration`** or **fixture MySQL** over long manual `define()` lists.
 
 ## Running locally

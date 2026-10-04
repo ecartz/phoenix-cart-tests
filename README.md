@@ -1,6 +1,8 @@
 # CE Phoenix Cart tests
 
-PHPUnit harness for [CE Phoenix Cart](https://github.com/CE-PhoenixCart/PhoenixCart). Tests live here so the shop fork stays close to upstream.
+PHPUnit and Playwright harness for [CE Phoenix Cart](https://github.com/CE-PhoenixCart/PhoenixCart). Tests live here so the shop fork stays close to upstream.
+
+Behavior coverage targets the **sample shop** (HTTP + browser), **disposable installer** admin flows, and shared catalog helpers (unit + integration). Hosted **PayPal**, **Stripe**, and **2Checkout** checkout are out of scope — see [`SKIPPED.md`](SKIPPED.md). Suite details: [`documents/README.md`](documents/README.md).
 
 ## Requirements
 
@@ -85,6 +87,8 @@ Timed homepage check runs with **`composer test:http`**. Carousel screenshots wi
 | `tests/unit/` | Unit and mock-db tests |
 | `tests/integration/` | `@group mysql` tests against fixture SQL |
 | `tests/http/` | `@group http` acceptance tests (running shop + DB) |
+| `tests/https/` | Apache TLS / SSL session id (`composer test:https`) |
+| `tests/installer/` | Web installer wizard + admin (`composer test:installer`) |
 | `tests/browser/` | Playwright specs |
 | `playwright.config.ts` | Playwright config |
 | `scripts/http-server.sh` | PHP built-in server for HTTP acceptance |
