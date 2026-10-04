@@ -9,6 +9,9 @@ namespace PhoenixCart\Tests\support;
  */
 final class http_order_fixture_sql {
 
+    /** @var array<int, string> */
+    private static array $saved_date_purchased_by_orders_id = [];
+
     private const OTHER_CUSTOMER_ID = 9001;
 
     private const OTHER_CUSTOMER_EMAIL = 'phoenix-http-other@example.com';
@@ -103,9 +106,96 @@ final class http_order_fixture_sql {
         mysql_bootstrap::define_connection_constants();
         $mysqli = self::connect();
 
+        $lookup = $mysqli->prepare(
+            'SELECT orders_id FROM orders WHERE customers_email_address = ? ORDER BY orders_id DESC LIMIT 1'
+        );
+
+        if ($lookup === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $lookup->bind_param('s', $email);
+        $lookup->execute();
+        $result = $lookup->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $lookup->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            throw new \RuntimeException('No order found to age for email: ' . $email);
+        }
+
+        self::remember_and_age_order_minutes((int) $row['orders_id'], $minutes);
+    }
+
+    public static function remember_and_age_order_minutes(int $orders_id, int $minutes): void {
+        if ($orders_id <= 0) {
+            throw new \InvalidArgumentException('orders_id must be positive.');
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $lookup = $mysqli->prepare(
+            'SELECT customers_email_address FROM orders WHERE orders_id = ? LIMIT 1'
+        );
+
+        if ($lookup === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $lookup->bind_param('i', $orders_id);
+        $lookup->execute();
+        $result = $lookup->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $lookup->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            throw new \RuntimeException('No order found to age for orders_id: ' . $orders_id);
+        }
+
+        self::remember_and_age_orders_for_email((string) $row['customers_email_address'], $minutes);
+    }
+
+    public static function remember_and_age_orders_for_email(string $email, int $minutes): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $lookup = $mysqli->prepare(
+            'SELECT orders_id, date_purchased FROM orders WHERE customers_email_address = ?'
+        );
+
+        if ($lookup === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $lookup->bind_param('s', $email);
+        $lookup->execute();
+        $result = $lookup->get_result();
+        $rows = $result !== false ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $lookup->close();
+
+        if ($rows === []) {
+            $mysqli->close();
+            throw new \RuntimeException('No orders found to age for email: ' . $email);
+        }
+
+        if (self::$saved_date_purchased_by_orders_id === []) {
+            foreach ($rows as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+
+                self::$saved_date_purchased_by_orders_id[(int) $row['orders_id']] = (string) $row['date_purchased'];
+            }
+        }
+
         $statement = $mysqli->prepare(
-            'UPDATE orders SET date_purchased = DATE_SUB(NOW(), INTERVAL ? MINUTE)'
-            . ' WHERE customers_email_address = ? ORDER BY orders_id DESC LIMIT 1'
+            'UPDATE orders SET date_purchased = DATE_SUB(NOW(), INTERVAL ? MINUTE) WHERE customers_email_address = ?'
         );
 
         if ($statement === false) {
@@ -117,6 +207,34 @@ final class http_order_fixture_sql {
         $statement->execute();
         $statement->close();
         $mysqli->close();
+    }
+
+    public static function restore_remembered_order_date_purchased(): void {
+        if (self::$saved_date_purchased_by_orders_id === []) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'UPDATE orders SET date_purchased = ? WHERE orders_id = ?'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        foreach (self::$saved_date_purchased_by_orders_id as $orders_id => $date_purchased) {
+            $statement->bind_param('si', $date_purchased, $orders_id);
+            $statement->execute();
+        }
+
+        $statement->close();
+        $mysqli->close();
+
+        self::$saved_date_purchased_by_orders_id = [];
     }
 
     private static function connect(): \mysqli {
