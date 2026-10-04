@@ -302,6 +302,108 @@ final class http_orders_lookup {
         return (int) $row['products_quantity'];
     }
 
+    public static function orders_status_id_for_order(int $orders_id): ?int {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare('SELECT orders_status FROM orders WHERE orders_id = ? LIMIT 1');
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('i', $orders_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (int) $row['orders_status'];
+    }
+
+    public static function orders_products_download_count(int $orders_products_download_id): ?int {
+        if ($orders_products_download_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT download_count FROM orders_products_download WHERE orders_products_download_id = ? LIMIT 1'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('i', $orders_products_download_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (int) $row['download_count'];
+    }
+
+    public static function set_order_purchased_days_ago(int $orders_id, int $days): void {
+        if ($orders_id <= 0) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'UPDATE orders SET date_purchased = DATE_SUB(NOW(), INTERVAL ? DAY) WHERE orders_id = ?'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('ii', $days, $orders_id);
+        $statement->execute();
+        $statement->close();
+        $mysqli->close();
+    }
+
+    public static function set_download_maxdays(int $orders_products_download_id, int $maxdays): void {
+        if ($orders_products_download_id <= 0) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'UPDATE orders_products_download SET download_maxdays = ? WHERE orders_products_download_id = ?'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('ii', $maxdays, $orders_products_download_id);
+        $statement->execute();
+        $statement->close();
+        $mysqli->close();
+    }
+
     public static function set_order_status(int $orders_id, int $orders_status_id): void {
         if ($orders_id <= 0) {
             return;
