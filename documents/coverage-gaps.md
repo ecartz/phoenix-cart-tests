@@ -16,8 +16,8 @@ Hosted PayPal, Stripe, and 2Checkout checkout remain out of scope — see [`SKIP
 
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
-| Login failure copy | Loose “password” substring match | [`login_form_test.php`](../tests/http/login_form_test.php): explicit **No match for E-Mail Address and/or Password** plus successful fixture login reaches `account.php` |
-| Advanced search / browse modules | Keywords and product names only | [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php): `cm-asr-title`, `cm-asr-search-result`, `cm-testimonials` |
+| Login failure copy | Loose “password” substring match | [`login_form_test.php`](../tests/http/login_form_test.php): explicit **No match for E-mail Address and/or Password** plus successful fixture login reaches `account.php` |
+| Advanced search / browse modules | Keywords and product names only | [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php): `cm-asr-title`, product listing markup, `cm-t-title`, `cm-t-list` |
 | Contact us | Success message only | [`contact_us_test.php`](../tests/http/contact_us_test.php): invalid **`formid`**, happy path asserts captured **`mail()`** via [`http_mail_capture.php`](../tests/support/http_mail_capture.php) |
 | Session UA check after auth | Anonymous session only | [`request_security_test.php`](../tests/http/request_security_test.php): fixture login then UA mismatch on `account.php`; [`php-built-in-router.php`](../scripts/php-built-in-router.php) syncs `HTTP_*` / `REMOTE_ADDR` into `getenv()` on **each** request |
 

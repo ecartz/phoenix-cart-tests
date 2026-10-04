@@ -15,7 +15,7 @@ Local and cloud runs set `PHOENIX_CART_ROOT` to the catalog tree (sibling `../Ph
 
 ## Documentation
 
-Suite runbooks: [`documents/README.md`](documents/README.md). Hosted payment exclusions: [`SKIPPED.md`](SKIPPED.md).
+Suite runbooks: [`documents/README.md`](documents/README.md). Behavior gap tracker: [`documents/coverage-gaps.md`](documents/coverage-gaps.md). Hosted payment exclusions: [`SKIPPED.md`](SKIPPED.md).
 
 ## Configuration constants (unit vs MySQL)
 

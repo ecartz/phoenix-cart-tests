@@ -25,6 +25,10 @@ abstract class http_test_case extends phoenix_test_case {
 
         http_bootstrap::write_local_configure();
 
+        if (getenv('PHOENIX_HTTP_MAIL_CAPTURE') === false || getenv('PHOENIX_HTTP_MAIL_CAPTURE') === '') {
+            putenv('PHOENIX_HTTP_MAIL_CAPTURE=1');
+        }
+
         $probe = http_bootstrap::client();
 
         try {
