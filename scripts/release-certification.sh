@@ -75,6 +75,7 @@ if [[ "${PHOENIX_HTTP_ENABLED:-}" == "1" ]]; then
   sleep 1
 fi
 
+# Stack + optional browser only. Installer and HTTPS stay in other suites.
 composer test:stack
 TEST_EXIT=$?
 
