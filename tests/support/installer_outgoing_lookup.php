@@ -70,4 +70,48 @@ final class installer_outgoing_lookup {
         return implode("\n", $parts);
     }
 
+    public static function has_queued_row(string $email_address, string $slug): bool {
+        if ($email_address === '' || $slug === '') {
+            return false;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+
+        $database = getenv('PHOENIX_INSTALLER_DB_NAME');
+        if (!is_string($database) || $database === '') {
+            $database = 'phoenix_install';
+        }
+
+        $mysqli = new \mysqli(
+            (string) (getenv('PHOENIX_DB_HOST') ?: '127.0.0.1'),
+            (string) (getenv('PHOENIX_DB_USER') ?: 'phoenix'),
+            (string) (getenv('PHOENIX_DB_PASSWORD') ?: 'phoenix'),
+            $database
+        );
+
+        if ($mysqli->connect_errno) {
+            return false;
+        }
+
+        $mysqli->set_charset('utf8mb4');
+
+        $statement = $mysqli->prepare(
+            'SELECT 1 FROM outgoing WHERE email_address = ? AND slug = ? LIMIT 1'
+        );
+        if ($statement === false) {
+            $mysqli->close();
+
+            return false;
+        }
+
+        $statement->bind_param('ss', $email_address, $slug);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        return is_array($row);
+    }
+
 }

@@ -122,7 +122,9 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
 
-- **`/admin/outgoing.php`** — outgoing queue (empty queue is valid; storefront contact mail path is covered by [`admin_mail_test.php`](../tests/installer/admin_mail_test.php) compose capture)
+- Storefront **`contact_us.php`** — captured shopowner mail, no outgoing row for the visitor email
+- Storefront COD checkout + **`checkout_success.php`** — **`order_thanks`** row in **`outgoing`** and visible on **`/admin/outgoing.php`**
+- **`/admin/outgoing.php`** — outgoing queue list smoke
 - **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates
 - **`/admin/modules.php?set=layout`** — layout (`&pi;`) modules
 - **`/admin/modules.php?set=currencies`** — **`c_ecb`** update-currency module

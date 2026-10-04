@@ -13,14 +13,16 @@ Release certification checks that **this test repository** passes the harness ag
 
 ## What runs
 
-Release certification is **stack + browser only**. [`scripts/release-certification.sh`](../scripts/release-certification.sh) checks out the catalog at the pin, imports fixtures, starts the HTTP server when enabled, then:
+Release certification runs the same phases as the CI full stack, then the installer suite. [`scripts/release-certification.sh`](../scripts/release-certification.sh) checks out the catalog at the pin, imports fixtures, starts the HTTP server when enabled, then:
 
 1. **`composer test:stack`** (unit + integration + HTTP)
 2. **`composer test:browser`** when **`PHOENIX_BROWSER_ENABLED=1`** and the HTTP server is enabled
+3. **`composer test:installer`** (disposable catalog on port 8766; set **`PHOENIX_MYSQL_ROOT_PASSWORD`** on CI)
+4. **`composer test:https`** when **`PHOENIX_HTTPS_ENABLED=1`** (Apache TLS; requires OS Apache packages on the runner)
 
-The script does not run the installer suite (**`composer test:installer`**) or the HTTPS suite. Installer coverage is [`installer-tests.md`](installer-tests.md) and the installer job in [`.github/workflows/phpunit-mysql.yml`](../.github/workflows/phpunit-mysql.yml). HTTPS is [`https-tests.md`](https-tests.md); use **`composer cloud-test`** or the CI full stack for Apache coverage.
+Installer-only details: [`installer-tests.md`](installer-tests.md). HTTPS details: [`https-tests.md`](https-tests.md). The parallel **`installer`** job in [`.github/workflows/phpunit-mysql.yml`](../.github/workflows/phpunit-mysql.yml) still runs installer alone on every `main` push.
 
-GitHub Actions certification uses the same image as the full stack: **PHP 8.4** and **MariaDB 10.11** only. MySQL 8 and other PHP versions are not run (see [`TESTING.md`](../TESTING.md)).
+GitHub Actions tag certification uses **PHP 8.4** and **MariaDB 10.11**. A separate **`full-stack-mysql8`** job in [`.github/workflows/phpunit-mysql.yml`](../.github/workflows/phpunit-mysql.yml) runs **`scripts/full-stack-test.sh`** against **MySQL 8.0** (see [`TESTING.md`](../TESTING.md)).
 
 Entry point: **`composer release-certify`**. Requires MariaDB/MySQL, PHP, Composer, and the same env vars as local HTTP tests.
 

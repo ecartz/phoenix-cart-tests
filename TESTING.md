@@ -85,7 +85,7 @@ Mocked-db tests live under `tests/unit/` with `#[Group('mockdb')]`. MySQL-backed
 | HTTPS | Apache, curl | DB + Apache TLS |
 | Optional | Payment sandbox secrets, release certify | Manual workflows / tag push |
 
-GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml) runs stack, browser, and HTTPS via [`scripts/full-stack-test.sh`](scripts/full-stack-test.sh), matching **`composer cloud-test`**. That workflow and [`.github/workflows/release-certification.yml`](.github/workflows/release-certification.yml) use **PHP 8.4** and **MariaDB 10.11** only. MySQL 8 and other PHP versions are not run.
+GitHub Actions [`.github/workflows/phpunit-mysql.yml`](.github/workflows/phpunit-mysql.yml) runs stack, browser, and HTTPS via [`scripts/full-stack-test.sh`](scripts/full-stack-test.sh) on **MariaDB 10.11**, matching **`composer cloud-test`**. The same workflow also runs a **`full-stack-mysql8`** job against **MySQL 8.0**. [`.github/workflows/release-certification.yml`](.github/workflows/release-certification.yml) certifies tags on **PHP 8.4** and **MariaDB 10.11** via [`scripts/release-certification.sh`](scripts/release-certification.sh) (stack, browser, installer, and HTTPS when enabled). Other PHP versions are not run in CI.
 
 ## Repository layout
 

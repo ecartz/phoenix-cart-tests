@@ -69,7 +69,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
 | Vendored install SQL vs catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match on `phoenix.sql` + `phoenix_data_sample.sql`) |
-| Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser); **PHP 8.4 / MariaDB 10.11** in CI only |
+| Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser), **`composer test:installer`**, and **`composer test:https`** when enabled; **PHP 8.4 / MariaDB 10.11** on tag certification; **MySQL 8.0** stack job in [`.github/workflows/phpunit-mysql.yml`](../.github/workflows/phpunit-mysql.yml) |
 
 ## HTTP storefront — account, GDPR, security (representative)
 
@@ -80,7 +80,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Address book / preferences | Partial | [`address_book_test.php`](../tests/http/address_book_test.php), [`account_preferences_test.php`](../tests/http/account_preferences_test.php) |
 | `Href::redirect` hardening | None | [`href_redirect_test.php`](../tests/http/href_redirect_test.php) |
 | Info / slug pages | None | [`info_page_test.php`](../tests/http/info_page_test.php) |
-| Stale **`checkout_success.php`** redirect timing | HTTP e2e deferred | Unit guard in [`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php) |
+| Stale **`checkout_success.php`** redirect timing | HTTP e2e deferred | [`checkout_success_stale_redirect_test.php`](../tests/http/checkout_success_stale_redirect_test.php) plus unit guard in [`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php) |
 
 ## Integration and unit (supporting SQL / modules)
 
@@ -94,7 +94,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 
 | Area | Notes |
 |------|--------|
-| Outgoing queue after storefront contact | Compose capture in [`admin_mail_test.php`](../tests/installer/admin_mail_test.php); queue list smoke on [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) |
+| Outgoing queue after storefront contact | Closed | [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) — contact mail capture vs queue; **`order_thanks`** after checkout on installer |
 | Windows vs Linux path/PHP differences | Linux CI and Cloud are merge gate — [`TESTING.md`](../TESTING.md) |
 
 ## Recently closed (first-four + orphan slices)
@@ -111,4 +111,4 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Harness limits + vendored SQL pin (slice) | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php), [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts), [`release-certification.md`](release-certification.md) |
 | Installer catalog storefront + account validation (slice) | [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php), [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) |
 
-Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **118** installer tests after the consolidated branch.
+Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **120** installer tests (plus **`admin_order_line_editor_test`** skipped until the catalog pin ships order-editor POST endpoints).
