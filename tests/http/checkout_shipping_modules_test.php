@@ -12,6 +12,12 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_shipping_modules_test extends http_test_case {
 
+    private const ITEM_SHIPPING_MODULE_ID = 'item_item';
+
+    private const ITEM_SHIPPING_TITLE = 'Per Item';
+
+    private const ITEM_SHIPPING_COST = 2.5;
+
     protected function tearDown(): void {
         http_checkout_fixture_sql::restore_flat_shipping_geo_zone();
         http_checkout_fixture_sql::restore_shipping_modules();
@@ -23,6 +29,7 @@ final class checkout_shipping_modules_test extends http_test_case {
         http_checkout_fixture_sql::install_extra_shipping_modules();
 
         $this->login_fixture_customer();
+        $orders_before = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
 
         $this->get_http()->request('GET', '/index.php', [
             'query' => [
@@ -42,7 +49,7 @@ final class checkout_shipping_modules_test extends http_test_case {
             'body' => [
                 'action' => 'process',
                 'formid' => $shipping_formid,
-                'shipping' => 'item_item',
+                'shipping' => self::ITEM_SHIPPING_MODULE_ID,
             ],
         ]);
         $payment_html = $payment_page->getContent(false);
@@ -66,6 +73,17 @@ final class checkout_shipping_modules_test extends http_test_case {
         $this->assertSame(
             'Cash on Delivery',
             http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
+        );
+
+        $orders_id = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+        $this->assertGreaterThan($orders_before, $orders_id);
+        $this->assertSame(
+            self::ITEM_SHIPPING_TITLE,
+            http_orders_lookup::orders_total_title_for_order($orders_id, 'ot_shipping')
+        );
+        $this->assertSame(
+            self::ITEM_SHIPPING_COST,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_shipping')
         );
     }
 

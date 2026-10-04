@@ -203,6 +203,74 @@ final class http_orders_lookup {
         return (float) $row['value'];
     }
 
+    public static function orders_total_title_for_order(int $orders_id, string $class): ?string {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT title FROM orders_total WHERE orders_id = ? AND class = ? ORDER BY sort_order ASC LIMIT 1'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('is', $orders_id, $class);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return (string) $row['title'];
+    }
+
+    /**
+     * @return array{currency: string, currency_value: float}|null
+     */
+    public static function orders_currency_for_order(int $orders_id): ?array {
+        if ($orders_id <= 0) {
+            return null;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $statement = $mysqli->prepare(
+            'SELECT currency, currency_value FROM orders WHERE orders_id = ? LIMIT 1'
+        );
+
+        if ($statement === false) {
+            $mysqli->close();
+            throw new \RuntimeException('Prepare failed: ' . $mysqli->error);
+        }
+
+        $statement->bind_param('i', $orders_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        $statement->close();
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return [
+            'currency' => (string) $row['currency'],
+            'currency_value' => (float) $row['currency_value'],
+        ];
+    }
+
     public static function orders_products_quantity_for_order(int $orders_id, int $products_id): ?int {
         if ($orders_id <= 0) {
             return null;
