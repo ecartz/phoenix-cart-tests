@@ -101,7 +101,7 @@ vendor/bin/phpunit --testsuite installer
 - **`/admin/modules_actions.php`** — Actions module set
 - **`/admin/importers.php`** — Importers list (empty table is valid)
 
-[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, **Pears** quantity **2** via `product_info.php`, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, **`/admin/orders.php?action=edit`** shows **`2 x Pears`**, and **`/admin/invoice.php`** / **`/admin/packingslip.php`** with that order’s **`oID`** show the doubled line and customer name.
+[`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) places a storefront COD order (register customer, **Pears** quantity **2** via `product_info.php`, flat shipping, `payment=cod`) on the disposable shop, then asserts admin **`/admin/orders.php`** lists the customer, **`/admin/orders.php?action=edit`** shows **`2 x Pears`**, and **`/admin/invoice.php`** / **`/admin/packingslip.php`** with that order’s **`oID`** show the doubled line and customer name. The order edit screen on catalog pin **`master`** has no order-line **`update_products`** POST (status updates use **`update_order`** only). This suite does not invent that write.
 
 [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) copies [`fixtures/http/http_storefront_hook_marker.php`](../fixtures/http/http_storefront_hook_marker.php) into the installed catalog, toggles **`HTTP_TEST_STOREFRONT_HOOK_MARKER_STATUS`**, asserts the HTML marker on/off on the storefront homepage, and lists the hook on **`/admin/modules_hooks.php`**.
 
@@ -162,12 +162,23 @@ vendor/bin/phpunit --testsuite installer
 - **`insert_product`**, **`update_product`** (renamed product), **`delete_product_confirm`**
 - **`copy_to_confirm`** with **`copy_as=duplicate`** into the new category (copy deleted afterward)
 - **`move_product_confirm`** into the new category and back to category **`1`**
+- **`update_product`** on an active product — storefront **`product_info.php`** shows the saved price (**`$6.41`**) and description
+- **`products_image`** multipart upload on that same form (`enctype="multipart/form-data"`, file input **`products_image`**) — storefront **`product_info.php`** shows **`images/phoenix-installer-catalog-product.png`**. If that form is not a normal multipart post the HTTP client can send, the image test is skipped and reports that upload is blocked.
+
+[`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) exercises **`create_account.php`** on the disposable shop. Sample data does not install **`cd_password_confirmation`**, so the class installs that customer-data module first. It then asserts:
+
+- empty required **firstname** stays on the form and stores no customer
+- a second registration with the same e-mail is rejected
+- **`password_confirmation`** that does not match **`password`** is rejected
+- **`matc`** omitted does not create a customer (the catalog pin references undefined **`ENTRY_MATC_ERROR`**, so the request may fail closed)
+- one United States address stores **`entry_country_id` `223`** and Florida’s **`entry_zone_id`** with an empty **`entry_state`**
+- one United Kingdom address (no zones) stores **`entry_country_id` `222`**, **`entry_zone_id` `0`**, and free-text **`entry_state`**
 
 [`admin_attributes_test.php`](../tests/installer/admin_attributes_test.php) on **`products_attributes.php`** adds an option and value, links them to sample product **Pears** (`products_id=3`) with a **`+`** price prefix, then removes the link, value, and option.
 
 [`admin_store_logo_test.php`](../tests/installer/admin_store_logo_test.php) uploads [`fixtures/installer-store-logo-test.png`](../fixtures/installer-store-logo-test.png) via **`store_logo.php?action=save`**, asserts **`STORE_LOGO`** and **`/admin/store_logo.php`** show the new file, then re-uploads the backed-up original logo from the disposable catalog copy.
 
-Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-one classes → twenty-one installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
+Each test class runs an independent wizard install after [`install_test_case`](tests/support/install_test_case.php) resets **`phoenix_install`** (twenty-four classes → twenty-four installs per full **`composer test:installer`** run). Each test method logs in again via [`login_installed_admin()`](../tests/support/install_test_case.php) (fresh cookie jar per method). [`ensure_install_directory()`](../tests/support/installer_bootstrap.php) restores **`install/`** on the catalog copy when a prior run removed it.
 
 Step 1’s browser `fetch` calls are exercised directly via HttpClient (no Playwright). **`rpc.php` passes the database password in the query string** — do not log request URLs.
 

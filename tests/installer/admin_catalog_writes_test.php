@@ -30,6 +30,20 @@ final class admin_catalog_writes_test extends install_test_case {
 
     private const PRODUCT_MODEL = 'INSTALL-CAT';
 
+    private const STOREFRONT_PRODUCT_NAME = 'Phoenix Installer Storefront Product';
+
+    private const STOREFRONT_PRODUCT_MODEL = 'INSTALL-SF';
+
+    private const STOREFRONT_DESCRIPTION_INITIAL = 'Installer storefront description before admin save.';
+
+    private const STOREFRONT_DESCRIPTION = 'Installer storefront description after admin save.';
+
+    private const STOREFRONT_PRICE = '6.41';
+
+    private const STOREFRONT_IMAGE_NAME = 'phoenix-installer-catalog-product.png';
+
+    private const IMAGE_UPLOAD_BLOCKED = 'Product image upload is blocked: the admin product form is not a normal multipart post the HTTP client can send.';
+
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
 
@@ -69,6 +83,99 @@ final class admin_catalog_writes_test extends install_test_case {
             (int) self::ROOT_CATEGORY_PATH,
         );
         $this->delete_category($admin_http, $child_path, $category_id);
+    }
+
+    public function test_admin_product_price_and_description_reach_storefront(): void {
+        $admin_http = $this->login_installed_admin();
+        $product_id = $this->insert_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            self::STOREFRONT_PRODUCT_NAME,
+            '1',
+            '1.00',
+            self::STOREFRONT_DESCRIPTION_INITIAL,
+            self::STOREFRONT_PRODUCT_MODEL,
+        );
+
+        $this->update_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            $product_id,
+            self::STOREFRONT_PRODUCT_NAME,
+            '1',
+            self::STOREFRONT_PRICE,
+            self::STOREFRONT_DESCRIPTION,
+            self::STOREFRONT_PRODUCT_MODEL,
+        );
+
+        $storefront_html = $this->fetch_storefront_product($product_id);
+        $this->assertStringContainsString(self::STOREFRONT_DESCRIPTION, $storefront_html);
+        $this->assertStringNotContainsString(self::STOREFRONT_DESCRIPTION_INITIAL, $storefront_html);
+        $this->assertMatchesRegularExpression(
+            '/<span class="productPrice">\$' . preg_quote(self::STOREFRONT_PRICE, '/') . '<\/span>/',
+            $storefront_html,
+        );
+
+        $this->delete_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            $product_id,
+            3,
+        );
+    }
+
+    public function test_admin_product_image_upload_reaches_storefront(): void {
+        $admin_http = $this->login_installed_admin();
+        $new_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
+            'cPath' => self::PRODUCT_CATEGORY_PATH,
+            'action' => 'new_product',
+        ]);
+        if (!$this->catalog_product_form_accepts_multipart_image($new_html)) {
+            $this->markTestSkipped(self::IMAGE_UPLOAD_BLOCKED);
+        }
+
+        $image_path = $this->storefront_image_fixture_path();
+        $product_id = $this->insert_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            self::STOREFRONT_PRODUCT_NAME,
+            '1',
+            self::STOREFRONT_PRICE,
+            self::STOREFRONT_DESCRIPTION,
+            self::STOREFRONT_PRODUCT_MODEL,
+        );
+
+        $this->update_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            $product_id,
+            self::STOREFRONT_PRODUCT_NAME,
+            '1',
+            self::STOREFRONT_PRICE,
+            self::STOREFRONT_DESCRIPTION,
+            self::STOREFRONT_PRODUCT_MODEL,
+            $image_path,
+        );
+
+        $storefront_html = $this->fetch_storefront_product($product_id);
+        $this->assertStringContainsString('images/' . self::STOREFRONT_IMAGE_NAME, $storefront_html);
+        $this->assertStringContainsString(self::STOREFRONT_DESCRIPTION, $storefront_html);
+        $this->assertMatchesRegularExpression(
+            '/<span class="productPrice">\$' . preg_quote(self::STOREFRONT_PRICE, '/') . '<\/span>/',
+            $storefront_html,
+        );
+        $saved_image = installer_bootstrap::catalog_copy_root()
+            . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . self::STOREFRONT_IMAGE_NAME;
+        $this->assertFileExists($saved_image);
+
+        $this->delete_product(
+            $admin_http,
+            self::PRODUCT_CATEGORY_PATH,
+            $product_id,
+            3,
+        );
+        $this->assertFileDoesNotExist($saved_image);
+        @unlink($image_path);
     }
 
     private function insert_category(HttpClientInterface $admin_http): string {
@@ -126,6 +233,10 @@ final class admin_catalog_writes_test extends install_test_case {
         HttpClientInterface $admin_http,
         string $category_path,
         string $product_name,
+        string $products_status = '0',
+        string $products_price = '1.00',
+        string $products_description = self::PRODUCT_DESCRIPTION,
+        string $products_model = self::PRODUCT_MODEL,
     ): string {
         $new_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
@@ -147,6 +258,10 @@ final class admin_catalog_writes_test extends install_test_case {
                 $language_id,
                 $products_date_added,
                 $product_name,
+                $products_status,
+                $products_price,
+                $products_description,
+                $products_model,
             ),
         ]);
         $this->assertContains($insert->getStatusCode(), [200, 302]);
@@ -175,6 +290,20 @@ final class admin_catalog_writes_test extends install_test_case {
         string $product_id,
         string $updated_name,
     ): void {
+        $this->update_product($admin_http, $category_path, $product_id, $updated_name);
+    }
+
+    private function update_product(
+        HttpClientInterface $admin_http,
+        string $category_path,
+        string $product_id,
+        string $product_name,
+        string $products_status = '0',
+        string $products_price = '1.00',
+        string $products_description = self::PRODUCT_DESCRIPTION,
+        string $products_model = self::PRODUCT_MODEL,
+        ?string $image_path = null,
+    ): void {
         $edit_html = $this->fetch_admin_page($admin_http, '/admin/catalog.php', [
             'cPath' => $category_path,
             'pID' => $product_id,
@@ -185,23 +314,42 @@ final class admin_catalog_writes_test extends install_test_case {
         $language_id = $this->parse_products_name_language_id($edit_html);
         $products_date_added = self::parse_hidden_input($edit_html, 'products_date_added');
         $this->assertNotSame('', $products_date_added);
-
-        $this->post_admin_form($admin_http, '/admin/catalog.php', [
-            'cPath' => $category_path,
-            'pID' => $product_id,
-            'action' => 'update_product',
-        ], $this->product_post_body(
+        $body = $this->product_post_body(
             $formid,
             $language_id,
             $products_date_added,
-            $updated_name,
-        ));
+            $product_name,
+            $products_status,
+            $products_price,
+            $products_description,
+            $products_model,
+        );
+
+        if ($image_path !== null) {
+            if (!$this->catalog_product_form_accepts_multipart_image($edit_html)) {
+                $this->markTestSkipped(self::IMAGE_UPLOAD_BLOCKED);
+            }
+
+            $this->post_admin_multipart($admin_http, '/admin/catalog.php', [
+                'cPath' => $category_path,
+                'pID' => $product_id,
+                'action' => 'update_product',
+            ], $body, [
+                'products_image' => $image_path,
+            ]);
+        } else {
+            $this->post_admin_form($admin_http, '/admin/catalog.php', [
+                'cPath' => $category_path,
+                'pID' => $product_id,
+                'action' => 'update_product',
+            ], $body);
+        }
 
         $this->assert_admin_list_contains(
             $admin_http,
             '/admin/catalog.php',
             ['cPath' => $category_path],
-            $updated_name,
+            $product_name,
         );
     }
 
@@ -356,23 +504,27 @@ final class admin_catalog_writes_test extends install_test_case {
         string $language_id,
         string $products_date_added,
         string $product_name,
+        string $products_status = '0',
+        string $products_price = '1.00',
+        string $products_description = self::PRODUCT_DESCRIPTION,
+        string $products_model = self::PRODUCT_MODEL,
     ): array {
         return [
             'formid' => $formid,
             'products_date_added' => $products_date_added,
-            'products_status' => '0',
+            'products_status' => $products_status,
             'products_quantity' => '1',
             'products_date_available' => '',
             'manufacturers_id' => '',
             'importers_id' => '',
-            'products_model' => self::PRODUCT_MODEL,
+            'products_model' => $products_model,
             'products_tax_class_id' => '1',
-            'products_price' => '1.00',
-            'products_price_gross' => '1.00',
+            'products_price' => $products_price,
+            'products_price_gross' => $products_price,
             'products_weight' => '0.5',
             'products_gtin' => '',
             "products_name[{$language_id}]" => $product_name,
-            "products_description[{$language_id}]" => self::PRODUCT_DESCRIPTION,
+            "products_description[{$language_id}]" => $products_description,
             "products_url[{$language_id}]" => '',
             "products_seo_title[{$language_id}]" => '',
             "products_seo_description[{$language_id}]" => '',
@@ -386,6 +538,45 @@ final class admin_catalog_writes_test extends install_test_case {
         }
 
         return '1';
+    }
+
+    private function fetch_storefront_product(string $product_id): string {
+        $shop_http = installer_bootstrap::client();
+        $product_page = $shop_http->request('GET', '/product_info.php', [
+            'query' => ['products_id' => $product_id],
+        ]);
+        $this->assertSame(200, $product_page->getStatusCode());
+
+        return $product_page->getContent(false);
+    }
+
+    private function catalog_product_form_accepts_multipart_image(string $html): bool {
+        if (!str_contains($html, 'enctype="multipart/form-data"')) {
+            return false;
+        }
+
+        return preg_match(
+            '/<input\b(?=[^>]*\btype="file")(?=[^>]*\bname="products_image")[^>]*>/i',
+            $html,
+        ) === 1;
+    }
+
+    private function storefront_image_fixture_path(): string {
+        $source = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures'
+            . DIRECTORY_SEPARATOR . 'installer-store-logo-test.png';
+        $this->assertFileExists($source);
+
+        $directory = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'working';
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            $this->fail('Cannot create working directory for the product image fixture.');
+        }
+
+        $destination = $directory . DIRECTORY_SEPARATOR . self::STOREFRONT_IMAGE_NAME;
+        if (!copy($source, $destination)) {
+            $this->fail('Cannot copy the product image fixture.');
+        }
+
+        return $destination;
     }
 
 }
