@@ -10,7 +10,7 @@ test.describe('products_new page', () => {
 
     const listing = page.locator('.is-product');
     await expect(listing.first()).toBeVisible();
-    await expect(listing.getByRole('link', { name: 'Oranges', exact: true })).toBeVisible();
-    await expect(listing.getByRole('link', { name: 'Pears', exact: true })).toBeVisible();
+    await expect(listing.getByRole('link', { name: 'Oranges', exact: true }).first()).toBeVisible();
+    await expect(listing.getByRole('link', { name: 'Pears', exact: true }).first()).toBeVisible();
   });
 });
