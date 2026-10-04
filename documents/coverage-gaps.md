@@ -80,7 +80,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Address book / preferences | Partial | [`address_book_test.php`](../tests/http/address_book_test.php), [`account_preferences_test.php`](../tests/http/account_preferences_test.php) |
 | `Href::redirect` hardening | None | [`href_redirect_test.php`](../tests/http/href_redirect_test.php) |
 | Info / slug pages | None | [`info_page_test.php`](../tests/http/info_page_test.php) |
-| Stale **`checkout_success.php`** redirect timing | HTTP e2e deferred | Unit guard in [`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php) |
+| Stale **`checkout_success.php`** redirect timing | HTTP e2e deferred | [`checkout_success_stale_redirect_test.php`](../tests/http/checkout_success_stale_redirect_test.php) (COD + aged `date_purchased`, config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php)); unit guard in [`cm_cs_redirect_old_order_test.php`](../tests/unit/content/cm_cs_redirect_old_order_test.php) |
 
 ## Integration and unit (supporting SQL / modules)
 

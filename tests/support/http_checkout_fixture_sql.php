@@ -47,6 +47,8 @@ final class http_checkout_fixture_sql {
 
     private static ?string $saved_flat_shipping_tax_class = null;
 
+    private static ?string $saved_redirect_old_order_minutes = null;
+
     public static function insert_virtual_download_for_pears(): void {
         self::remove_virtual_download_for_pears();
 
@@ -513,6 +515,48 @@ final class http_checkout_fixture_sql {
         $mysqli->close();
         self::$saved_display_price_with_tax = null;
         self::$saved_flat_shipping_tax_class = null;
+    }
+
+    public static function enable_checkout_success_redirect_old_order_minutes(int $minutes): void {
+        if ($minutes <= 0) {
+            throw new \InvalidArgumentException('Redirect minutes must be greater than zero for HTTP stale-success tests.');
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        if (self::$saved_redirect_old_order_minutes === null) {
+            self::$saved_redirect_old_order_minutes = self::fetch_configuration_value(
+                $mysqli,
+                'MODULE_CONTENT_CHECKOUT_SUCCESS_REDIRECT_OLD_ORDER_MINUTES'
+            ) ?? '60';
+        }
+
+        self::set_configuration(
+            $mysqli,
+            'MODULE_CONTENT_CHECKOUT_SUCCESS_REDIRECT_OLD_ORDER_MINUTES',
+            (string) $minutes
+        );
+
+        $mysqli->close();
+    }
+
+    public static function restore_checkout_success_redirect_old_order_minutes(): void {
+        if (self::$saved_redirect_old_order_minutes === null) {
+            return;
+        }
+
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        self::set_configuration(
+            $mysqli,
+            'MODULE_CONTENT_CHECKOUT_SUCCESS_REDIRECT_OLD_ORDER_MINUTES',
+            self::$saved_redirect_old_order_minutes
+        );
+
+        $mysqli->close();
+        self::$saved_redirect_old_order_minutes = null;
     }
 
     public static function restrict_cod_to_non_fixture_geo_zone(): void {
