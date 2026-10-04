@@ -56,7 +56,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Storefront hook fixture toggle + admin hooks list | None | [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) |
 | Compose mail / order notify capture | None | [`admin_mail_test.php`](../tests/installer/admin_mail_test.php) |
 | Storefront **`create_account`** validation + address zones | HTTP welcome mail only | [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) — omitted **`matc`** may **HTTP 500** on the pin when **`ENTRY_MATC_ERROR`** is undefined (see [`installer-tests.md`](installer-tests.md)) |
-| **Admin order line editor add/remove products** | None | **Open** — blocked at [`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt) until CE ships stable order-editor endpoints for the pinned ref |
+| **Admin order line editor add/remove products** | None | **Blocked** — catalog pin **`master`** ([`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt)): `admin/orders.php?action=edit` renders the Products tab as read-only line HTML (no line-item form); the only POST on that screen is **`action=update_order`** (`status`, `comments`, `notify`). There is no `update_products` (or add/remove line) handler under `admin/includes/actions/orders/`. Harness cannot POST invented line edits or assert invoice **totals** after admin line changes until CE ships that write. Storefront qty **2** on invoice/packingslip remains [`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php). |
 
 ## Browser, HTTPS, harness environment
 
