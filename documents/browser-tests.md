@@ -35,6 +35,7 @@ Specs skip when **`PHOENIX_HTTP_BASE_URL`** is unset.
 | `homepage_visual.spec.ts` | Carousel **`toHaveScreenshot`** baseline |
 | `currency_dropdown.spec.ts` | Navbar **EUR** currency dropdown updates URL and product price |
 | `search_form.spec.ts` | Navbar **quick_find** submits keywords to **`advanced_search_result.php`** |
+| `products_new.spec.ts` | **`products_new.php`** sortable listing shows sample catalog products |
 
 Binding names in specs use **snake_case** (enforced by [`browser_spec_snake_case_test.php`](../tests/unit/invariants/browser_spec_snake_case_test.php)).
 

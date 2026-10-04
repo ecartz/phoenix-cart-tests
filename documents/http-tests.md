@@ -16,7 +16,8 @@ HTTP tests are included in **`composer test:stack`** and **`composer test:all`**
 ## Prerequisites
 
 1. Import fixtures: **`bash fixtures/import-mysql-fixtures.sh`**
-2. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; see [`http_mail_capture.php`](../tests/support/http_mail_capture.php) for future assertions).
+2. Optional sanity check: **`bash scripts/verify-fixture-sql.sh`**
+3. Write catalog configure and start the built-in server: **`bash scripts/http-server.sh`** (document root = **`PHOENIX_CART_ROOT`**, default port **8765**). The server sets **`sendmail_path`** to [`scripts/capture-installer-mail.php`](../scripts/capture-installer-mail.php) so storefront **`mail()`** is captured under **`working/http-mail/`** (same mechanism as the installer server; see [`http_mail_capture.php`](../tests/support/http_mail_capture.php) for future assertions).
 3. Set skip gate and origin:
 
 ```bash
@@ -56,8 +57,8 @@ Examples in this suite:
 - GDPR intro page and logged-in `gdpr_data` JSON export with store name (`account_gdpr_test`)
 - Address book insert and delete (`address_book_test`)
 - Password forgotten → reset key from MySQL → new password login (`password_reset_test`; restores seed hash in `tearDown`)
-- Contact form success message and captured shopowner mail (`contact_us_test`; [`http_mail_capture.php`](../tests/support/http_mail_capture.php))
-- Search, specials, new products, testimonials, manufacturer browse, and `manufacturers.php` index (`catalog_browse_test`)
+- Contact form success message, bad **`formid`**, captured shopowner mail, and **`ar_contact_us`** throttle (`contact_us_test`; [`http_mail_capture.php`](../tests/support/http_mail_capture.php), [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php))
+- Search, specials, new products, testimonials, manufacturer browse, and `manufacturers.php` index (`catalog_browse_test`); dedicated **`products_new.php`** listing (`products_new_test`)
 - Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql)); asserts stored `orders.payment_method` is **Cash on Delivery** and the latest order has Florida **`ot_tax`**
 - Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
 - Checkout with a secondary address on shipping/payment address steps (`checkout_alternate_address_test`)

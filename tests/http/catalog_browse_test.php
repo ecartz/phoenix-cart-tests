@@ -17,6 +17,7 @@ final class catalog_browse_test extends http_test_case {
         $this->assertStringContainsString('keywords', $advanced_body);
         $this->assertStringContainsString('advanced_search_result.php', $advanced_body);
         $this->assertStringContainsString('name="keywords"', $advanced_body);
+        $this->assertStringContainsString('name="manufacturers_id"', $advanced_body);
 
         $search = $this->get_http()->request('GET', '/advanced_search_result.php', [
             'query' => [
@@ -24,7 +25,10 @@ final class catalog_browse_test extends http_test_case {
             ],
         ]);
         $this->assertSame(200, $search->getStatusCode());
-        $this->assertStringContainsString('Oranges', $search->getContent(false));
+        $search_body = $search->getContent(false);
+        $this->assertStringContainsString('Oranges', $search_body);
+        $this->assertStringContainsString('cm-asr-title', $search_body);
+        $this->assertStringContainsString('is-product', $search_body);
 
         $specials = $this->get_http()->request('GET', '/specials.php');
         $this->assertSame(200, $specials->getStatusCode());
@@ -40,7 +44,10 @@ final class catalog_browse_test extends http_test_case {
 
         $testimonials = $this->get_http()->request('GET', '/testimonials.php');
         $this->assertSame(200, $testimonials->getStatusCode());
-        $this->assertStringContainsString('John Doe', $testimonials->getContent(false));
+        $testimonials_body = $testimonials->getContent(false);
+        $this->assertStringContainsString('John Doe', $testimonials_body);
+        $this->assertStringContainsString('cm-t-title', $testimonials_body);
+        $this->assertStringContainsString('cm-t-list', $testimonials_body);
 
         $manufacturer = $this->get_http()->request('GET', '/index.php', [
             'query' => [

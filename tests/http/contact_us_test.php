@@ -68,4 +68,27 @@ final class contact_us_test extends http_test_case {
         $this->assertStringNotContainsString('Your message has been sent to the Shopowner.', $body);
     }
 
+    public function test_action_recorder_blocks_repeat_enquiry_within_window(): void {
+        http_action_recorder_fixture_sql::seed_recent_success('ar_contact_us', '127.0.0.1');
+
+        $page = $this->get_http()->request('GET', '/contact_us.php');
+        $formid = self::parse_hidden_input($page->getContent(false), 'formid');
+        $this->assertNotSame('', $formid);
+
+        $response = $this->get_http()->request('POST', '/contact_us.php', [
+            'body' => [
+                'action' => 'send',
+                'formid' => $formid,
+                'name' => 'HTTP Test Visitor',
+                'email' => 'visitor@example.com',
+                'enquiry' => 'Should be throttled by action recorder.',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('An enquiry has already been sent', $body);
+        $this->assertStringNotContainsString('Your message has been sent to the Shopowner.', $body);
+    }
+
 }

@@ -13,12 +13,14 @@ Release certification checks that **this test repository** passes the harness ag
 
 ## What runs
 
-[`scripts/release-certification.sh`](../scripts/release-certification.sh) checks out the catalog at the pin, imports fixtures, starts the HTTP server when enabled, then:
+[`scripts/release-certification.sh`](../scripts/release-certification.sh) checks out the catalog at the pin, imports fixtures, runs [`scripts/verify-fixture-sql.sh`](../scripts/verify-fixture-sql.sh), starts the HTTP server when enabled, then:
 
 1. **`composer test:stack`** (unit + integration + HTTP)
 2. Optional **`composer test:browser`** when **`PHOENIX_BROWSER_ENABLED=1`**
 
 Entry point: **`composer release-certify`**. Requires MariaDB/MySQL, PHP, Composer, and the same env vars as local HTTP tests.
+
+This certification path validates the **pinned CE ref + committed fixture SQL + harness suites** on the runner OS. It does **not** include a PHP or MySQL/MariaDB version matrix — use project CI images and local docs for engine choices.
 
 ```bash
 export PHOENIX_DB_HOST=127.0.0.1
