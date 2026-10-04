@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhoenixCart\Tests\http;
 
+use PhoenixCart\Tests\support\http_mail_capture;
 use PhoenixCart\Tests\support\http_orders_lookup;
 use PhoenixCart\Tests\support\http_test_case;
 use PHPUnit\Framework\Attributes\Group;
@@ -68,6 +69,10 @@ final class checkout_moneyorder_test extends http_test_case {
         $confirm_formid = self::parse_hidden_input($confirmation_html, 'formid');
         $this->assertNotSame('', $confirm_formid);
 
+        if (http_mail_capture::is_enabled()) {
+            http_mail_capture::clear();
+        }
+
         $success = $this->get_http()->request('POST', '/checkout_process.php', [
             'body' => [
                 'formid' => $confirm_formid,
@@ -80,29 +85,38 @@ final class checkout_moneyorder_test extends http_test_case {
         $success_body = $success->getContent(false);
         $this->assertStringContainsString('cm-cs-thank-you', $success_body);
 
+        $orders_after = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
+        $this->assertGreaterThan($orders_before, $orders_after);
         $this->assertSame(
             'Check/Money Order',
-            http_orders_lookup::latest_payment_method_for_email(self::FIXTURE_CUSTOMER_EMAIL)
+            http_orders_lookup::payment_method_for_order($orders_after)
         );
 
-        $orders_id = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
-        $this->assertGreaterThan($orders_before, $orders_id);
         $this->assertSame(
             self::EXPECTED_SUBTOTAL,
-            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_subtotal')
+            http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_subtotal')
         );
         $this->assertSame(
             self::EXPECTED_SHIPPING,
-            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_shipping')
+            http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_shipping')
         );
         $this->assertSame(
             self::EXPECTED_TAX,
-            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_tax')
+            http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_tax')
         );
         $this->assertSame(
             self::EXPECTED_TOTAL,
-            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_total')
+            http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_total')
         );
+
+        if (http_mail_capture::is_enabled()) {
+            $mail = http_mail_capture::read_combined();
+            $this->assertStringContainsString('Order Process', $mail);
+            $this->assertStringContainsString('Order Number: ' . $orders_after, $mail);
+            $this->assertStringContainsString('Pears', $mail);
+            $this->assertStringContainsString('Check/Money Order', $mail);
+            $this->assertStringContainsString(self::FIXTURE_CUSTOMER_EMAIL, $mail);
+        }
     }
 
 }
