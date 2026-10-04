@@ -37,6 +37,7 @@ Examples in this suite:
 
 - Homepage and category/product GET (`index_smoke_test`, `product_info_test`, `category_listing_test`)
 - Cart session via `buy_now`, quantity updates, line removal, and a non-download attribute line (`shopping_cart_test`)
+- Priced Pears attribute at quantity 2: line price and `cart-subtotal` for prefixes `+` (`$12.48`), `-` (`$7.48`), and `%` (`$7.48`) (`shopping_cart_test`; attribute row via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - Logged-in account pages, profile edit, and logoff redirect (`account_pages_test`)
 - Product review write for pears with temporary `ALLOW_ALL_REVIEWS`, then review text on `product_info.php` (`product_review_test`; [`http_review_fixture_sql.php`](../tests/support/http_review_fixture_sql.php))
 - Order history list, foreign `order_id` redirect, and `checkout_success.php` thank-you module (`account_history_test`; other customer order via [`http_order_fixture_sql.php`](../tests/support/http_order_fixture_sql.php))
@@ -61,11 +62,11 @@ Examples in this suite:
 - Logged-in checkout through COD and flat shipping to `checkout_success.php` (`checkout_cod_test`; fixture customer in [`fixtures/http/seed_customer.sql`](../fixtures/http/seed_customer.sql)); asserts stored `orders.payment_method` is **Cash on Delivery** and the latest order has Florida **`ot_tax`**
 - Checkout order comment stored in `orders_status_history` (`checkout_comments_test`)
 - Checkout with a secondary address on shipping/payment address steps (`checkout_alternate_address_test`)
-- Stock block redirect when `STOCK_ALLOW_CHECKOUT` is false and product quantity is zero (`checkout_stock_test`)
+- Stock block redirect when `STOCK_ALLOW_CHECKOUT` is false and product quantity is zero; quantity drops by the ordered amount after a successful COD order; with allow-checkout on and quantity 0, checkout completes and the cart shows the stock warning (`checkout_stock_test`)
 - Item, zone, and table shipping modules plus flat geo-zone hide, free-shipping confirmation, and stored **`ot_shipping`** `0` (`checkout_shipping_modules_test`; temporary config via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - Priced attribute (+`$1.25`) on Pears with quantity 2 and exact `orders_total` rows (`checkout_priced_attribute_test`; [`http_orders_lookup.php`](../tests/support/http_orders_lookup.php))
 - Mixed virtual + physical cart still shows shipping and COD (`checkout_mixed_cart_test`)
-- Money-order virtual order download after status **Processing** (`checkout_download_test`; writes `download/http-test-download.zip` under the catalog root for the test)
+- Money-order virtual order download (`checkout_download_test`; writes `download/http-test-download.zip` under the catalog root for the test): Pending does not serve the file; one admin status change to **Processing** (temporary administrator via [`http_admin_fixture.php`](../tests/support/http_admin_fixture.php)) serves it and decrements `download_count`; a purchase older than `download_maxdays` is refused until maxdays is 0
 - Same flow with Check/Money Order (`checkout_moneyorder_test`; confirmation shows fixture payee **Your Store** from `MODULE_PAYMENT_MONEYORDER_PAYTO`); asserts `payment_method` **Check/Money Order**
 - Virtual download cart skips shipping, hides COD, completes with money order (`checkout_virtual_cod_test`; temporary attribute/download rows on product 3 via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php))
 - COD payment zone excludes the fixture Florida address (`checkout_geo_zone_cod_test`; temporary geo zone + `MODULE_PAYMENT_COD_ZONE`)

@@ -206,7 +206,20 @@ final class http_checkout_fixture_sql {
         return self::CART_VALUE_ID;
     }
 
-    public static function insert_priced_cart_attribute_for_pears(): void {
+    public static function insert_priced_cart_attribute_for_pears(
+        string $price_prefix = '+',
+        string $options_values_price = '1.2500'
+    ): void {
+        if (!in_array($price_prefix, ['+', '-', '%'], true)) {
+            throw new \InvalidArgumentException('Unsupported attribute price prefix: ' . $price_prefix);
+        }
+
+        if (!is_numeric($options_values_price)) {
+            throw new \InvalidArgumentException('Attribute price must be numeric.');
+        }
+
+        $price_sql = number_format((float) $options_values_price, 4, '.', '');
+
         self::remove_priced_cart_attribute_for_pears();
 
         mysql_bootstrap::define_connection_constants();
@@ -230,7 +243,8 @@ final class http_checkout_fixture_sql {
         self::exec(
             $mysqli,
             'INSERT INTO products_attributes (products_id, options_id, options_values_id, options_values_price, price_prefix)'
-            . ' VALUES (3, ' . self::PRICED_OPTION_ID . ', ' . self::PRICED_VALUE_ID . ", '1.2500', '+')"
+            . ' VALUES (3, ' . self::PRICED_OPTION_ID . ', ' . self::PRICED_VALUE_ID . ", '"
+            . $price_sql . "', '" . $price_prefix . "')"
         );
 
         self::$priced_products_attributes_id = (int) $mysqli->insert_id;
@@ -378,7 +392,41 @@ final class http_checkout_fixture_sql {
         self::$saved_free_shipping_over = null;
     }
 
-    public static function block_checkout_when_pears_out_of_stock(): void {
+    public static function products_quantity(int $products_id): int {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+
+        $result = $mysqli->query(
+            'SELECT products_quantity FROM products WHERE products_id = ' . $products_id . ' LIMIT 1'
+        );
+        $row = $result !== false ? $result->fetch_assoc() : false;
+        if ($result !== false) {
+            $result->free();
+        }
+        $mysqli->close();
+
+        if (!is_array($row)) {
+            throw new \RuntimeException('Product not found: ' . $products_id);
+        }
+
+        return (int) $row['products_quantity'];
+    }
+
+    public static function set_products_quantity(int $products_id, int $quantity): void {
+        mysql_bootstrap::define_connection_constants();
+        $mysqli = self::connect();
+        self::exec(
+            $mysqli,
+            'UPDATE products SET products_quantity = ' . $quantity . ' WHERE products_id = ' . $products_id
+        );
+        $mysqli->close();
+    }
+
+    public static function set_pears_quantity_and_allow_checkout(int $quantity, string $allow_checkout): void {
+        if (!in_array($allow_checkout, ['true', 'false'], true)) {
+            throw new \InvalidArgumentException('STOCK_ALLOW_CHECKOUT must be true or false.');
+        }
+
         self::restore_pears_stock_and_checkout_flag();
 
         mysql_bootstrap::define_connection_constants();
@@ -395,10 +443,14 @@ final class http_checkout_fixture_sql {
 
         self::$saved_stock_allow_checkout = self::fetch_configuration_value($mysqli, 'STOCK_ALLOW_CHECKOUT') ?? 'true';
 
-        self::exec($mysqli, 'UPDATE products SET products_quantity = 0 WHERE products_id = 3');
-        self::set_configuration($mysqli, 'STOCK_ALLOW_CHECKOUT', 'false');
+        self::exec($mysqli, 'UPDATE products SET products_quantity = ' . $quantity . ' WHERE products_id = 3');
+        self::set_configuration($mysqli, 'STOCK_ALLOW_CHECKOUT', $allow_checkout);
 
         $mysqli->close();
+    }
+
+    public static function block_checkout_when_pears_out_of_stock(): void {
+        self::set_pears_quantity_and_allow_checkout(0, 'false');
     }
 
     public static function restore_pears_stock_and_checkout_flag(): void {
