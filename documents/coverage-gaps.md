@@ -11,7 +11,10 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
 | COD checkout stored totals | Confirmation HTML only | [`checkout_cod_test.php`](../tests/http/checkout_cod_test.php) + [`http_orders_lookup.php`](../tests/support/http_orders_lookup.php) (`payment_method`, Florida **`ot_tax`**) |
-| Check/Money Order payee and stored method | Confirmation copy only | [`checkout_moneyorder_test.php`](../tests/http/checkout_moneyorder_test.php) |
+| Check/Money Order payee, stored method, totals, confirmation mail | Confirmation copy only | [`checkout_moneyorder_test.php`](../tests/http/checkout_moneyorder_test.php) |
+| Session currency EUR on checkout | None | [`checkout_currency_test.php`](../tests/http/checkout_currency_test.php) |
+| Tax-inclusive display + taxable shipping | None | [`checkout_tax_display_test.php`](../tests/http/checkout_tax_display_test.php) |
+| Per-item shipping stored total | Module smoke only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) (**`ot_shipping`** **2.50**) |
 | Priced attribute (+$1.25) qty 2 through COD | Cart attribute smoke only | [`checkout_priced_attribute_test.php`](../tests/http/checkout_priced_attribute_test.php): exact **`ot_subtotal` / `ot_shipping` / `ot_tax` / `ot_total`**, line qty **2** |
 | Free shipping stored total | Confirmation HTML only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) asserts **`ot_shipping`** **0** |
 | Virtual download + money order | Partial paths | [`checkout_download_test.php`](../tests/http/checkout_download_test.php), [`checkout_virtual_cod_test.php`](../tests/http/checkout_virtual_cod_test.php) |
@@ -23,10 +26,10 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
-| `buy_now`, qty update, line removal | Minimal | [`shopping_cart_test.php`](../tests/http/shopping_cart_test.php) |
+| `buy_now`, qty update, line removal, priced attribute **+/-/ %** | Minimal | [`shopping_cart_test.php`](../tests/http/shopping_cart_test.php) |
 | Non-download attribute line in cart | None | [`shopping_cart_test.php`](../tests/http/shopping_cart_test.php) |
-| Out-of-stock checkout block | None | [`checkout_stock_test.php`](../tests/http/checkout_stock_test.php) |
-| Virtual download after Processing | None | [`checkout_download_test.php`](../tests/http/checkout_download_test.php) |
+| Stock block, decrement, allow-zero warning | Block only | [`checkout_stock_test.php`](../tests/http/checkout_stock_test.php) |
+| Virtual download pending / maxdays / maxcount / admin status | Processing only | [`checkout_download_test.php`](../tests/http/checkout_download_test.php) |
 | Bogus download URL | None | [`download_bogus_id_test.php`](../tests/http/download_bogus_id_test.php) |
 
 ## HTTP storefront — forms, mail, recorder, browse
@@ -34,12 +37,13 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
 | Login failure copy + formid on retry | Loose substring | [`login_form_test.php`](../tests/http/login_form_test.php) |
-| Advanced search / testimonials modules | Product names only | [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php): **`cm-asr-title`**, **`cm-t-title`**, **`cm-t-list`**, **`manufacturers.php`** |
+| Advanced search filters + testimonials modules | Product names only | [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php): category/price/description filters, **`cm-asr-title`**, **`cm-t-title`**, **`cm-t-list`**, **`manufacturers.php`** |
 | Contact us mail capture + bad formid | Success message only | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_mail_capture.php`](../tests/support/http_mail_capture.php) |
 | Contact us action recorder throttle | None | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php) |
 | `products_new.php` listing | Bundled in browse test only | [`products_new_test.php`](../tests/http/products_new_test.php); Playwright [`products_new.spec.ts`](../tests/browser/products_new.spec.ts) |
 | Session UA mismatch after login | Anonymous only | [`request_security_test.php`](../tests/http/request_security_test.php); [`php-built-in-router.php`](../scripts/php-built-in-router.php) syncs **`HTTP_*`** per request |
-| Password reset / forgotten edges | Partial | [`password_reset_test.php`](../tests/http/password_reset_test.php), [`password_forgotten_unknown_test.php`](../tests/http/password_forgotten_unknown_test.php) |
+| Password reset mail + forgotten edges | Partial | [`password_reset_test.php`](../tests/http/password_reset_test.php) (captured reset mail), [`password_forgotten_unknown_test.php`](../tests/http/password_forgotten_unknown_test.php) |
+| Registration welcome mail | None | [`create_account_test.php`](../tests/http/create_account_test.php) |
 
 ## Installer — admin catalog, customer data, documents
 
@@ -60,9 +64,10 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Carousel / offcanvas / checkout scratch | None | Playwright specs — [`browser-tests.md`](browser-tests.md) |
 | Navbar search + currency | None | [`search_form.spec.ts`](../tests/browser/search_form.spec.ts), [`currency_dropdown.spec.ts`](../tests/browser/currency_dropdown.spec.ts) |
 | Visual regression baseline | None | [`homepage_visual.spec.ts`](../tests/browser/homepage_visual.spec.ts) |
+| Product attribute select (Lemons **Box Size**) | None | [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts) |
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
-| Fixture SQL sanity after import | Manual | [`scripts/verify-fixture-sql.sh`](../scripts/verify-fixture-sql.sh) (products **1** / **3**, HTTP fixture customer, pin file) |
+| Vendored install SQL matches catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match vs `install/phoenix*.sql`) |
 | Release certification scope | Ad hoc | [`release-certification.md`](release-certification.md) — pinned catalog + **`composer test:stack`** (+ optional browser); no PHP/MySQL version matrix |
 
 ## HTTP storefront — account, GDPR, security (representative)
@@ -100,4 +105,4 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps`](https://g
 | Storefront hook fixture | [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) |
 | Login / search / free shipping / formid / mail / router / UA | [`login_form_test.php`](../tests/http/login_form_test.php), [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php), [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php), [`contact_us_test.php`](../tests/http/contact_us_test.php), [`request_security_test.php`](../tests/http/request_security_test.php) |
 
-Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, **`bash scripts/verify-fixture-sql.sh`**, and starting HTTP/installer servers (see suite docs).
+Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`** and starting HTTP/installer servers (see suite docs).
