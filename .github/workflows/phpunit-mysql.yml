@@ -148,3 +148,70 @@ jobs:
           PHOENIX_DB_PASSWORD: phoenix
           PHOENIX_MYSQL_ROOT_PASSWORD: root
         run: composer test:installer
+
+  mysql8-unit-integration:
+    name: Unit + integration (MySQL 8)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: phoenix_test
+          MYSQL_USER: phoenix
+          MYSQL_PASSWORD: phoenix
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out test repo
+        uses: actions/checkout@v5
+
+      - name: Verify shell scripts are executable in git
+        run: bash scripts/verify-shell-script-modes.sh
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, mysqli
+          coverage: none
+
+      - name: Install OS packages
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Clone CE PhoenixCart at pinned ref
+        run: bash scripts/clone-catalog.sh
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+
+      - name: Import fixture SQL
+        env:
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: bash fixtures/import-mysql-fixtures.sh
+
+      - name: Run unit and integration suites
+        env:
+          PHOENIX_CART_ROOT: ${{ github.workspace }}/PhoenixCart
+          PHOENIX_MYSQL_ENABLED: '1'
+          PHOENIX_DB_HOST: 127.0.0.1
+          PHOENIX_DB_PORT: 3306
+          PHOENIX_DB_NAME: phoenix_test
+          PHOENIX_DB_USER: phoenix
+          PHOENIX_DB_PASSWORD: phoenix
+        run: |
+          composer test
+          composer test:mysql
