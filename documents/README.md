@@ -34,6 +34,5 @@ This harness exercises **behavior** on the fixture sample shop and on disposable
 | [`payment-sandbox.md`](payment-sandbox.md) | Optional Stripe SCA test keys in CI |
 | [`installer-tests.md`](installer-tests.md) | Optional web installer on disposable catalog + DB |
 | [`release-certification.md`](release-certification.md) | Tag-paired certification runs |
-| [`coverage-gaps.md`](coverage-gaps.md) | Behavior backlog: open gaps, recently closed first-four items, and deferred areas |
 
 Shared support code lives under [`tests/support/`](../tests/support/). Hosted payment exclusions are listed in [`SKIPPED.md`](../SKIPPED.md).

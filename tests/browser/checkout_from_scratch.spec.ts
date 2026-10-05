@@ -83,6 +83,6 @@ test.describe('checkout from scratch', () => {
     await page.locator('form[name="checkout_confirmation"] button[type="submit"], form[name="checkout_confirmation"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_success\.php/);
-    await expect(page.locator('body')).toContainText('cm-cs-thank-you');
+    await expect(page.locator('.cm-cs-thank-you')).toBeVisible();
   });
 });
