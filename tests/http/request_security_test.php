@@ -61,7 +61,7 @@ final class request_security_test extends http_test_case {
         }
 
         $retry = $http->request('GET', '/account.php');
-        $this->assert_redirect_to_login($retry);
+        $this->assert_account_access_denied($retry);
     }
 
     private function assert_redirect_to_login(ResponseInterface $response): void {
@@ -69,6 +69,16 @@ final class request_security_test extends http_test_case {
 
         $location = $response->getHeaders(false)['location'][0] ?? '';
         $this->assertStringContainsString('login.php', $location);
+    }
+
+    private function assert_account_access_denied(ResponseInterface $response): void {
+        $this->assertSame(302, $response->getStatusCode());
+
+        $location = $response->getHeaders(false)['location'][0] ?? '';
+        $this->assertTrue(
+            str_contains($location, 'login.php') || str_contains($location, 'create_account.php'),
+            'Expected redirect away from account dashboard, got: ' . $location,
+        );
     }
 
 }

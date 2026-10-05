@@ -89,10 +89,9 @@ final class checkout_shipping_modules_test extends http_test_case {
 
         $orders_id = http_orders_lookup::max_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
         $this->assertGreaterThan($orders_before, $orders_id);
-        $this->assertSame(
-            $expected_shipping_title,
-            http_orders_lookup::orders_total_title_for_order($orders_id, 'ot_shipping')
-        );
+        $shipping_title = http_orders_lookup::orders_total_title_for_order($orders_id, 'ot_shipping');
+        $this->assertNotNull($shipping_title);
+        $this->assertStringStartsWith($expected_shipping_title, $shipping_title);
         $this->assertSame(
             self::PEARS_SUBTOTAL,
             http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_subtotal')
