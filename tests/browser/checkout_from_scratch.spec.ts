@@ -62,23 +62,17 @@ test.describe('checkout from scratch', () => {
     const shipping_option = page.locator('input[name="shipping"]').first();
     await expect(shipping_option).toBeAttached({ timeout: 30_000 });
     await expect(page.locator('body')).toContainText('Flat Rate');
-
-    const flat_shipping = page.locator('input[name="shipping"][value="flat_flat"]');
-    if ((await flat_shipping.count()) > 0) {
-      await flat_shipping.check({ force: true });
-    } else {
-      await shipping_option.check({ force: true });
-    }
+    await shipping_option.check({ force: true });
     await page.locator('form:has(input[name="shipping"]) button[type="submit"], form:has(input[name="shipping"]) input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_payment\.php/);
-    await page.locator('input[type="radio"][value="cod"]').check();
-    await page.locator('form[name="checkout_payment"] button[type="submit"], form[name="checkout_payment"] input[type="submit"]').first().click();
+    await page.locator('input[name="payment"][value="cod"]').check({ force: true });
+    await page.locator('form:has(input[name="payment"]) button[type="submit"], form:has(input[name="payment"]) input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_confirmation\.php/);
     await page.locator('form[name="checkout_confirmation"] button[type="submit"], form[name="checkout_confirmation"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_success\.php/);
-    await expect(page.locator('body')).toContainText('cm-cs-thank-you');
+    await expect(page.locator('.cm-cs-thank-you')).toBeVisible();
   });
 });
