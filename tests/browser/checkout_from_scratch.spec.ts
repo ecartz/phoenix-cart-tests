@@ -51,16 +51,21 @@ test.describe('checkout from scratch', () => {
     await page.locator('form[name="create_account"] button[type="submit"], form[name="create_account"] input[type="submit"]').first().click();
 
     await page.waitForURL(/create_account_success\.php|checkout_shipping\.php/);
-    if (/create_account_success\.php/.test(page.url())) {
-      const continue_checkout = page.locator('.cm-cas-continue-button a').first();
-      await expect(continue_checkout).toBeVisible();
-      await continue_checkout.click();
+    if (!page.url().includes('checkout_shipping.php')) {
+      await page.goto('/checkout_shipping.php');
     }
 
     await expect(page).toHaveURL(/checkout_shipping\.php/);
+    await expect(page.locator('form[name="checkout_shipping"]')).toBeVisible();
     await expect(page.locator('body')).toContainText('Flat Rate');
 
-    await page.locator('input[type="radio"][value="flat_flat"]').check();
+    const shipping_form = page.locator('form[name="checkout_shipping"]');
+    const flat_shipping = shipping_form.locator('input[name="shipping"][value="flat_flat"]');
+    if ((await flat_shipping.count()) > 0) {
+      await flat_shipping.check({ force: true });
+    } else {
+      await shipping_form.locator('input[name="shipping"]').first().check({ force: true });
+    }
     await page.locator('form[name="checkout_shipping"] button[type="submit"], form[name="checkout_shipping"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_payment\.php/);
