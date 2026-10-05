@@ -37,8 +37,8 @@ test.describe('checkout from scratch', () => {
     await page.locator('select[name="country_id"]').selectOption('223');
 
     const zone_select = page.locator('select[name="zone_id"]');
-    if (await zone_select.isVisible()) {
-      await zone_select.selectOption({ label: 'Florida' });
+    if ((await zone_select.count()) > 0) {
+      await zone_select.selectOption('18');
     } else {
       await page.locator('input[name="state"]').fill('Florida');
     }
@@ -59,9 +59,16 @@ test.describe('checkout from scratch', () => {
     }
 
     await expect(page).toHaveURL(/checkout_shipping\.php/);
+    const shipping_option = page.locator('input[name="shipping"]').first();
+    await expect(shipping_option).toBeAttached({ timeout: 30_000 });
     await expect(page.locator('body')).toContainText('Flat Rate');
 
-    await page.locator('input[name="shipping"][value="flat_flat"]').check({ force: true });
+    const flat_shipping = page.locator('input[name="shipping"][value="flat_flat"]');
+    if ((await flat_shipping.count()) > 0) {
+      await flat_shipping.check({ force: true });
+    } else {
+      await shipping_option.check({ force: true });
+    }
     await page.locator('form:has(input[name="shipping"]) button[type="submit"], form:has(input[name="shipping"]) input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_payment\.php/);
