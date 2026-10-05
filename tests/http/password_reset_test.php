@@ -32,6 +32,69 @@ final class password_reset_test extends http_test_case {
         parent::tearDown();
     }
 
+    public function test_bad_formid_keeps_forgotten_form_without_success_message(): void {
+        $forgot_page = $this->get_http()->request('GET', '/password_forgotten.php');
+        $this->assertSame(200, $forgot_page->getStatusCode());
+
+        $response = $this->get_http()->request('POST', '/password_forgotten.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => '00000000000000000000000000000000',
+                'email_address' => self::FIXTURE_CUSTOMER_EMAIL,
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('cm-forgot-password', $body);
+        $this->assertStringNotContainsString('Check your email for a password reset link', $body);
+        $this->assertNull(http_customer_fixture_sql::password_reset_key_for_fixture_customer());
+    }
+
+    public function test_second_forgotten_password_request_blocked_within_recorder_window(): void {
+        $this->get_http()->request('GET', '/');
+
+        $forgot_page = $this->get_http()->request('GET', '/password_forgotten.php');
+        $first_formid = self::parse_hidden_input($forgot_page->getContent(false), 'formid');
+        $this->assertNotSame('', $first_formid);
+
+        $this->get_http()->request('POST', '/password_forgotten.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $first_formid,
+                'email_address' => self::FIXTURE_CUSTOMER_EMAIL,
+            ],
+        ]);
+
+        $this->assertNotNull(http_customer_fixture_sql::password_reset_key_for_fixture_customer());
+
+        $mail_after_first = '';
+        if (http_mail_capture::is_enabled()) {
+            $mail_after_first = http_mail_capture::read_combined();
+            $this->assertStringContainsString('Password Reset', $mail_after_first);
+        }
+
+        $second_page = $this->get_http()->request('GET', '/password_forgotten.php');
+        $second_formid = self::parse_hidden_input($second_page->getContent(false), 'formid');
+        $this->assertNotSame('', $second_formid);
+
+        $second_response = $this->get_http()->request('POST', '/password_forgotten.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => $second_formid,
+                'email_address' => self::FIXTURE_CUSTOMER_EMAIL,
+            ],
+        ]);
+
+        $second_body = $second_response->getContent(false);
+        $this->assertStringContainsString('A password reset link has already been sent', $second_body);
+        $this->assertStringContainsString('5 minutes', $second_body);
+
+        if (http_mail_capture::is_enabled()) {
+            $this->assertSame($mail_after_first, http_mail_capture::read_combined());
+        }
+    }
+
     public function test_password_forgotten_flow_resets_fixture_password(): void {
         $this->get_http()->request('GET', '/');
 

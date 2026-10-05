@@ -17,33 +17,51 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 #[Group('http')]
 final class request_security_test extends http_test_case {
 
+    private const MISMATCH_USER_AGENT = 'phoenix-cart-tests-http/mismatch-user-agent';
+
     public function test_changed_user_agent_redirects_to_login(): void {
-        $http = $this->get_http_without_redirects();
-        $http->request('GET', '/');
-
-        $mismatch_agent = 'phoenix-cart-tests-http/mismatch-user-agent';
-
-        $response = $http->request('GET', '/index.php', [
-            'headers' => [
-                'User-Agent' => $mismatch_agent,
-            ],
-        ]);
-
-        $this->assert_redirect_to_login($response);
-        $this->assertSame('', $response->getContent(false));
+        $this->assert_logged_in_session_invalidated_after_mismatch(function ($http): ResponseInterface {
+            return $http->request('GET', '/account.php', [
+                'headers' => [
+                    'User-Agent' => self::MISMATCH_USER_AGENT,
+                ],
+            ]);
+        }, true);
     }
 
     public function test_changed_client_ip_redirects_to_login(): void {
+        $this->assert_logged_in_session_invalidated_after_mismatch(function ($http): ResponseInterface {
+            return $http->request('GET', '/account.php', [
+                'headers' => [
+                    'X-Forwarded-For' => '198.51.100.2',
+                ],
+            ]);
+        }, false);
+    }
+
+    /**
+     * @param callable(\Symfony\Contracts\HttpClient\HttpClientInterface): ResponseInterface $mismatch_request
+     */
+    private function assert_logged_in_session_invalidated_after_mismatch(
+        callable $mismatch_request,
+        bool $expect_empty_mismatch_body
+    ): void {
+        $this->login_fixture_customer();
+
         $http = $this->get_http_without_redirects();
-        $http->request('GET', '/');
 
-        $response = $http->request('GET', '/index.php', [
-            'headers' => [
-                'X-Forwarded-For' => '198.51.100.2',
-            ],
-        ]);
+        $account = $http->request('GET', '/account.php');
+        $this->assertSame(200, $account->getStatusCode());
+        $this->assertStringContainsString('cm-account-title', $account->getContent(false));
 
-        $this->assert_redirect_to_login($response);
+        $mismatch_response = $mismatch_request($http);
+        $this->assert_redirect_to_login($mismatch_response);
+        if ($expect_empty_mismatch_body) {
+            $this->assertSame('', $mismatch_response->getContent(false));
+        }
+
+        $retry = $http->request('GET', '/account.php');
+        $this->assert_redirect_to_login($retry);
     }
 
     private function assert_redirect_to_login(ResponseInterface $response): void {

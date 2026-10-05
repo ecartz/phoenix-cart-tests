@@ -11,6 +11,14 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('http')]
 final class checkout_cod_test extends http_test_case {
 
+    private const EXPECTED_SUBTOTAL = 4.99;
+
+    private const EXPECTED_SHIPPING = 5.0;
+
+    private const EXPECTED_TAX = 0.3493;
+
+    private const EXPECTED_TOTAL = 10.3393;
+
     public function test_logged_in_customer_completes_checkout_with_cod(): void {
         $this->login_fixture_customer();
 
@@ -82,8 +90,24 @@ final class checkout_cod_test extends http_test_case {
         $orders_id = http_orders_lookup::latest_orders_id_for_email(self::FIXTURE_CUSTOMER_EMAIL);
         $tax_row = http_orders_lookup::ot_tax_row_for_order($orders_id);
         $this->assertNotNull($tax_row);
-        $this->assertGreaterThan(0.0, $tax_row['value']);
         $this->assertStringContainsString('FL TAX', $tax_row['title']);
+
+        $this->assertSame(
+            self::EXPECTED_SUBTOTAL,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_subtotal')
+        );
+        $this->assertSame(
+            self::EXPECTED_SHIPPING,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_shipping')
+        );
+        $this->assertSame(
+            self::EXPECTED_TAX,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_tax')
+        );
+        $this->assertSame(
+            self::EXPECTED_TOTAL,
+            http_orders_lookup::orders_total_value_for_order($orders_id, 'ot_total')
+        );
     }
 
 }

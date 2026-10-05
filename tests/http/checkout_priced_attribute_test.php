@@ -7,26 +7,38 @@ namespace PhoenixCart\Tests\http;
 use PhoenixCart\Tests\support\http_checkout_fixture_sql;
 use PhoenixCart\Tests\support\http_orders_lookup;
 use PhoenixCart\Tests\support\http_test_case;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('http')]
 final class checkout_priced_attribute_test extends http_test_case {
 
-    private const EXPECTED_SUBTOTAL = 12.48;
-
     private const EXPECTED_SHIPPING = 5.0;
-
-    private const EXPECTED_TAX = 0.8736;
-
-    private const EXPECTED_TOTAL = 18.3536;
 
     protected function tearDown(): void {
         http_checkout_fixture_sql::remove_priced_cart_attribute_for_pears();
         parent::tearDown();
     }
 
-    public function test_checkout_with_priced_attribute_quantity_two_stores_exact_order_totals(): void {
-        http_checkout_fixture_sql::insert_priced_cart_attribute_for_pears();
+    /**
+     * @return array<string, array{0: string, 1: float, 2: float, 3: float}>
+     */
+    public static function priced_attribute_checkout_totals_provider(): array {
+        return [
+            'plus prefix' => ['+', 12.48, 0.8736, 18.3536],
+            'minus prefix' => ['-', 7.48, 0.5236, 13.0036],
+            'percent prefix' => ['%', 7.48, 0.5236, 13.0036],
+        ];
+    }
+
+    #[DataProvider('priced_attribute_checkout_totals_provider')]
+    public function test_checkout_with_priced_attribute_quantity_two_stores_exact_order_totals(
+        string $price_prefix,
+        float $expected_subtotal,
+        float $expected_tax,
+        float $expected_total
+    ): void {
+        http_checkout_fixture_sql::insert_priced_cart_attribute_for_pears($price_prefix);
 
         $this->login_fixture_customer();
 
@@ -78,7 +90,7 @@ final class checkout_priced_attribute_test extends http_test_case {
         $this->assertSame(2, http_orders_lookup::orders_products_quantity_for_order($orders_after, 3));
 
         $this->assertSame(
-            self::EXPECTED_SUBTOTAL,
+            $expected_subtotal,
             http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_subtotal')
         );
         $this->assertSame(
@@ -86,11 +98,11 @@ final class checkout_priced_attribute_test extends http_test_case {
             http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_shipping')
         );
         $this->assertSame(
-            self::EXPECTED_TAX,
+            $expected_tax,
             http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_tax')
         );
         $this->assertSame(
-            self::EXPECTED_TOTAL,
+            $expected_total,
             http_orders_lookup::orders_total_value_for_order($orders_after, 'ot_total')
         );
     }
