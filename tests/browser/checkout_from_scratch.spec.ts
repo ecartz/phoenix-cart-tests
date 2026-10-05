@@ -26,7 +26,10 @@ test.describe('checkout from scratch', () => {
     await page.locator('input[name="lastname"]').fill('Checkout');
     await page.locator('input[name="email_address"]').fill(email_address);
     await page.locator('input[name="password"]').fill(password);
-    await page.locator('input[name="password_confirmation"]').fill(password);
+    const password_confirmation = page.locator('input[name="password_confirmation"]');
+    if (await password_confirmation.isVisible()) {
+      await password_confirmation.fill(password);
+    }
     await page.locator('input[name="street_address"]').fill('1 Test Street');
     await page.locator('input[name="city"]').fill('Testville');
     await page.locator('input[name="postcode"]').fill('90210');
