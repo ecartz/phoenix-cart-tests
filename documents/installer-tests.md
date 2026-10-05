@@ -122,7 +122,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) covers the last read-only admin entry points and module sets not opened elsewhere:
 
-- Storefront **`contact_us.php`** — captured shopowner mail, no outgoing row for the visitor email
+- Storefront **`contact_us.php`** — requires installer mail capture; asserts **`working/installer-mail/`** contains the visitor e-mail and enquiry text; asserts **`installer_outgoing_lookup::combined_body()`** does not contain that visitor e-mail (shopowner contact uses **`mail()`**, not the outgoing queue)
 - Storefront COD checkout + **`checkout_success.php`** — **`order_thanks`** row in **`outgoing`** and visible on **`/admin/outgoing.php`**
 - **`/admin/outgoing.php`** — outgoing queue list smoke
 - **`/admin/outgoing_tpl.php`** — sample outgoing e-mail templates

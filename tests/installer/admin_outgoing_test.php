@@ -51,23 +51,14 @@ final class admin_outgoing_test extends install_test_case {
         );
         $this->assertStringContainsString('Your message has been sent to the Shopowner.', $response_body);
 
-        $outgoing_body = installer_outgoing_lookup::combined_body();
-        if (str_contains($outgoing_body, $visitor_email)) {
-            $admin_http = $this->login_installed_admin();
-            $queue = $admin_http->request('GET', '/admin/outgoing.php');
-            $this->assertSame(200, $queue->getStatusCode());
-            $this->assertStringContainsString($visitor_email, $queue->getContent(false));
-
-            return;
-        }
-
         $this->require_installer_mail_capture();
-        $this->assert_captured_mail_contains($visitor_email);
 
         $captured = installer_mail_capture::read_combined();
-        if ($captured !== '') {
-            $this->assertStringContainsString($enquiry, $captured);
-        }
+        $this->assertStringContainsString($visitor_email, $captured);
+        $this->assertStringContainsString($enquiry, $captured);
+
+        $outgoing_body = installer_outgoing_lookup::combined_body();
+        $this->assertStringNotContainsString($visitor_email, $outgoing_body);
     }
 
     public function test_storefront_checkout_success_enqueues_order_thanks_outgoing_row(): void {

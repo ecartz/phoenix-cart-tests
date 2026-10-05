@@ -94,7 +94,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 
 | Area | Notes |
 |------|--------|
-| Outgoing queue after storefront contact | Closed | [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) — contact mail capture vs queue; **`order_thanks`** after checkout on installer |
+| Installer outgoing queue (`order_thanks`) | Closed | [`admin_outgoing_test.php`](../tests/installer/admin_outgoing_test.php) **`test_storefront_checkout_success_enqueues_order_thanks_outgoing_row`** — storefront contact shopowner notification is captured **`mail()`** (visitor e-mail absent from outgoing), not queue proof |
 | Windows vs Linux path/PHP differences | Linux CI and Cloud are merge gate — [`TESTING.md`](../TESTING.md) |
 
 ## Recently closed (first-four + orphan slices)
