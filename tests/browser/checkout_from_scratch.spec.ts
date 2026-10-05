@@ -67,7 +67,7 @@ test.describe('checkout from scratch', () => {
     } else {
       await expect(page.locator('input[type="hidden"][name="shipping"][value="flat_flat"]')).toBeAttached();
     }
-    await page.locator('form[name="checkout_shipping"] button[type="submit"], form[name="checkout_shipping"] input[type="submit"]').first().click();
+    await page.locator('form[name="checkout_address"] button[type="submit"], form[name="checkout_address"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_payment\.php/);
     await page.locator('input[type="radio"][value="cod"]').check();
