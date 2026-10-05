@@ -59,15 +59,13 @@ test.describe('checkout from scratch', () => {
     }
 
     await expect(page).toHaveURL(/checkout_shipping\.php/);
-    const shipping_option = page.locator('input[name="shipping"]').first();
-    await expect(shipping_option).toBeAttached({ timeout: 30_000 });
-    await expect(page.locator('body')).toContainText('Flat Rate');
+    await expect(page.locator('body')).toContainText('Flat Rate', { timeout: 30_000 });
 
-    const flat_shipping = page.locator('input[name="shipping"][value="flat_flat"]');
-    if ((await flat_shipping.count()) > 0) {
-      await flat_shipping.check({ force: true });
+    const flat_shipping_radio = page.locator('input[type="radio"][name="shipping"][value="flat_flat"]');
+    if ((await flat_shipping_radio.count()) > 0) {
+      await flat_shipping_radio.check({ force: true });
     } else {
-      await shipping_option.check({ force: true });
+      await expect(page.locator('input[type="hidden"][name="shipping"][value="flat_flat"]')).toBeAttached();
     }
     await page.locator('form[name="checkout_shipping"] button[type="submit"], form[name="checkout_shipping"] input[type="submit"]').first().click();
 
