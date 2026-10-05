@@ -158,7 +158,7 @@ vendor/bin/phpunit --testsuite installer
 
 [`admin_modules_config_test.php`](../tests/installer/admin_modules_config_test.php) installs one module from **`list=new`** per **`modules.php`** set (skips empty sets), removes it, and round-trips one plain **`configuration_value`** key in visible groups **`4`**, **`7`**, **`8`**, **`9`**, **`10`**, **`12`**, **`13`**, **`14`**, **`15`**, and **`16`** (groups **`1`**, **`3`**, hidden **`6`**, and invisible **`11`** are skipped).
 
-[`admin_order_line_editor_test.php`](../tests/installer/admin_order_line_editor_test.php) is skipped until [`catalog_order_editor_probe.php`](../tests/support/catalog_order_editor_probe.php) finds order-line POST actions on the pinned catalog ref (see [`coverage-gaps.md`](coverage-gaps.md)).
+[`admin_order_line_editor_test.php`](../tests/installer/admin_order_line_editor_test.php) skips before the wizard when the pinned edit view has no line quantity, price, or add/remove controls (current pin **`master`**). When the live **`/admin/orders.php?action=edit`** form renders those inputs, the test places a storefront COD Pears order, POSTs the form’s real field names and action, and asserts quantity, price, and a changed grand total on **`/admin/invoice.php`**. Add and remove lines run only when the edit HTML includes those controls. A skip is not editor coverage — see [`coverage-gaps.md`](coverage-gaps.md).
 
 [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php) exercises reversible catalog writes on the disposable shop:
 

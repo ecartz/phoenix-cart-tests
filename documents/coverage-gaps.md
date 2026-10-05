@@ -56,7 +56,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Storefront hook fixture toggle + admin hooks list | None | [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) |
 | Compose mail / order notify capture | None | [`admin_mail_test.php`](../tests/installer/admin_mail_test.php) |
 | Storefront **`create_account`** validation + address zones | HTTP welcome mail only | [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) — omitted **`matc`** may **HTTP 500** on the pin when **`ENTRY_MATC_ERROR`** is undefined (see [`installer-tests.md`](installer-tests.md)) |
-| **Admin order line editor add/remove products** | None | **Open** — blocked at [`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt) until CE ships stable order-editor endpoints for the pinned ref |
+| **Admin order line editor add/remove products** | None | **Open** on pin **`master`** — [`admin_order_line_editor_test.php`](../tests/installer/admin_order_line_editor_test.php) **skips** until the live order edit form has line quantity, price, or add/remove inputs; when those fields exist it POSTs them and asserts the invoice (not merely that a probe file exists). Storefront invoice qty **2** in [`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) is checkout quantity, not an admin repricing |
 
 ## Browser, HTTPS, harness environment
 
@@ -111,4 +111,4 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Harness limits + vendored SQL pin (slice) | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php), [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts), [`release-certification.md`](release-certification.md) |
 | Installer catalog storefront + account validation (slice) | [`admin_catalog_writes_test.php`](../tests/installer/admin_catalog_writes_test.php), [`storefront_account_validation_test.php`](../tests/installer/storefront_account_validation_test.php) |
 
-Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **120** installer tests (plus **`admin_order_line_editor_test`** skipped until the catalog pin ships order-editor POST endpoints).
+Run **`composer test:stack`** and **`composer test:installer`** on Cloud after **`bash fixtures/import-mysql-fixtures.sh`**, starting the HTTP server (**`bash scripts/http-server.sh`**) for stack tests and letting **`composer test:installer`** start its own server (see suite docs). Expect **120** installer tests with **`admin_order_line_editor_test`** skipped on pin **`master`** (no line inputs on the edit form).
