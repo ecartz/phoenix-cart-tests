@@ -70,7 +70,13 @@ test.describe('checkout from scratch', () => {
     await page.locator('form[name="checkout_address"] button[type="submit"], form[name="checkout_address"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_payment\.php/);
-    await page.locator('input[type="radio"][value="cod"]').check();
+
+    const cod_payment_radio = page.locator('input[type="radio"][name="payment"][value="cod"]');
+    if ((await cod_payment_radio.count()) > 0) {
+      await cod_payment_radio.check();
+    } else {
+      await expect(page.locator('input[type="hidden"][name="payment"][value="cod"]')).toBeAttached();
+    }
     await page.locator('form[name="checkout_payment"] button[type="submit"], form[name="checkout_payment"] input[type="submit"]').first().click();
 
     await expect(page).toHaveURL(/checkout_confirmation\.php/);
