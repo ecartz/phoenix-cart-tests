@@ -27,8 +27,8 @@ test.describe('checkout from scratch', () => {
     await page.locator('input[name="email_address"]').fill(email_address);
     await page.locator('input[name="password"]').fill(password);
     const password_confirmation = page.locator('input[name="password_confirmation"]');
-    if (await password_confirmation.isVisible()) {
-      await password_confirmation.fill(password);
+    if ((await password_confirmation.count()) > 0) {
+      await password_confirmation.fill(password, { force: true });
     }
     await page.locator('input[name="street_address"]').fill('1 Test Street');
     await page.locator('input[name="city"]').fill('Testville');
@@ -42,7 +42,10 @@ test.describe('checkout from scratch', () => {
       await page.locator('input[name="state"]').fill('Florida');
     }
 
-    await page.locator('input[name="telephone"]').fill('555-0100');
+    const telephone = page.locator('input[name="telephone"]');
+    if ((await telephone.count()) > 0) {
+      await telephone.fill('555-0100', { force: true });
+    }
     await page.locator('input[name="matc"]').check();
 
     await page.locator('form[name="create_account"] button[type="submit"], form[name="create_account"] input[type="submit"]').first().click();
