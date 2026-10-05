@@ -10,15 +10,15 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 
 | Gap | Prior state | Harness today |
 |-----|-------------|---------------|
-| COD checkout stored totals | Confirmation HTML only | [`checkout_cod_test.php`](../tests/http/checkout_cod_test.php) + [`http_orders_lookup.php`](../tests/support/http_orders_lookup.php) (`payment_method`, Florida **`ot_tax`**) |
+| COD checkout stored totals | Confirmation HTML only | [`checkout_cod_test.php`](../tests/http/checkout_cod_test.php) + [`http_orders_lookup.php`](../tests/support/http_orders_lookup.php) — exact **`ot_subtotal` / `ot_shipping` / `ot_tax` / `ot_total`** (4.99 / 5.00 / 0.3493 / 10.3393), Florida **`FL TAX`**, **Cash on Delivery** |
 | Check/Money Order payee, stored method, totals, confirmation mail | Confirmation copy only | [`checkout_moneyorder_test.php`](../tests/http/checkout_moneyorder_test.php) |
 | Session currency EUR on checkout | None | [`checkout_currency_test.php`](../tests/http/checkout_currency_test.php) |
 | Tax-inclusive display + taxable shipping | None | [`checkout_tax_display_test.php`](../tests/http/checkout_tax_display_test.php) |
-| Per-item shipping stored total | Module smoke only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) (**`ot_shipping`** **2.50**) |
-| Priced attribute (+$1.25) qty 2 through COD | Cart attribute smoke only | [`checkout_priced_attribute_test.php`](../tests/http/checkout_priced_attribute_test.php): exact **`ot_subtotal` / `ot_shipping` / `ot_tax` / `ot_total`**, line qty **2** |
+| Per-item shipping stored total | Module smoke only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) — **`item_item`** **2.50**; **`zones_zones`** and **`table_table`** **8.50** with full order totals on Pears |
+| Priced attribute (+$1.25) qty 2 through COD | Cart attribute smoke only | [`checkout_priced_attribute_test.php`](../tests/http/checkout_priced_attribute_test.php): **`+` / `-` / `%`** prefixes with exact stored totals (cart math in [`shopping_cart_test.php`](../tests/http/shopping_cart_test.php)) |
 | Free shipping stored total | Confirmation HTML only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) asserts **`ot_shipping`** **0** |
 | Virtual download + money order | Partial paths | [`checkout_download_test.php`](../tests/http/checkout_download_test.php), [`checkout_virtual_cod_test.php`](../tests/http/checkout_virtual_cod_test.php) |
-| Shipping module matrix (item/zone/table/geo) | Flat rate only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php) |
+| Shipping module matrix (item/zone/table/geo) | Flat rate only | [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php) via [`http_checkout_fixture_sql.php`](../tests/support/http_checkout_fixture_sql.php) (item + zone + table stored totals; flat geo-zone hide) |
 | Off-site return module (non-hosted) | None | [`checkout_local_redirect_test.php`](../tests/http/checkout_local_redirect_test.php) |
 | Hosted card/wallet checkout | Not attempted | Out of scope — [`SKIPPED.md`](../SKIPPED.md) |
 
@@ -41,8 +41,8 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Contact us mail capture + bad formid | Success message only | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_mail_capture.php`](../tests/support/http_mail_capture.php) |
 | Contact us action recorder throttle | None | [`contact_us_test.php`](../tests/http/contact_us_test.php) + [`http_action_recorder_fixture_sql.php`](../tests/support/http_action_recorder_fixture_sql.php) |
 | `products_new.php` listing | Bundled in browse test only | [`products_new_test.php`](../tests/http/products_new_test.php); Playwright [`products_new.spec.ts`](../tests/browser/products_new.spec.ts) |
-| Session UA mismatch after login | Anonymous only | [`request_security_test.php`](../tests/http/request_security_test.php); [`php-built-in-router.php`](../scripts/php-built-in-router.php) syncs **`HTTP_*`** per request |
-| Password reset mail + forgotten edges | Partial | [`password_reset_test.php`](../tests/http/password_reset_test.php) (captured reset mail), [`password_forgotten_unknown_test.php`](../tests/http/password_forgotten_unknown_test.php) |
+| Session UA mismatch after login | Anonymous only | [`request_security_test.php`](../tests/http/request_security_test.php) — fixture customer logged in, then UA or **`X-Forwarded-For`** mismatch on **`account.php`** clears session; [`php-built-in-router.php`](../scripts/php-built-in-router.php) syncs **`HTTP_*`** per request |
+| Password reset mail + forgotten edges | Partial | [`password_reset_test.php`](../tests/http/password_reset_test.php) — captured reset mail, bad **`formid`**, **`ar_reset_password`** throttle (5 minutes); [`password_forgotten_unknown_test.php`](../tests/http/password_forgotten_unknown_test.php) |
 | Registration welcome mail | None | [`create_account_test.php`](../tests/http/create_account_test.php) |
 
 ## Installer — admin catalog, customer data, documents
@@ -65,7 +65,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 | Carousel / offcanvas / checkout scratch | None | Playwright specs — [`browser-tests.md`](browser-tests.md) |
 | Navbar search + currency | None | [`search_form.spec.ts`](../tests/browser/search_form.spec.ts), [`currency_dropdown.spec.ts`](../tests/browser/currency_dropdown.spec.ts) |
 | Visual regression baseline | None | [`homepage_visual.spec.ts`](../tests/browser/homepage_visual.spec.ts) |
-| Product attribute select (Lemons **Box Size**) | None | [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts) |
+| Product attribute select (Lemons **Box Size**) | None | [`product_attribute_select.spec.ts`](../tests/browser/product_attribute_select.spec.ts) — **24** option, add to cart, **`$12.49`** on **`shopping_cart.php`** |
 | **`SSL_SESSION_ID`** session binding | Not on plain HTTP | [`https-tests.md`](https-tests.md) |
 | Every **`cm_*`** content module | Sample-shop smoke only | Not exhaustive — see [`http-tests.md`](http-tests.md) |
 | Vendored install SQL vs catalog pin checkout | Manual diff | [`vendored_install_sql_test.php`](../tests/unit/invariants/vendored_install_sql_test.php) (byte match on `phoenix.sql` + `phoenix_data_sample.sql`) |
@@ -101,7 +101,7 @@ Merged HTTP/installer coverage from [`cursor/remaining-coverage-gaps-a33a`](http
 
 | Item | Test / doc pointer |
 |------|-------------------|
-| Priced attribute order totals | [`checkout_priced_attribute_test.php`](../tests/http/checkout_priced_attribute_test.php) |
+| Priced attribute order totals (`+` / `-` / `%`) | [`checkout_priced_attribute_test.php`](../tests/http/checkout_priced_attribute_test.php) |
 | Invoice / packingslip qty 2 | [`admin_order_documents_test.php`](../tests/installer/admin_order_documents_test.php) |
 | Storefront hook fixture | [`storefront_hook_fixture_test.php`](../tests/installer/storefront_hook_fixture_test.php) |
 | Login / search / free shipping / formid / router / UA | [`login_form_test.php`](../tests/http/login_form_test.php), [`catalog_browse_test.php`](../tests/http/catalog_browse_test.php), [`checkout_shipping_modules_test.php`](../tests/http/checkout_shipping_modules_test.php), [`request_security_test.php`](../tests/http/request_security_test.php) |

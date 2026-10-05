@@ -31,12 +31,12 @@ Specs skip when **`PHOENIX_HTTP_BASE_URL`** is unset.
 |------|---------------------|
 | `homepage_carousel.spec.ts` | Carousel **next** control changes the active slide text |
 | `navbar_offcanvas.spec.ts` | Bootstrap offcanvas opens from the hamburger control |
-| `checkout_from_scratch.spec.ts` | `buy_now` → cart → checkout redirect to `create_account.php`; first customer field |
+| `checkout_from_scratch.spec.ts` | `buy_now` → cart → register on `create_account.php` → COD checkout through `checkout_success.php` |
 | `homepage_visual.spec.ts` | Carousel **`toHaveScreenshot`** baseline |
 | `currency_dropdown.spec.ts` | Navbar **EUR** currency dropdown updates URL and product price |
 | `search_form.spec.ts` | Navbar **quick_find** submits keywords to **`advanced_search_result.php`** |
 | `products_new.spec.ts` | **`products_new.php`** sortable listing shows sample catalog products |
-| `product_attribute_select.spec.ts` | Lemons **Box Size** select chooses the **24** option |
+| `product_attribute_select.spec.ts` | Lemons **Box Size** **24**, add to cart, **`$12.49`** on **`shopping_cart.php`** |
 
 Binding names in specs use **snake_case** (enforced by [`browser_spec_snake_case_test.php`](../tests/unit/invariants/browser_spec_snake_case_test.php)).
 
