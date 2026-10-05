@@ -25,5 +25,14 @@ test.describe('product attribute select', () => {
     await expect(box_size).toHaveValue('2');
     const selected_text = (await box_size.locator('option:checked').innerText()).trim();
     expect(selected_text).toMatch(/^24\b/);
+
+    const cart_form = page.locator('form[name="cart_quantity"]');
+    await expect(cart_form).toBeVisible();
+    await cart_form.locator('button[type="submit"], input[type="submit"]').first().click();
+
+    await expect(page).toHaveURL(/shopping_cart\.php/);
+    await expect(page.locator('body')).toContainText('Lemons');
+    await expect(page.locator('body')).toContainText('24');
+    await expect(page.locator('body')).toContainText('$12.49');
   });
 });
