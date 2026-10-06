@@ -12,23 +12,21 @@ final class cm_create_account_link_test extends content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        if (is_file(DIR_FS_CATALOG . 'includes/languages/english/modules/content/login/cm_create_account_link.php')) {
-            require DIR_FS_CATALOG . 'includes/languages/english/modules/content/login/cm_create_account_link.php';
-        }
-
+        $this->with_linker();
         $this->define_constants([
             'MODULE_CONTENT_CREATE_ACCOUNT_LINK_STATUS' => 'True',
-            'MODULE_CONTENT_CREATE_ACCOUNT_LINK_CONTENT_WIDTH' => 'col-sm-12',
+            'MODULE_CONTENT_CREATE_ACCOUNT_LINK_CONTENT_WIDTH' => 'col-sm-6',
+            'MODULE_CONTENT_LOGIN_TEXT_NEW_CUSTOMER' => 'New Customer',
         ]);
-
-        $this->with_linker();
     }
 
-    public function test_execute_buffers_module_markup(): void {
+    public function test_execute_buffers_create_account_button_into_login_group(): void {
         $this->execute_module(cm_create_account_link::class);
 
         $content = $this->buffered_content('login');
         $this->assertStringContainsString('cm-create-account-link', $content);
+        $this->assertStringContainsString('New Customer', $content);
+        $this->assertStringContainsString('create_account.php', $content);
     }
 
 }
