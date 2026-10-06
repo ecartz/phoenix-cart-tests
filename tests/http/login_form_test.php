@@ -45,4 +45,32 @@ final class login_form_test extends http_test_case {
         $this->assertNotSame('', $retry_formid, 'login form should still expose formid after a failed attempt');
     }
 
+    public function test_bad_formid_does_not_log_in_with_valid_credentials(): void {
+        $login_page = $this->get_http()->request('GET', '/login.php');
+        $this->assertSame(200, $login_page->getStatusCode());
+
+        $response = $this->get_http()->request('POST', '/login.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => '00000000000000000000000000000000',
+                'email_address' => self::FIXTURE_CUSTOMER_EMAIL,
+                'password' => self::FIXTURE_CUSTOMER_PASSWORD,
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('cm-login-form', $body);
+        $this->assertStringNotContainsString('cm-account-title', $body);
+        $this->assertStringNotContainsString('No match for E-mail Address and/or Password', $body);
+
+        $account_probe = $this->get_http()->request('GET', '/account.php');
+        $account_body = $account_probe->getContent(false);
+        $this->assertStringNotContainsString(
+            'cm-account-title',
+            $account_body,
+            'bad formid must not establish a logged-in session'
+        );
+    }
+
 }

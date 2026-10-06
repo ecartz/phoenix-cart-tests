@@ -110,4 +110,35 @@ final class checkout_cod_test extends http_test_case {
         );
     }
 
+    public function test_bad_formid_on_checkout_shipping_does_not_advance_to_payment(): void {
+        $this->login_fixture_customer();
+
+        $this->get_http()->request('GET', '/index.php', [
+            'query' => [
+                'action' => 'buy_now',
+                'products_id' => '3',
+            ],
+        ]);
+
+        $shipping_page = $this->get_http()->request('GET', '/checkout_shipping.php');
+        $this->assertSame(200, $shipping_page->getStatusCode());
+
+        $response = $this->get_http()->request('POST', '/checkout_shipping.php', [
+            'body' => [
+                'action' => 'process',
+                'formid' => '00000000000000000000000000000000',
+                'shipping' => 'flat_flat',
+            ],
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $response->getContent(false);
+        $this->assertStringContainsString('Flat Rate', $body);
+        $this->assertStringNotContainsString('Cash on Delivery', $body);
+
+        $payment_probe = $this->get_http()->request('GET', '/checkout_payment.php');
+        $final_url = (string) ($payment_probe->getInfo('url') ?? '');
+        $this->assertStringContainsString('checkout_shipping.php', $final_url);
+    }
+
 }
