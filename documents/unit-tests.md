@@ -32,3 +32,5 @@ Use real MySQL ([`integration-tests.md`](integration-tests.md)) when the test’
 ## Catalog root
 
 Set **`PHOENIX_CART_ROOT`** to a checkout of [CE-PhoenixCart/PhoenixCart](https://github.com/CE-PhoenixCart/PhoenixCart), or clone with [`scripts/clone-catalog.sh`](../scripts/clone-catalog.sh) (ref from [`fixtures/catalog_pin.txt`](../fixtures/catalog_pin.txt)). [`vendored_install_sql_test`](../tests/unit/invariants/vendored_install_sql_test.php) checks the vendored install SQL against that checkout (see [`fixtures/README.md`](../fixtures/README.md)).
+
+[`content_module_execute_tests_test`](../tests/unit/invariants/content_module_execute_tests_test.php) walks `includes/modules/content/**/cm_*.php` in the catalog checkout and requires a matching execute test under [`tests/unit/content/`](../tests/unit/content/) or [`tests/integration/`](../tests/integration/).

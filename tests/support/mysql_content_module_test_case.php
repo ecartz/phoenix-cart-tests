@@ -7,6 +7,7 @@ namespace PhoenixCart\Tests\support;
 use default_template;
 use hooks;
 use Linker;
+use ReflectionClass;
 use Template;
 
 /**
@@ -65,6 +66,27 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
         } finally {
             chdir($previous_directory);
         }
+    }
+
+    protected function buffered_content(string $group): string {
+        /** @var Template $template */
+        $template = $GLOBALS['Template'];
+
+        if (!$template->has_content($group)) {
+            return '';
+        }
+
+        $reflection = new ReflectionClass($template);
+        $property = $reflection->getProperty('_content');
+        $property->setAccessible(true);
+        /** @var array<string, list<string>> $stored */
+        $stored = $property->getValue($template);
+
+        return implode('', $stored[$group] ?? []);
+    }
+
+    protected function reset_template(): void {
+        $GLOBALS['Template'] = new Template(new default_template());
     }
 
 }
