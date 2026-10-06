@@ -14,7 +14,9 @@ final class cm_cu_modular_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
+        $this->prepare_storefront();
+        $this->load_languages_for_installed('MODULE_CONTENT_CU_INSTALLED', 'modules/pi/contact_us');
+        $this->load_language('contact_us.php', 'ENTRY_NAME_TEXT');
     }
 
     public function test_execute_buffers_module_markup(): void {
