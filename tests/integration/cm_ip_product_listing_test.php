@@ -14,18 +14,27 @@ final class cm_ip_product_listing_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $GLOBALS['current_category_id'] = 1;
-        $_GET['cPath'] = '1';
+        $this->prepare_storefront();
+        $this->load_language(
+            'modules/content/index_products/cm_ip_product_listing.php',
+            'MODULE_CONTENT_IP_PRODUCT_LISTING_TITLE'
+        );
+        $GLOBALS['current_category_id'] = 3;
+        unset($_GET['manufacturers_id'], $_GET['filter_id'], $_GET['sort']);
     }
 
-    public function test_execute_buffers_module_markup(): void {
-        $this->assertTrue(defined('MODULE_CONTENT_IP_PRODUCT_LISTING_STATUS'));
-        $this->assertSame('True', MODULE_CONTENT_IP_PRODUCT_LISTING_STATUS);
+    protected function tearDown(): void {
+        unset($GLOBALS['current_category_id'], $_GET['sort']);
 
+        parent::tearDown();
+    }
+
+    public function test_execute_lists_pears_in_category(): void {
         $this->execute_module(cm_ip_product_listing::class);
 
         $content = $this->buffered_content('index_products');
         $this->assertStringContainsString('cm-ip-product-listing', $content);
+        $this->assertStringContainsString('Pears', $content);
     }
 
 }

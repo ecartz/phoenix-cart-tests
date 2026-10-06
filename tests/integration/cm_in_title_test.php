@@ -14,21 +14,26 @@ final class cm_in_title_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
+        $this->prepare_category_tree();
+        $this->load_language(
+            'modules/content/index_nested/cm_in_title.php',
+            'MODULE_CONTENT_IN_TITLE_PUBLIC_TITLE'
+        );
         $GLOBALS['current_category_id'] = 1;
     }
 
     protected function tearDown(): void {
-        unset($GLOBALS['current_category_id']);
+        unset($GLOBALS['current_category_id'], $GLOBALS['category_tree']);
 
         parent::tearDown();
     }
 
-    public function test_execute_buffers_nested_category_title(): void {
+    public function test_execute_buffers_fruit_category_heading(): void {
         $this->execute_module(cm_in_title::class);
 
         $content = $this->buffered_content('index_nested');
         $this->assertStringContainsString('cm-in-title', $content);
+        $this->assertStringContainsString('Fruit', $content);
     }
 
 }

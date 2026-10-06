@@ -96,7 +96,7 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
             return;
         }
 
-        require DIR_FS_CATALOG . 'includes/languages/english/' . ltrim($relative, '/');
+        require_once DIR_FS_CATALOG . 'includes/languages/english/' . ltrim($relative, '/');
     }
 
     protected function prepare_storefront(): void {

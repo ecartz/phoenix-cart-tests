@@ -14,19 +14,27 @@ final class cm_cs_product_notifications_test extends mysql_content_module_test_c
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['customer_id'] = 1;
-        $GLOBALS['customer_id'] = 1;
-        $GLOBALS['notify'] = new objectInfo(['products_id' => 1]);
+        $this->prepare_storefront();
+        $this->load_language(
+            'modules/content/checkout_success/cm_cs_product_notifications.php',
+            'MODULE_CONTENT_CHECKOUT_SUCCESS_PRODUCT_NOTIFICATIONS_TEXT_NOTIFY_PRODUCTS'
+        );
+        $this->seed_customer();
+        $this->insert_order('Pears');
     }
 
-    public function test_execute_buffers_module_markup(): void {
-        $this->assertTrue(defined('MODULE_CONTENT_CHECKOUT_SUCCESS_PRODUCT_NOTIFICATIONS_STATUS'));
-        $this->assertSame('True', MODULE_CONTENT_CHECKOUT_SUCCESS_PRODUCT_NOTIFICATIONS_STATUS);
+    protected function tearDown(): void {
+        $this->delete_customer();
 
+        parent::tearDown();
+    }
+
+    public function test_execute_offers_notification_for_unordered_sample_product(): void {
         $this->execute_module(cm_cs_product_notifications::class);
 
         $content = $this->buffered_content('checkout_success');
         $this->assertStringContainsString('cm-cs-product-notifications', $content);
+        $this->assertStringContainsString('Pears', $content);
     }
 
 }

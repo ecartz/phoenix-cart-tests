@@ -17,14 +17,10 @@ final class cm_info_modular_test extends mysql_content_module_test_case {
         $_SESSION['languages_id'] = 1;
     }
 
-    public function test_execute_buffers_module_markup(): void {
-        $this->assertTrue(defined('MODULE_CONTENT_INFO_MODULAR_STATUS'));
-        $this->assertSame('True', MODULE_CONTENT_INFO_MODULAR_STATUS);
-
+    public function test_execute_skips_wrapper_when_info_children_are_not_configured(): void {
         $this->execute_module(cm_info_modular::class);
 
-        $content = $this->buffered_content('info');
-        $this->assertStringContainsString('cm-info-modular', $content);
+        $this->assertSame('', $this->buffered_content('info'));
     }
 
 }

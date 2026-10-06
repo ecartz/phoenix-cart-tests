@@ -13,32 +13,29 @@ final class cm_sc_no_products_test extends content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        if (is_file(DIR_FS_CATALOG . 'includes/languages/english/modules/content/shopping_cart/cm_sc_no_products.php')) {
-            require DIR_FS_CATALOG . 'includes/languages/english/modules/content/shopping_cart/cm_sc_no_products.php';
-        }
-
+        $this->with_linker();
+        $_SESSION['cart'] = new shoppingCart();
         $this->define_constants([
             'MODULE_CONTENT_SC_NO_PRODUCTS_STATUS' => 'True',
             'MODULE_CONTENT_SC_NO_PRODUCTS_CONTENT_WIDTH' => 'col-sm-12',
+            'MODULE_CONTENT_SC_NO_PRODUCTS_TEXT_CART_EMPTY' => 'Your cart is empty',
+            'MODULE_CONTENT_SC_NO_PRODUCTS_BUTTON_CONTINUE' => 'Continue',
         ]);
-
-        $_SESSION['cart'] = new shoppingCart();
     }
 
     protected function tearDown(): void {
-        unset($_SESSION['customer_id'], $_SESSION['cart'], $GLOBALS['product'], $GLOBALS['customer']);
-        unset($_GET['products_id'], $_GET['cPath']);
-        unset($GLOBALS['keywords'], $GLOBALS['listing_sql'], $GLOBALS['listing_split']);
-        unset($GLOBALS['current_category_id'], $GLOBALS['category_tree']);
+        unset($_SESSION['cart']);
 
         parent::tearDown();
     }
 
-    public function test_execute_buffers_module_markup(): void {
+    public function test_execute_buffers_empty_cart_alert_into_shopping_cart_group(): void {
         $this->execute_module(cm_sc_no_products::class);
 
         $content = $this->buffered_content('shopping_cart');
         $this->assertStringContainsString('cm-sc-no-products', $content);
+        $this->assertStringContainsString('Your cart is empty', $content);
+        $this->assertStringContainsString('index.php', $content);
     }
 
 }

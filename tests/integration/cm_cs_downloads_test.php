@@ -11,18 +11,33 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('mysql')]
 final class cm_cs_downloads_test extends mysql_content_module_test_case {
 
-    public function test_execute_respects_download_enabled_flag(): void {
-        $this->assertTrue(defined('MODULE_CONTENT_CHECKOUT_SUCCESS_DOWNLOADS_STATUS'));
-        $this->assertSame('True', MODULE_CONTENT_CHECKOUT_SUCCESS_DOWNLOADS_STATUS);
+    protected function setUp(): void {
+        parent::setUp();
+
+        $this->prepare_storefront();
+        $this->load_language(
+            'modules/content/checkout_success/cm_cs_downloads.php',
+            'HEADING_DOWNLOAD'
+        );
+        $this->seed_customer();
+        $this->insert_order('Pears', true);
+        $_SERVER['SCRIPT_NAME'] = '/checkout_success.php';
+    }
+
+    protected function tearDown(): void {
+        $this->delete_customer();
+
+        parent::tearDown();
+    }
+
+    public function test_execute_lists_downloadable_order_product(): void {
+        $this->assertSame('true', DOWNLOAD_ENABLED);
 
         $this->execute_module(cm_cs_downloads::class);
 
         $content = $this->buffered_content('checkout_success');
-        if (defined('DOWNLOAD_ENABLED') && DOWNLOAD_ENABLED === 'true') {
-            $this->assertStringContainsString('cm-cs-downloads', $content);
-        } else {
-            $this->assertSame('', $content);
-        }
+        $this->assertStringContainsString('cm-cs-downloads', $content);
+        $this->assertStringContainsString('Pears', $content);
     }
 
 }

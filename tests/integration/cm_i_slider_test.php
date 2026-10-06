@@ -7,7 +7,6 @@ namespace PhoenixCart\Tests\integration;
 use cm_i_slider;
 use PhoenixCart\Tests\support\mysql_content_module_test_case;
 use PHPUnit\Framework\Attributes\Group;
-use Text;
 
 #[Group('mysql')]
 final class cm_i_slider_test extends mysql_content_module_test_case {
@@ -15,19 +14,21 @@ final class cm_i_slider_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
-        $this->with_linker();
+        $this->prepare_storefront();
+        $this->load_language(
+            'modules/content/index/cm_i_slider.php',
+            'MODULE_CONTENT_I_SLIDER_TITLE'
+        );
     }
 
-    public function test_execute_buffers_slider_when_advert_group_configured(): void {
-        if (!defined('MODULE_CONTENT_I_SLIDER_GRP') || Text::is_empty(MODULE_CONTENT_I_SLIDER_GRP)) {
-            $this->markTestSkipped('MODULE_CONTENT_I_SLIDER_GRP is not set in fixture configuration.');
-        }
+    public function test_execute_renders_sample_carousel_advert(): void {
+        $this->assertSame('carousel', MODULE_CONTENT_I_SLIDER_GRP);
 
         $this->execute_module(cm_i_slider::class);
 
         $content = $this->buffered_content('index');
         $this->assertStringContainsString('cm-i-slider', $content);
+        $this->assertStringContainsString('Fresh fruit direct to your door', $content);
     }
 
 }

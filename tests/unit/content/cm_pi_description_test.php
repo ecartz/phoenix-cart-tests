@@ -13,33 +13,29 @@ final class cm_pi_description_test extends content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        if (is_file(DIR_FS_CATALOG . 'includes/languages/english/modules/content/product_info/cm_pi_description.php')) {
-            require DIR_FS_CATALOG . 'includes/languages/english/modules/content/product_info/cm_pi_description.php';
-        }
-
         $this->define_constants([
             'MODULE_CONTENT_PI_DESCRIPTION_STATUS' => 'True',
             'MODULE_CONTENT_PI_DESCRIPTION_CONTENT_WIDTH' => 'col-sm-12',
         ]);
-
-        $GLOBALS['product'] = new Product(['id' => 1, 'status' => 1]);
-        $GLOBALS['product']->set('description', 'Juicy oranges.');
+        $GLOBALS['product'] = new Product([
+            'id' => 3,
+            'status' => 1,
+            'description' => 'Pears are soft and sweet.',
+        ]);
     }
 
     protected function tearDown(): void {
-        unset($_SESSION['customer_id'], $_SESSION['cart'], $GLOBALS['product'], $GLOBALS['customer']);
-        unset($_GET['products_id'], $_GET['cPath']);
-        unset($GLOBALS['keywords'], $GLOBALS['listing_sql'], $GLOBALS['listing_split']);
-        unset($GLOBALS['current_category_id'], $GLOBALS['category_tree']);
+        unset($GLOBALS['product']);
 
         parent::tearDown();
     }
 
-    public function test_execute_buffers_module_markup(): void {
+    public function test_execute_buffers_product_description_into_product_info_group(): void {
         $this->execute_module(cm_pi_description::class);
 
         $content = $this->buffered_content('product_info');
         $this->assertStringContainsString('cm-pi-description', $content);
+        $this->assertStringContainsString('Pears are soft and sweet.', $content);
     }
 
 }

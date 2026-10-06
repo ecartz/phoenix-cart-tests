@@ -17,14 +17,14 @@ final class cm_i_modular_test extends mysql_content_module_test_case {
         $_SESSION['languages_id'] = 1;
     }
 
-    public function test_execute_buffers_module_markup(): void {
+    public function test_execute_skips_wrapper_when_no_index_children_are_installed(): void {
         $this->assertTrue(defined('MODULE_CONTENT_I_MODULAR_STATUS'));
         $this->assertSame('True', MODULE_CONTENT_I_MODULAR_STATUS);
+        $this->assertSame('', MODULE_CONTENT_I_INSTALLED);
 
         $this->execute_module(cm_i_modular::class);
 
-        $content = $this->buffered_content('index');
-        $this->assertStringContainsString('cm-i-modular', $content);
+        $this->assertSame('', $this->buffered_content('index'));
     }
 
 }
