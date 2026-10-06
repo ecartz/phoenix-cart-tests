@@ -19,6 +19,9 @@ final class cm_cs_downloads_test extends mysql_content_module_test_case {
             'modules/content/checkout_success/cm_cs_downloads.php',
             'HEADING_DOWNLOAD'
         );
+        $this->define_constants([
+            'HEADER_TITLE_MY_ACCOUNT' => 'Account',
+        ]);
         $this->seed_customer();
         $this->insert_order('Pears', true);
         $_SERVER['SCRIPT_NAME'] = '/checkout_success.php';

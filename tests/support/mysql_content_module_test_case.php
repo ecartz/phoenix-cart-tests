@@ -19,7 +19,6 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
         parent::setUp();
 
         $this->define_constants([
-            'MODULE_CONTENT_BOOTSTRAP_ROW_DESCRIPTION' => 'Bootstrap row note',
             'BOOTSTRAP_CONTENT' => 8,
         ]);
 
@@ -64,6 +63,10 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
 
             throw $exception;
         } finally {
+            while (ob_get_level() > $buffer_level) {
+                ob_end_clean();
+            }
+
             chdir($previous_directory);
         }
     }
@@ -99,10 +102,83 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
         require_once DIR_FS_CATALOG . 'includes/languages/english/' . ltrim($relative, '/');
     }
 
+    protected function load_language_file_if_missing(string $relative): void {
+        $path = DIR_FS_CATALOG . 'includes/languages/english/' . ltrim($relative, '/');
+        if (!is_file($path)) {
+            return;
+        }
+
+        $source = file_get_contents($path);
+        if (!is_string($source) || !preg_match('/^\s*const\s+([A-Z0-9_]+)\s*=/m', $source, $matches)) {
+            require_once $path;
+
+            return;
+        }
+
+        $this->load_language($relative, $matches[1]);
+    }
+
+    /**
+     * @param non-empty-string $installed_constant
+     * @param non-empty-string $language_subdirectory under includes/languages/english/
+     */
+    protected function load_languages_for_installed(
+        string $installed_constant,
+        string $language_subdirectory,
+    ): void {
+        if (!defined($installed_constant)) {
+            return;
+        }
+
+        $installed = constant($installed_constant);
+        if (!is_string($installed) || $installed === '') {
+            return;
+        }
+
+        foreach (explode(';', $installed) as $piece) {
+            $basename = pathinfo(trim($piece), PATHINFO_FILENAME);
+            if ($basename === '') {
+                continue;
+            }
+
+            $this->load_language_file_if_missing($language_subdirectory . '/' . $basename . '.php');
+        }
+    }
+
+    protected function load_core_english_constants(): void {
+        if (defined('FORM_REQUIRED_INPUT')) {
+            return;
+        }
+
+        if (defined('STAR_RATING') || defined('MODULE_CONTENT_BOOTSTRAP_ROW_DESCRIPTION')) {
+            $this->define_fallback_english_constants();
+
+            return;
+        }
+
+        require_once DIR_FS_CATALOG . 'includes/languages/english.php';
+    }
+
+    protected function define_fallback_english_constants(): void {
+        $this->define_constants([
+            'FORM_REQUIRED_INPUT' => '',
+            'HEADER_TITLE_MY_ACCOUNT' => 'Account',
+            'IMAGE_BUTTON_CLOSE' => 'Close',
+            'PRODUCT_REMOVED' => '%s has been removed from your Cart',
+            'MODULE_CONTENT_BOOTSTRAP_ROW_DESCRIPTION' => '',
+            'NAVBAR_ICON_CART_CONTENTS' => '<span class="position-relative%2$s">'
+                . '<i title="Shopping Cart: %1$s item(s) in your cart" class="fas fa-shopping-cart fa-fw fa-xl"></i>'
+                . '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary border">'
+                . '<span class="cart-count">%1$s</span></span></span>',
+            'TEXT_SEARCH_PLACEHOLDER' => 'Search',
+        ]);
+    }
+
     protected function prepare_storefront(): void {
         $_SESSION['languages_id'] = 1;
         $_SESSION['currency'] = defined('DEFAULT_CURRENCY') ? DEFAULT_CURRENCY : 'USD';
         $this->with_linker();
+        $this->load_core_english_constants();
 
         $GLOBALS['hooks'] = $GLOBALS['all_hooks'] ?? new hooks('shop');
         $GLOBALS['all_hooks'] = $GLOBALS['hooks'];
@@ -113,6 +189,14 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
             $GLOBALS['short_date_formatter'] = new \IntlDateFormatter(
                 'en',
                 \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE
+            );
+        }
+
+        if (!isset($GLOBALS['long_date_formatter'])) {
+            $GLOBALS['long_date_formatter'] = new \IntlDateFormatter(
+                'en',
+                \IntlDateFormatter::LONG,
                 \IntlDateFormatter::NONE
             );
         }
@@ -128,10 +212,7 @@ abstract class mysql_content_module_test_case extends mysql_test_case {
         $this->define_constants([
             'TEXT_NO_PRODUCTS' => 'There are no products available in this category.',
             'TEXT_SORT_BY' => 'Sort by',
-            'STAR_RATING' => 'Rated %s Stars',
-            'IMAGE_BUTTON_CLOSE' => 'Close',
             'MATC_BUTTON_CLOSE' => 'Close',
-            'PRODUCT_REMOVED' => '%s has been removed from your Cart',
             'STOCK_MARK_PRODUCT_OUT_OF_STOCK' => '***',
         ]);
     }

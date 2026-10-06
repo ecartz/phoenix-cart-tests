@@ -34,7 +34,7 @@ final class cm_gdpr_personal_details_test extends mysql_content_module_test_case
         $content = $this->buffered_content('gdpr');
         $this->assertStringContainsString('cm-gdpr-personal-details', $content);
         $this->assertStringContainsString('Fixture', $content);
-        $this->assertStringContainsString('Male', $content);
+        $this->assertStringContainsString('Unknown', $content);
     }
 
 }

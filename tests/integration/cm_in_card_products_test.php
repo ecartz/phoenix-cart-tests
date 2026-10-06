@@ -33,7 +33,7 @@ final class cm_in_card_products_test extends mysql_content_module_test_case {
 
         $content = $this->buffered_content('index_nested');
         $this->assertStringContainsString('cm-in-card-products', $content);
-        $this->assertStringContainsString('Oranges', $content);
+        $this->assertStringContainsString('Lime', $content);
     }
 
 }

@@ -14,9 +14,9 @@ final class cm_t_write_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
+        $this->prepare_storefront();
         $_SESSION['customer_id'] = 1;
-        $this->with_linker();
+        $this->load_language_file_if_missing('modules/content/testimonials/cm_t_write.php');
     }
 
     protected function tearDown(): void {

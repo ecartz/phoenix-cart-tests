@@ -15,9 +15,13 @@ final class cm_pi_price_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
+        $this->prepare_storefront();
         $GLOBALS['product'] = new Product(['id' => 1, 'status' => 1]);
-        $GLOBALS['currencies'] = new currencies();
+        $this->define_constants([
+            'MODULE_CONTENT_PI_PRICE_STATUS' => 'True',
+            'MODULE_CONTENT_PI_PRICE_CONTENT_WIDTH' => 'col-sm-5 text-start text-sm-end',
+        ]);
+        $this->load_language_file_if_missing('modules/content/product_info/cm_pi_price.php');
     }
 
     protected function tearDown(): void {

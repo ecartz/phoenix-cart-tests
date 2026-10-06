@@ -15,8 +15,7 @@ final class cm_sc_checkout_test extends mysql_content_module_test_case {
     protected function setUp(): void {
         parent::setUp();
 
-        $_SESSION['languages_id'] = 1;
-        $this->with_linker();
+        $this->prepare_storefront();
         $_SESSION['cart'] = new shoppingCart();
         $_SESSION['cart']->add_cart(1, 1);
     }
@@ -28,6 +27,8 @@ final class cm_sc_checkout_test extends mysql_content_module_test_case {
     }
 
     public function test_execute_buffers_checkout_button_when_cart_has_products(): void {
+        $this->load_language_file_if_missing('modules/content/shopping_cart/cm_sc_checkout.php');
+
         $this->execute_module(cm_sc_checkout::class);
 
         $content = $this->buffered_content('shopping_cart');
