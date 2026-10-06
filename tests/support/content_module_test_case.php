@@ -89,4 +89,11 @@ abstract class content_module_test_case extends phoenix_test_case {
         $GLOBALS['Template'] = new Template(new default_template());
     }
 
+    /**
+     * Account link modules write Template data. The account page builder turns that into HTML.
+     */
+    protected function build_account_page(): void {
+        (new \tp_account())->build();
+    }
+
 }
